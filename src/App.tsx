@@ -3,24 +3,70 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AppProvider } from "./contexts/AppContext";
+import Layout from "./components/layout/Layout";
+
+// Pages
 import Index from "./pages/Index";
+import Team from "./pages/Team";
+import FAQ from "./pages/FAQ";
+import SkillSearch from "./pages/jobs/SkillSearch";
+import JobDetail from "./pages/jobs/JobDetail";
+import Recommendations from "./pages/jobs/Recommendations";
+import Optimize from "./pages/resume/Optimize";
+import Skills from "./pages/analysis/Skills";
+import Prep from "./pages/interview/Prep";
+import MemberCenter from "./pages/member/MemberCenter";
+import RegisterForm from "./pages/auth/RegisterForm";
+import UploadResume from "./pages/member/UploadResume";
+import Password from "./pages/member/Password";
+import CareerPath from "./pages/member/CareerPath";
+import MyResumes from "./pages/member/MyResumes";
+import Personality from "./pages/member/survey/Personality";
+import Preference from "./pages/member/survey/Preference";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AppProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Layout>
+            <Routes>
+              {/* 基礎 */}
+              <Route path="/" element={<Index />} />
+              <Route path="/team" element={<Team />} />
+              <Route path="/faq" element={<FAQ />} />
+              
+              {/* 核心 */}
+              <Route path="/jobs/skill-search" element={<SkillSearch />} />
+              <Route path="/jobs/recommendations" element={<Recommendations />} />
+              <Route path="/jobs/:id" element={<JobDetail />} />
+              <Route path="/resume/optimize" element={<Optimize />} />
+              <Route path="/analysis/skills" element={<Skills />} />
+              <Route path="/interview/prep" element={<Prep />} />
+              
+              {/* 會員 */}
+              <Route path="/member/center" element={<MemberCenter />} />
+              <Route path="/auth/register-form" element={<RegisterForm />} />
+              <Route path="/member/upload-resume" element={<UploadResume />} />
+              <Route path="/member/password" element={<Password />} />
+              <Route path="/member/career-path" element={<CareerPath />} />
+              <Route path="/member/my-resumes" element={<MyResumes />} />
+              <Route path="/member/survey/personality" element={<Personality />} />
+              <Route path="/member/survey/preference" element={<Preference />} />
+              
+              {/* Catch-all */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Layout>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AppProvider>
   </QueryClientProvider>
 );
 
