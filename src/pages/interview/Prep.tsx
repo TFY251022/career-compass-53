@@ -1,14 +1,66 @@
-import { MessageSquare } from 'lucide-react';
+import { useState } from 'react';
+import { MessageSquare, Mail } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import RightDrawer from '@/components/panels/RightDrawer';
+import { AILoadingSpinner } from '@/components/loading/LoadingStates';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Prep = () => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [letterContent, setLetterContent] = useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+
   const topics = [
     { title: '自我介紹', description: '如何有效地展現自己' },
     { title: '技術面試', description: '常見技術問題與解答技巧' },
     { title: '行為面試', description: 'STAR 法則與實例演練' },
     { title: '薪資談判', description: '如何談出理想薪資' },
   ];
+
+  const handleGenerateThankYou = async () => {
+    setDrawerOpen(true);
+    setIsGenerating(true);
+    setLetterContent(null);
+    
+    // Simulate AI generation
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    
+    setLetterContent(`親愛的 [面試官姓名]：
+
+非常感謝您今天撥冗與我進行面試，讓我有機會更深入地了解貴公司及這個職位。
+
+在面試過程中，我對於 [討論的專案/技術/團隊文化] 印象深刻。這更加堅定了我希望加入貴公司的意願。
+
+我相信我在 [相關技能/經驗] 方面的專業能力，能夠為團隊帶來價值。
+
+如有任何問題或需要補充資料，請隨時與我聯繫。
+
+再次感謝您的時間與考慮。
+
+祝好
+
+[您的姓名]
+[聯絡方式]`);
+    
+    setIsGenerating(false);
+  };
+
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const blob = new Blob([letterContent || ''], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '面試感謝函.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    setIsDownloading(false);
+  };
 
   return (
     <div className="container py-12 animate-fade-in">
@@ -22,19 +74,69 @@ const Prep = () => {
         </p>
       </div>
 
+      <div className="max-w-4xl mx-auto mb-8">
+        <Card className="bg-primary/5 border-primary/20">
+          <CardContent className="flex items-center justify-between p-6">
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Mail className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold">面試後感謝函</h3>
+                <p className="text-sm text-muted-foreground">AI 自動生成專業感謝函</p>
+              </div>
+            </div>
+            <Button onClick={handleGenerateThankYou} className="gradient-primary">
+              生成感謝函
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        {topics.map((topic) => (
-          <Card key={topic.title} className="hover:shadow-medium transition-shadow">
-            <CardHeader>
-              <CardTitle className="text-lg">{topic.title}</CardTitle>
-              <CardDescription>{topic.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full">開始練習</Button>
-            </CardContent>
-          </Card>
+        {topics.map((topic, index) => (
+          <motion.div
+            key={topic.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <Card className="hover:shadow-medium transition-shadow h-full">
+              <CardHeader>
+                <CardTitle className="text-lg">{topic.title}</CardTitle>
+                <CardDescription>{topic.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full">開始練習</Button>
+              </CardContent>
+            </Card>
+          </motion.div>
         ))}
       </div>
+
+      <RightDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        title="AI 感謝函生成"
+        subtitle="根據面試情況自動生成"
+        showDownload={!!letterContent}
+        onDownload={handleDownload}
+        isDownloading={isDownloading}
+      >
+        <AnimatePresence mode="wait">
+          {isGenerating ? (
+            <AILoadingSpinner message="AI 正在生成感謝函..." />
+          ) : letterContent ? (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="whitespace-pre-wrap text-sm leading-relaxed bg-muted/30 p-4 rounded-lg"
+            >
+              {letterContent}
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </RightDrawer>
     </div>
   );
 };

@@ -8,6 +8,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from '@/components/ui/navigation-menu';
 import { 
   Briefcase, 
   FileText, 
@@ -17,20 +25,33 @@ import {
   Menu,
   LogOut,
   Settings,
-  FileUp
+  FileUp,
+  Search,
+  Target,
+  ChevronDown
 } from 'lucide-react';
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import AuthModal from '@/components/auth/AuthModal';
 
 const Navbar = () => {
   const { isLoggedIn, setIsLoggedIn } = useAppState();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+
+  const productLinks = [
+    { to: '/jobs/skill-search', label: '職缺核心技能查詢', icon: Search, description: '根據技能搜尋最適合的職缺' },
+    { to: '/resume/optimize', label: '履歷優化', icon: FileText, description: 'AI 智能分析優化您的履歷' },
+    { to: '/analysis/skills', label: '職能圖譜', icon: BarChart3, description: '深度分析技能優勢與發展方向' },
+    { to: '/jobs/recommendations', label: '推薦職缺', icon: Target, description: '根據您的條件推薦最佳職缺' },
+    { to: '/interview/prep', label: '面試輔助', icon: MessageSquare, description: '模擬面試練習與準備' },
+  ];
 
   const navLinks = [
-    { to: '/jobs/skill-search', label: '技能搜尋', icon: Briefcase },
-    { to: '/resume/optimize', label: '履歷優化', icon: FileText },
-    { to: '/analysis/skills', label: '技能分析', icon: BarChart3 },
-    { to: '/interview/prep', label: '面試準備', icon: MessageSquare },
+    { to: '/', label: '首頁' },
+    { to: '/team', label: '團隊簡介' },
+    { to: '/faq', label: '常見問答' },
   ];
 
   const handleLogout = () => {
@@ -38,153 +59,206 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
-            <Briefcase className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <span className="text-xl font-bold text-foreground">
-            職涯<span className="text-gradient">智慧</span>
-          </span>
-        </Link>
+    <>
+      <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-16 items-center justify-between">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
+              <Briefcase className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <span className="text-xl font-bold text-foreground">
+              職涯<span className="text-gradient">智慧</span>
+            </span>
+          </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-1">
-          {navLinks.map((link) => (
-            <Link key={link.to} to={link.to}>
-              <Button variant="ghost" className="gap-2">
-                <link.icon className="h-4 w-4" />
-                {link.label}
-              </Button>
-            </Link>
-          ))}
-        </div>
-
-        {/* Auth Section */}
-        <div className="hidden md:flex items-center gap-3">
-          {isLoggedIn ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-2">
-                  <User className="h-4 w-4" />
-                  會員中心
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem asChild>
-                  <Link to="/member/center" className="flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    會員中心
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/member/my-resumes" className="flex items-center gap-2">
-                    <FileText className="h-4 w-4" />
-                    我的履歷
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/member/upload-resume" className="flex items-center gap-2">
-                    <FileUp className="h-4 w-4" />
-                    上傳履歷
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/member/career-path" className="flex items-center gap-2">
-                    <BarChart3 className="h-4 w-4" />
-                    職涯路徑
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/member/password" className="flex items-center gap-2">
-                    <Settings className="h-4 w-4" />
-                    密碼設定
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-destructive">
-                  <LogOut className="h-4 w-4" />
-                  登出
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <>
-              <Link to="/auth/register-form">
-                <Button variant="ghost">註冊</Button>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => (
+              <Link key={link.to} to={link.to}>
+                <Button variant="ghost">{link.label}</Button>
               </Link>
-              <Button onClick={() => setIsLoggedIn(true)} className="gradient-primary">
-                登入
-              </Button>
-            </>
-          )}
-        </div>
+            ))}
+            
+            {/* Product Dropdown */}
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="bg-transparent">
+                    產品資訊
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[400px] gap-1 p-4 md:w-[500px] md:grid-cols-1">
+                      {productLinks.map((link) => (
+                        <li key={link.to}>
+                          <NavigationMenuLink asChild>
+                            <Link
+                              to={link.to}
+                              className="flex items-center gap-3 select-none rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                            >
+                              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                                <link.icon className="h-5 w-5 text-primary" />
+                              </div>
+                              <div>
+                                <div className="text-sm font-medium leading-none mb-1">{link.label}</div>
+                                <p className="text-xs text-muted-foreground">{link.description}</p>
+                              </div>
+                            </Link>
+                          </NavigationMenuLink>
+                        </li>
+                      ))}
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
 
-        {/* Mobile Menu */}
-        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetTrigger asChild className="md:hidden">
-            <Button variant="ghost" size="icon">
-              <Menu className="h-5 w-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-72">
-            <div className="flex flex-col gap-4 mt-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors"
-                >
-                  <link.icon className="h-5 w-5 text-primary" />
-                  <span className="font-medium">{link.label}</span>
+          {/* Auth Section */}
+          <div className="hidden md:flex items-center gap-3">
+            {isLoggedIn ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="gap-2 pl-2">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src="/placeholder.svg" />
+                      <AvatarFallback className="bg-primary/10 text-primary text-sm">U</AvatarFallback>
+                    </Avatar>
+                    <span>會員中心</span>
+                    <ChevronDown className="h-4 w-4 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link to="/member/center" className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      會員中心
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/member/my-resumes" className="flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      我的履歷
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/member/upload-resume" className="flex items-center gap-2">
+                      <FileUp className="h-4 w-4" />
+                      上傳履歷
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/member/career-path" className="flex items-center gap-2">
+                      <BarChart3 className="h-4 w-4" />
+                      職涯路徑
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/member/password" className="flex items-center gap-2">
+                      <Settings className="h-4 w-4" />
+                      密碼設定
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-destructive">
+                    <LogOut className="h-4 w-4" />
+                    登出
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Link to="/auth/register-form">
+                  <Button variant="ghost">註冊</Button>
                 </Link>
-              ))}
-              <div className="border-t border-border my-2" />
-              {isLoggedIn ? (
-                <>
+                <Button onClick={() => setAuthModalOpen(true)} className="gradient-primary">
+                  登入
+                </Button>
+              </>
+            )}
+          </div>
+
+          {/* Mobile Menu */}
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger asChild className="md:hidden">
+              <Button variant="ghost" size="icon">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-72">
+              <div className="flex flex-col gap-4 mt-8">
+                {navLinks.map((link) => (
                   <Link
-                    to="/member/center"
+                    key={link.to}
+                    to={link.to}
                     onClick={() => setMobileOpen(false)}
                     className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors"
                   >
-                    <User className="h-5 w-5 text-primary" />
-                    <span className="font-medium">會員中心</span>
+                    <span className="font-medium">{link.label}</span>
                   </Link>
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setMobileOpen(false);
-                    }}
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors text-destructive"
-                  >
-                    <LogOut className="h-5 w-5" />
-                    <span className="font-medium">登出</span>
-                  </button>
-                </>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  <Link to="/auth/register-form" onClick={() => setMobileOpen(false)}>
-                    <Button variant="outline" className="w-full">註冊</Button>
-                  </Link>
-                  <Button
-                    onClick={() => {
-                      setIsLoggedIn(true);
-                      setMobileOpen(false);
-                    }}
-                    className="w-full gradient-primary"
-                  >
-                    登入
-                  </Button>
+                ))}
+                
+                <div className="border-t border-border my-2 pt-2">
+                  <p className="text-xs text-muted-foreground px-3 mb-2">產品資訊</p>
+                  {productLinks.map((link) => (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors"
+                    >
+                      <link.icon className="h-5 w-5 text-primary" />
+                      <span className="font-medium">{link.label}</span>
+                    </Link>
+                  ))}
                 </div>
-              )}
-            </div>
-          </SheetContent>
-        </Sheet>
-      </div>
-    </nav>
+
+                <div className="border-t border-border my-2" />
+                {isLoggedIn ? (
+                  <>
+                    <Link
+                      to="/member/center"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors"
+                    >
+                      <User className="h-5 w-5 text-primary" />
+                      <span className="font-medium">會員中心</span>
+                    </Link>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setMobileOpen(false);
+                      }}
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors text-destructive"
+                    >
+                      <LogOut className="h-5 w-5" />
+                      <span className="font-medium">登出</span>
+                    </button>
+                  </>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <Link to="/auth/register-form" onClick={() => setMobileOpen(false)}>
+                      <Button variant="outline" className="w-full">註冊</Button>
+                    </Link>
+                    <Button
+                      onClick={() => {
+                        setAuthModalOpen(true);
+                        setMobileOpen(false);
+                      }}
+                      className="w-full gradient-primary"
+                    >
+                      登入
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </nav>
+
+      <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
+    </>
   );
 };
 

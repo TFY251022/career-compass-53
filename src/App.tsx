@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "./contexts/AppContext";
 import Layout from "./components/layout/Layout";
+import ProtectedRoute from "./components/gatekeeper/ProtectedRoute";
 
 // Pages
 import Index from "./pages/Index";
@@ -42,13 +43,23 @@ const App = () => (
               <Route path="/team" element={<Team />} />
               <Route path="/faq" element={<FAQ />} />
               
-              {/* 核心 */}
-              <Route path="/jobs/skill-search" element={<SkillSearch />} />
-              <Route path="/jobs/recommendations" element={<Recommendations />} />
+              {/* 核心 (Protected) */}
+              <Route path="/jobs/skill-search" element={
+                <ProtectedRoute><SkillSearch /></ProtectedRoute>
+              } />
+              <Route path="/jobs/recommendations" element={
+                <ProtectedRoute><Recommendations /></ProtectedRoute>
+              } />
               <Route path="/jobs/:id" element={<JobDetail />} />
-              <Route path="/resume/optimize" element={<Optimize />} />
-              <Route path="/analysis/skills" element={<Skills />} />
-              <Route path="/interview/prep" element={<Prep />} />
+              <Route path="/resume/optimize" element={
+                <ProtectedRoute><Optimize /></ProtectedRoute>
+              } />
+              <Route path="/analysis/skills" element={
+                <ProtectedRoute><Skills /></ProtectedRoute>
+              } />
+              <Route path="/interview/prep" element={
+                <ProtectedRoute><Prep /></ProtectedRoute>
+              } />
               
               {/* 會員 */}
               <Route path="/member/center" element={<MemberCenter />} />
