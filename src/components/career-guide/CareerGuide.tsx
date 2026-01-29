@@ -12,8 +12,8 @@ const CareerGuide = () => {
   const slides = [
     {
       icon: '✨',
-      title: '歡迎來到 CareerPilot！',
-      description: '我是你的專屬職涯領航員 🚀 讓我帶你快速了解這個平台！',
+      title: '歡迎來到職星領航員！',
+      description: '我是你的專屬職涯接待員 🚀 讓我帶你快速了解這個平台！',
     },
     {
       icon: '📄',
