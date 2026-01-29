@@ -69,7 +69,7 @@ const Preference = () => {
         <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-6">
           <Heart className="h-8 w-8 text-primary" />
         </div>
-        <h1 className="text-3xl font-bold mb-4">工作偏好問卷</h1>
+        <h1 className="text-3xl font-bold mb-4">工作偏好</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
           告訴我們您的工作偏好，獲得更符合期望的職缺推薦
         </p>

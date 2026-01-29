@@ -80,7 +80,7 @@ const MemberCenter = () => {
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">性格測驗</span>
+                <span className="text-sm font-medium">職涯問卷</span>
                 <Badge variant={isPersonalityQuizDone ? 'default' : 'secondary'}>
                   {isPersonalityQuizDone ? '已完成' : '未完成'}
                 </Badge>
@@ -95,7 +95,7 @@ const MemberCenter = () => {
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">偏好問卷</span>
+                <span className="text-sm font-medium">工作偏好</span>
                 <Badge variant={isJobPreferenceQuizDone ? 'default' : 'secondary'}>
                   {isJobPreferenceQuizDone ? '已完成' : '未完成'}
                 </Badge>

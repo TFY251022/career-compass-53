@@ -1,4 +1,5 @@
 import { useState } from 'react';
+// 職涯問卷 (formerly 性格測驗)
 import { Brain } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -97,7 +98,7 @@ const Personality = () => {
         <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-6">
           <Brain className="h-8 w-8 text-primary" />
         </div>
-        <h1 className="text-3xl font-bold mb-4">性格測驗</h1>
+        <h1 className="text-3xl font-bold mb-4">職涯問卷</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
           了解您的職場性格特質，獲得更精準的職涯建議
         </p>

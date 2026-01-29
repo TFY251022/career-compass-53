@@ -17,7 +17,6 @@ import {
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
 import { 
-  Briefcase, 
   FileText, 
   BarChart3, 
   MessageSquare, 
@@ -28,7 +27,8 @@ import {
   FileUp,
   Search,
   Target,
-  ChevronDown
+  ChevronDown,
+  Compass
 } from 'lucide-react';
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -50,7 +50,7 @@ const Navbar = () => {
 
   const navLinks = [
     { to: '/', label: '首頁' },
-    { to: '/team', label: '團隊簡介' },
+    { to: '/team', label: '關於我們' },
     { to: '/faq', label: '常見問答' },
   ];
 
@@ -65,11 +65,14 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
-              <Briefcase className="h-5 w-5 text-primary-foreground" />
+              <Compass className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-foreground">
-              職涯<span className="text-gradient">智慧</span>
-            </span>
+            <div className="flex flex-col leading-none">
+              <span className="text-lg font-bold text-foreground">
+                職星領航員
+              </span>
+              <span className="text-xs text-muted-foreground">Career Pilot</span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -85,7 +88,7 @@ const Navbar = () => {
               <NavigationMenuList>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="bg-transparent">
-                    產品資訊
+                    服務項目
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] gap-1 p-4 md:w-[500px] md:grid-cols-1">
@@ -186,7 +189,16 @@ const Navbar = () => {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-72">
-              <div className="flex flex-col gap-4 mt-8">
+              <div className="flex items-center gap-2 mb-8">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
+                  <Compass className="h-5 w-5 text-primary-foreground" />
+                </div>
+                <div className="flex flex-col leading-none">
+                  <span className="text-lg font-bold">職星領航員</span>
+                  <span className="text-xs text-muted-foreground">Career Pilot</span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
                 {navLinks.map((link) => (
                   <Link
                     key={link.to}
@@ -199,7 +211,7 @@ const Navbar = () => {
                 ))}
                 
                 <div className="border-t border-border my-2 pt-2">
-                  <p className="text-xs text-muted-foreground px-3 mb-2">產品資訊</p>
+                  <p className="text-xs text-muted-foreground px-3 mb-2">服務項目</p>
                   {productLinks.map((link) => (
                     <Link
                       key={link.to}
