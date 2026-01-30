@@ -78,7 +78,7 @@ const Preference = () => {
       <div className="max-w-2xl mx-auto">
         <ContentTransition
           isLoading={isAnalyzing}
-          skeleton={<AILoadingSpinner message="AI 正在分析您的偏好..." />}
+          skeleton={<AILoadingSpinner message="正在整理您的工作偏好..." />}
         >
           {result ? (
             <motion.div

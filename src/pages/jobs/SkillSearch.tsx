@@ -72,7 +72,7 @@ const SkillSearch = () => {
           isLoading={isLoading}
           skeleton={
             <div className="space-y-4">
-              <AILoadingSpinner message="AI 正在分析技能匹配度..." />
+              <AILoadingSpinner message="正在為您尋找合適職缺..." />
               <CardSkeleton />
               <CardSkeleton />
             </div>

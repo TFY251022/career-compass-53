@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2, Star } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface AILoadingSpinnerProps {
   message?: string;
 }
 
-export const AILoadingSpinner = ({ message = 'AI Analyzing, please wait...' }: AILoadingSpinnerProps) => {
+export const AILoadingSpinner = ({ message = '正在為您處理，請稍候...' }: AILoadingSpinnerProps) => {
   return (
     <motion.div
       className="flex flex-col items-center justify-center py-12"
@@ -16,7 +16,7 @@ export const AILoadingSpinner = ({ message = 'AI Analyzing, please wait...' }: A
     >
       <div className="relative">
         <div className="h-16 w-16 rounded-full gradient-primary flex items-center justify-center animate-pulse">
-          <Sparkles className="h-8 w-8 text-primary-foreground" />
+          <Star className="h-8 w-8 text-primary-foreground" />
         </div>
         <Loader2 className="absolute -top-1 -right-1 h-6 w-6 text-primary animate-spin" />
       </div>
