@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
 import { Compass, Mail, Phone, MapPin } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 
 const Footer = () => {
   const quickLinks = [
@@ -26,34 +24,34 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="border-t border-border bg-muted/30">
+    <footer className="footer-bg">
       <div className="container py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
-          <div className="lg:col-span-1 space-y-4">
+          <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
                 <Compass className="h-5 w-5 text-primary-foreground" />
               </div>
               <div className="flex flex-col leading-none">
-                <span className="text-lg font-bold">職星領航員</span>
-                <span className="text-xs text-muted-foreground">Career Pilot</span>
+                <span className="text-lg font-bold text-white">職星領航員</span>
+                <span className="text-xs text-white/60">Career Pilot</span>
               </div>
             </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-white/70 leading-relaxed">
               運用 AI 技術，為您打造最佳職涯發展路徑。
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold mb-4">快速連結</h4>
+            <h4 className="font-semibold mb-4 text-white">快速連結</h4>
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    className="text-sm text-white/70 hover:text-white transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -64,13 +62,13 @@ const Footer = () => {
 
           {/* Services */}
           <div>
-            <h4 className="font-semibold mb-4">服務項目</h4>
+            <h4 className="font-semibold mb-4 text-white">服務項目</h4>
             <ul className="space-y-2">
               {serviceLinks.map((link) => (
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    className="text-sm text-white/70 hover:text-white transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -79,50 +77,19 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Member */}
+          {/* Contact Info */}
           <div>
-            <h4 className="font-semibold mb-4">會員專區</h4>
-            <ul className="space-y-2">
-              {memberLinks.map((link) => (
-                <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Newsletter & Contact */}
-          <div>
-            <h4 className="font-semibold mb-4">訂閱電子報</h4>
-            <p className="text-sm text-muted-foreground mb-3">
-              獲取最新職涯資訊與平台更新
-            </p>
-            <div className="flex gap-2 mb-6">
-              <Input 
-                type="email" 
-                placeholder="輸入電子郵件" 
-                className="text-sm"
-              />
-              <Button size="sm" className="gradient-primary shrink-0">
-                訂閱
-              </Button>
-            </div>
-            
-            <ul className="space-y-2">
-              <li className="flex items-center gap-2 text-sm text-muted-foreground">
+            <h4 className="font-semibold mb-4 text-white">聯絡資訊</h4>
+            <ul className="space-y-3">
+              <li className="flex items-center gap-2 text-sm text-white/70">
                 <Mail className="h-4 w-4 text-primary" />
                 <span>contact@careerpilot.com</span>
               </li>
-              <li className="flex items-center gap-2 text-sm text-muted-foreground">
+              <li className="flex items-center gap-2 text-sm text-white/70">
                 <Phone className="h-4 w-4 text-primary" />
                 <span>+886 2 1234 5678</span>
               </li>
-              <li className="flex items-start gap-2 text-sm text-muted-foreground">
+              <li className="flex items-start gap-2 text-sm text-white/70">
                 <MapPin className="h-4 w-4 text-primary mt-0.5" />
                 <span>台北市信義區信義路五段7號</span>
               </li>
@@ -131,15 +98,15 @@ const Footer = () => {
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
+        <div className="border-t border-white/10 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-white/60">
             © 2024 Career Pilot 職星領航員. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <Link to="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">
               隱私政策
             </Link>
-            <Link to="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">
               服務條款
             </Link>
           </div>

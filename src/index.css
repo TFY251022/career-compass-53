@@ -15,8 +15,13 @@
     --popover: 0 0% 100%;
     --popover-foreground: 150 10% 15%;
 
+    /* Primary Green - Main CTA color */
     --primary: 152 69% 45%;
     --primary-foreground: 0 0% 100%;
+
+    /* Bright accent green for highlights */
+    --primary-bright: 152 76% 52%;
+    --primary-dark: 152 65% 35%;
 
     --secondary: 150 20% 96%;
     --secondary-foreground: 150 10% 15%;
@@ -41,6 +46,10 @@
     --ring: 152 69% 45%;
 
     --radius: 0.75rem;
+
+    /* Footer darker green */
+    --footer-bg: 152 45% 18%;
+    --footer-foreground: 150 20% 90%;
 
     /* Custom tokens - Professional Green Theme */
     --gradient-primary: linear-gradient(135deg, hsl(152 69% 45%) 0%, hsl(165 60% 42%) 100%);
@@ -74,6 +83,9 @@
     --primary: 152 69% 50%;
     --primary-foreground: 150 15% 8%;
 
+    --primary-bright: 152 76% 55%;
+    --primary-dark: 152 65% 40%;
+
     --secondary: 150 20% 17%;
     --secondary-foreground: 150 20% 98%;
 
@@ -95,6 +107,9 @@
     --border: 150 20% 17%;
     --input: 150 20% 17%;
     --ring: 152 69% 55%;
+
+    --footer-bg: 152 45% 10%;
+    --footer-foreground: 150 20% 85%;
 
     --sidebar-background: 150 15% 10%;
     --sidebar-foreground: 150 20% 96%;
@@ -155,9 +170,11 @@
     @apply bg-card/80 backdrop-blur-sm border border-border/50;
   }
 
-  /* Hero section background */
+  /* Hero section background - Light green with radial gradient */
   .hero-bg {
-    background: linear-gradient(135deg, hsl(152 69% 45%) 0%, hsl(160 55% 38%) 50%, hsl(165 50% 35%) 100%);
+    background: 
+      radial-gradient(ellipse 80% 60% at 50% 45%, hsl(152 75% 75% / 0.6) 0%, hsl(152 60% 85% / 0.3) 40%, transparent 70%),
+      linear-gradient(180deg, hsl(152 40% 92%) 0%, hsl(152 35% 88%) 100%);
   }
 
   /* Feature card hover effect */
@@ -167,6 +184,31 @@
 
   .feature-card:hover {
     @apply shadow-medium -translate-y-1;
+  }
+
+  /* Floating animation for hero cards */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float 4s ease-in-out infinite;
+    animation-delay: 1s;
+  }
+
+  /* Footer dark green background */
+  .footer-bg {
+    background: hsl(var(--footer-bg));
+    color: hsl(var(--footer-foreground));
   }
 }
 
