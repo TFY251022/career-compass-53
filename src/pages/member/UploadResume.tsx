@@ -66,7 +66,7 @@ const UploadResume = () => {
           isLoading={isUploading}
           skeleton={
             <div className="space-y-6">
-              <AILoadingSpinner message="AI 正在分析您的履歷..." />
+              <AILoadingSpinner message="正在分析您的履歷內容..." />
               <AnalysisSkeleton />
             </div>
           }

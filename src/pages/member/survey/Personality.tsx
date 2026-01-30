@@ -107,7 +107,7 @@ const Personality = () => {
       <div className="max-w-2xl mx-auto">
         <ContentTransition
           isLoading={isAnalyzing}
-          skeleton={<AILoadingSpinner message="AI 正在分析您的性格特質..." />}
+          skeleton={<AILoadingSpinner message="正在分析您的職涯傾向..." />}
         >
           {result ? (
             <motion.div

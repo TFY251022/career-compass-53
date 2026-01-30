@@ -48,7 +48,7 @@ const Optimize = () => {
         </div>
         <h1 className="text-3xl font-bold mb-4">履歷優化</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          運用 AI 分析您的履歷，提供專業優化建議
+          專業分析您的履歷，提供優化建議
         </p>
       </div>
 
@@ -57,7 +57,7 @@ const Optimize = () => {
           isLoading={isAnalyzing}
           skeleton={
             <div className="space-y-6">
-              <AILoadingSpinner message="AI 正在深度分析您的履歷..." />
+              <AILoadingSpinner message="正在分析您的履歷內容..." />
               <AnalysisSkeleton />
             </div>
           }

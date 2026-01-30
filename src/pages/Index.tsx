@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { FileText, BarChart3, Target, ArrowRight, Mail, Phone, MapPin, Sparkles, Upload, CheckCircle } from 'lucide-react';
+import { FileText, BarChart3, Target, ArrowRight, Mail, Phone, MapPin, Star, Upload, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 // Diamond Star Icon Component
@@ -20,7 +20,7 @@ const Index = () => {
     {
       icon: FileText,
       title: '履歷優化',
-      description: '運用AI深度分析履歷內容，針對用戶履歷進行專業優化建議，協助突顯個人優勢。',
+      description: '深度分析您的履歷內容，提供專業優化建議，協助突顯個人優勢與競爭力。',
       to: '/resume/optimize'
     },
     {
@@ -144,7 +144,7 @@ const Index = () => {
               className="text-base md:text-lg text-muted-foreground mb-10 leading-relaxed max-w-2xl mx-auto"
             >
               職海無涯，讓我們一起優雅上岸。<br />
-              結合AI技術，輔助打造專屬職涯藍圖，精準匹配理想職缺，提升面試成功率。
+              打造專屬職涯藍圖，精準匹配理想職缺，提升面試成功率。
             </motion.p>
 
             {/* CTA Buttons */}
@@ -225,7 +225,7 @@ const Index = () => {
             </div>
             <h2 className="text-2xl md:text-3xl font-bold mb-4">核心功能介紹</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              結合先進AI技術與大數據分析
+              結合先進技術與市場數據，為您提供最佳職涯建議
             </p>
           </motion.div>
           

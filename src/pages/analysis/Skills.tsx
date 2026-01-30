@@ -60,7 +60,7 @@ const Skills = () => {
           isLoading={isAnalyzing}
           skeleton={
             <div className="space-y-6">
-              <AILoadingSpinner message="AI 正在分析您的技能數據..." />
+              <AILoadingSpinner message="正在分析您的技能組合..." />
               <AnalysisSkeleton />
             </div>
           }

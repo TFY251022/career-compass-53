@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { X, MessageCircle, Sparkles, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, MessageCircle, Star, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const CareerGuide = () => {
@@ -18,7 +18,7 @@ const CareerGuide = () => {
     {
       icon: '📄',
       title: '上傳你的履歷',
-      description: '首先上傳你的履歷，AI 會幫你分析技能並提供優化建議。',
+      description: '首先上傳你的履歷，我們會幫你分析技能並提供優化建議。',
       action: () => navigate('/member/upload-resume'),
       actionLabel: '上傳履歷',
     },
@@ -88,7 +88,7 @@ const CareerGuide = () => {
               <div className="bg-primary p-4 flex items-center justify-between text-primary-foreground">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-full bg-primary-foreground/20 flex items-center justify-center">
-                    <Sparkles className="h-5 w-5" />
+                    <Star className="h-5 w-5" />
                   </div>
                   <div>
                     <h3 className="font-semibold">職星接待員</h3>

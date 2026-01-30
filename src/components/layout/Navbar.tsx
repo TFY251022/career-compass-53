@@ -24,7 +24,7 @@ const Navbar = () => {
     to: '/resume/optimize',
     label: '履歷優化',
     icon: FileText,
-    description: 'AI 智能分析優化您的履歷'
+    description: '專業分析並優化您的履歷'
   }, {
     to: '/analysis/skills',
     label: '職能圖譜',
