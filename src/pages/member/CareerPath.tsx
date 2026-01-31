@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { Map, Download, ChevronRight, Star, FileText, Calendar } from 'lucide-react';
+import { Map, ChevronRight, Star, FileText, Calendar } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import RightDrawer from '@/components/panels/RightDrawer';
-import ProtectedRoute from '@/components/gatekeeper/ProtectedRoute';
+import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Career step data
 const careerSteps = [
@@ -93,12 +94,15 @@ const analysisHistory = [
   },
 ];
 
-// Arrow Step Component
-const ArrowStep = ({ step, isFirst, isLast }: { step: typeof careerSteps[0]; isFirst: boolean; isLast: boolean }) => {
+// Arrow Step Component - with mobile responsiveness
+const ArrowStep = ({ step, isFirst, isLast, isMobile }: { step: typeof careerSteps[0]; isFirst: boolean; isLast: boolean; isMobile: boolean }) => {
   return (
-    <div className="flex flex-col items-center flex-1 min-w-[180px]">
+    <div className={cn(
+      "flex flex-col items-center",
+      isMobile ? "min-w-[140px] flex-shrink-0" : "flex-1 min-w-[160px] md:min-w-[180px]"
+    )}>
       {/* Arrow shape */}
-      <div className="relative w-full h-14 flex items-center">
+      <div className={cn("relative w-full flex items-center", isMobile ? "h-10" : "h-12 md:h-14")}>
         {/* Arrow body */}
         <div
           className={cn(
@@ -109,13 +113,13 @@ const ArrowStep = ({ step, isFirst, isLast }: { step: typeof careerSteps[0]; isF
           )}
           style={{
             clipPath: isFirst
-              ? 'polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%)'
+              ? 'polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%)'
               : isLast
-              ? 'polygon(0 0, 100% 0, 100% 100%, 0 100%, 16px 50%)'
-              : 'polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%, 16px 50%)',
+              ? 'polygon(0 0, 100% 0, 100% 100%, 0 100%, 12px 50%)'
+              : 'polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 12px 50%)',
           }}
         >
-          <span className="font-semibold text-sm pl-2">{step.step}</span>
+          <span className={cn("font-semibold pl-2", isMobile ? "text-xs" : "text-xs md:text-sm")}>{step.step}</span>
         </div>
         
         {/* Glow effect for current step */}
@@ -124,26 +128,30 @@ const ArrowStep = ({ step, isFirst, isLast }: { step: typeof careerSteps[0]; isF
             className="absolute inset-0 bg-primary/20 blur-md -z-10"
             style={{
               clipPath: isFirst
-                ? 'polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%)'
+                ? 'polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%)'
                 : isLast
-                ? 'polygon(0 0, 100% 0, 100% 100%, 0 100%, 16px 50%)'
-                : 'polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%, 16px 50%)',
+                ? 'polygon(0 0, 100% 0, 100% 100%, 0 100%, 12px 50%)'
+                : 'polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 12px 50%)',
             }}
           />
         )}
       </div>
       
       {/* Title and details */}
-      <div className="mt-4 text-center">
+      <div className="mt-3 md:mt-4 text-center">
         <h4 className={cn(
-          "font-semibold mb-2",
-          step.isCurrent ? "text-primary" : "text-foreground"
+          "font-semibold mb-1.5 md:mb-2",
+          step.isCurrent ? "text-primary" : "text-foreground",
+          isMobile ? "text-xs" : "text-sm md:text-base"
         )}>
           {step.title}
         </h4>
-        <ul className="space-y-1">
+        <ul className="space-y-0.5 md:space-y-1">
           {step.details.map((detail, idx) => (
-            <li key={idx} className="text-xs text-muted-foreground">
+            <li key={idx} className={cn(
+              "text-muted-foreground",
+              isMobile ? "text-[10px]" : "text-[10px] md:text-xs"
+            )}>
               {detail}
             </li>
           ))}
@@ -154,34 +162,37 @@ const ArrowStep = ({ step, isFirst, isLast }: { step: typeof careerSteps[0]; isF
 };
 
 // Skeleton for career steps
-const CareerStepsSkeleton = () => (
+const CareerStepsSkeleton = ({ isMobile }: { isMobile: boolean }) => (
   <div className="flex gap-2 overflow-x-auto pb-4">
     {[1, 2, 3, 4].map((i) => (
-      <div key={i} className="flex flex-col items-center flex-1 min-w-[180px]">
-        <Skeleton className="w-full h-14" />
-        <Skeleton className="w-24 h-5 mt-4" />
-        <div className="mt-2 space-y-1 w-full px-4">
-          <Skeleton className="w-full h-3" />
-          <Skeleton className="w-3/4 h-3 mx-auto" />
-          <Skeleton className="w-5/6 h-3 mx-auto" />
+      <div key={i} className={cn(
+        "flex flex-col items-center",
+        isMobile ? "min-w-[140px] flex-shrink-0" : "flex-1 min-w-[160px] md:min-w-[180px]"
+      )}>
+        <Skeleton className={cn("w-full", isMobile ? "h-10" : "h-12 md:h-14")} />
+        <Skeleton className="w-20 md:w-24 h-4 md:h-5 mt-3 md:mt-4" />
+        <div className="mt-1.5 md:mt-2 space-y-1 w-full px-2 md:px-4">
+          <Skeleton className="w-full h-2.5 md:h-3" />
+          <Skeleton className="w-3/4 h-2.5 md:h-3 mx-auto" />
+          <Skeleton className="w-5/6 h-2.5 md:h-3 mx-auto" />
         </div>
       </div>
     ))}
   </div>
 );
 
-// Skeleton for analysis list
+// Analysis list skeleton
 const AnalysisListSkeleton = () => (
-  <div className="space-y-4">
+  <div className="space-y-3 md:space-y-4">
     {[1, 2, 3].map((i) => (
-      <div key={i} className="p-4 rounded-lg border">
+      <div key={i} className="p-3 md:p-4 rounded-lg border">
         <div className="flex items-start justify-between">
-          <div className="space-y-2 flex-1">
-            <Skeleton className="w-32 h-4" />
-            <Skeleton className="w-48 h-5" />
-            <Skeleton className="w-full h-4" />
+          <div className="space-y-1.5 md:space-y-2 flex-1">
+            <Skeleton className="w-24 md:w-32 h-3 md:h-4" />
+            <Skeleton className="w-36 md:w-48 h-4 md:h-5" />
+            <Skeleton className="w-full h-3 md:h-4" />
           </div>
-          <Skeleton className="w-5 h-5" />
+          <Skeleton className="w-4 h-4 md:w-5 md:h-5 shrink-0" />
         </div>
       </div>
     ))}
@@ -190,24 +201,24 @@ const AnalysisListSkeleton = () => (
 
 // Drawer content skeleton
 const DrawerContentSkeleton = () => (
-  <div className="space-y-6">
+  <div className="space-y-4 md:space-y-6">
     <div>
-      <Skeleton className="w-24 h-5 mb-2" />
-      <Skeleton className="w-full h-4" />
+      <Skeleton className="w-20 md:w-24 h-4 md:h-5 mb-2" />
+      <Skeleton className="w-full h-3 md:h-4" />
     </div>
     <div>
-      <Skeleton className="w-20 h-5 mb-3" />
+      <Skeleton className="w-16 md:w-20 h-4 md:h-5 mb-2 md:mb-3" />
       <div className="space-y-2">
-        <Skeleton className="w-full h-8 rounded-full" />
-        <Skeleton className="w-4/5 h-8 rounded-full" />
-        <Skeleton className="w-5/6 h-8 rounded-full" />
+        <Skeleton className="w-full h-7 md:h-8 rounded-full" />
+        <Skeleton className="w-4/5 h-7 md:h-8 rounded-full" />
+        <Skeleton className="w-5/6 h-7 md:h-8 rounded-full" />
       </div>
     </div>
     <div>
-      <Skeleton className="w-28 h-5 mb-3" />
+      <Skeleton className="w-24 md:w-28 h-4 md:h-5 mb-2 md:mb-3" />
       <div className="space-y-2">
-        <Skeleton className="w-full h-8 rounded-full" />
-        <Skeleton className="w-3/4 h-8 rounded-full" />
+        <Skeleton className="w-full h-7 md:h-8 rounded-full" />
+        <Skeleton className="w-3/4 h-7 md:h-8 rounded-full" />
       </div>
     </div>
   </div>
@@ -219,6 +230,7 @@ const CareerPath = () => {
   const [selectedAnalysis, setSelectedAnalysis] = useState<typeof analysisHistory[0] | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [drawerLoading, setDrawerLoading] = useState(false);
+  const isMobile = useIsMobile();
 
   const roadmapRef = useRef<HTMLDivElement>(null);
   const historyRef = useRef<HTMLDivElement>(null);
@@ -243,71 +255,97 @@ const CareerPath = () => {
     }, 1500);
   };
 
-  const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
-    <ProtectedRoute>
-      <div className="container py-8 animate-fade-in">
+    <LoginRequired>
+      <div className="container py-6 md:py-8 animate-fade-in">
         {/* Page Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
-            <Map className="h-8 w-8 text-primary" />
+        <div className="text-center mb-6 md:mb-8">
+          <div className="inline-flex items-center justify-center h-14 w-14 md:h-16 md:w-16 rounded-full bg-primary/10 mb-3 md:mb-4">
+            <Map className="h-7 w-7 md:h-8 md:w-8 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold mb-2">職涯地圖</h1>
-          <p className="text-muted-foreground">掌握您的職涯發展藍圖與歷史分析紀錄</p>
+          <h1 className="text-2xl md:text-3xl font-bold mb-1.5 md:mb-2">職涯地圖</h1>
+          <p className="text-muted-foreground text-sm md:text-base">掌握您的職涯發展藍圖與歷史分析紀錄</p>
         </div>
 
+        {/* Mobile: Top Navigation */}
+        {isMobile && (
+          <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 shrink-0 text-xs"
+              onClick={() => scrollToSection(roadmapRef)}
+            >
+              <Map className="h-3.5 w-3.5" />
+              職涯階梯圖
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 shrink-0 text-xs"
+              onClick={() => scrollToSection(historyRef)}
+            >
+              <FileText className="h-3.5 w-3.5" />
+              職涯分析結果
+            </Button>
+          </div>
+        )}
+
         {/* Main Layout: Sidebar + Content */}
-        <div className="flex gap-8">
-          {/* Left Sidebar - Fixed */}
-          <aside className="w-1/4 min-w-[200px] shrink-0">
-            <Card className="sticky top-24">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Star className="h-5 w-5 text-primary" />
-                  導覽
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start gap-2 text-left"
-                  onClick={() => scrollToSection(roadmapRef)}
-                >
-                  <Map className="h-4 w-4" />
-                  職涯階梯圖
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start gap-2 text-left"
-                  onClick={() => scrollToSection(historyRef)}
-                >
-                  <FileText className="h-4 w-4" />
-                  職涯分析結果
-                </Button>
-              </CardContent>
-            </Card>
-          </aside>
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8">
+          {/* Left Sidebar - Hidden on Mobile, Sticky on Desktop */}
+          {!isMobile && (
+            <aside className="w-1/4 min-w-[180px] shrink-0 hidden md:block">
+              <Card className="sticky top-24">
+                <CardHeader className="pb-2 md:pb-3">
+                  <CardTitle className="text-base md:text-lg flex items-center gap-2">
+                    <Star className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+                    導覽
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-1.5 md:space-y-2">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start gap-2 text-left text-sm"
+                    onClick={() => scrollToSection(roadmapRef)}
+                  >
+                    <Map className="h-4 w-4" />
+                    職涯階梯圖
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start gap-2 text-left text-sm"
+                    onClick={() => scrollToSection(historyRef)}
+                  >
+                    <FileText className="h-4 w-4" />
+                    職涯分析結果
+                  </Button>
+                </CardContent>
+              </Card>
+            </aside>
+          )}
 
           {/* Right Main Content - Scrollable */}
-          <main className="flex-1 space-y-8">
+          <main className="flex-1 space-y-6 md:space-y-8">
             {/* Career Roadmap Section */}
             <section ref={roadmapRef}>
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Star className="h-5 w-5 text-primary" />
+                <CardHeader className="pb-2 md:pb-4">
+                  <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+                    <Star className="h-4 w-4 md:h-5 md:w-5 text-primary" />
                     職涯階梯圖
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-xs md:text-sm">
                     您的職涯發展路徑，當前位置以發光效果標示
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   {isLoading ? (
-                    <CareerStepsSkeleton />
+                    <CareerStepsSkeleton isMobile={isMobile} />
                   ) : (
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
@@ -321,6 +359,7 @@ const CareerPath = () => {
                           step={step}
                           isFirst={index === 0}
                           isLast={index === careerSteps.length - 1}
+                          isMobile={isMobile}
                         />
                       ))}
                     </motion.div>
@@ -332,12 +371,12 @@ const CareerPath = () => {
             {/* Analysis History Section */}
             <section ref={historyRef}>
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-primary" />
+                <CardHeader className="pb-2 md:pb-4">
+                  <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+                    <FileText className="h-4 w-4 md:h-5 md:w-5 text-primary" />
                     職涯分析結果
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-xs md:text-sm">
                     點擊查看詳細分析內容，可下載完整報告
                   </CardDescription>
                 </CardHeader>
@@ -349,7 +388,7 @@ const CareerPath = () => {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 0.2 }}
-                      className="space-y-4"
+                      className="space-y-3 md:space-y-4"
                     >
                       {analysisHistory.map((analysis, index) => (
                         <motion.div
@@ -357,21 +396,21 @@ const CareerPath = () => {
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.1 }}
-                          className="p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer group"
+                          className="p-3 md:p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer group"
                           onClick={() => handleAnalysisClick(analysis)}
                         >
                           <div className="flex items-start justify-between">
-                            <div className="space-y-1">
-                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <Calendar className="h-4 w-4" />
+                            <div className="space-y-0.5 md:space-y-1 flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-muted-foreground">
+                                <Calendar className="h-3.5 w-3.5 md:h-4 md:w-4 shrink-0" />
                                 {analysis.date}
                               </div>
-                              <h4 className="font-semibold">{analysis.title}</h4>
-                              <p className="text-sm text-muted-foreground line-clamp-2">
+                              <h4 className="font-semibold text-sm md:text-base truncate">{analysis.title}</h4>
+                              <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">
                                 {analysis.summary}
                               </p>
                             </div>
-                            <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors mt-1" />
+                            <ChevronRight className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground group-hover:text-primary transition-colors mt-1 shrink-0 ml-2" />
                           </div>
                         </motion.div>
                       ))}
@@ -399,23 +438,23 @@ const CareerPath = () => {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
+              className="space-y-4 md:space-y-6"
             >
               <div>
-                <h4 className="font-medium mb-2">分析摘要</h4>
-                <p className="text-muted-foreground text-sm">{selectedAnalysis.summary}</p>
+                <h4 className="font-medium mb-1.5 md:mb-2 text-sm md:text-base">分析摘要</h4>
+                <p className="text-muted-foreground text-xs md:text-sm">{selectedAnalysis.summary}</p>
               </div>
 
               <div>
-                <h4 className="font-medium mb-3 flex items-center gap-2">
-                  <Star className="h-4 w-4 text-primary" />
+                <h4 className="font-medium mb-2 md:mb-3 flex items-center gap-1.5 md:gap-2 text-sm md:text-base">
+                  <Star className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary" />
                   優勢亮點
                 </h4>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 md:gap-2">
                   {selectedAnalysis.content.strengths.map((item, idx) => (
                     <span
                       key={idx}
-                      className="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm"
+                      className="px-2.5 py-1 md:px-3 md:py-1.5 bg-primary/10 text-primary rounded-full text-xs md:text-sm"
                     >
                       {item}
                     </span>
@@ -424,11 +463,11 @@ const CareerPath = () => {
               </div>
 
               <div>
-                <h4 className="font-medium mb-3">待加強項目</h4>
-                <ul className="space-y-2">
+                <h4 className="font-medium mb-2 md:mb-3 text-sm md:text-base">待加強項目</h4>
+                <ul className="space-y-1.5 md:space-y-2">
                   {selectedAnalysis.content.improvements.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span className="h-1.5 w-1.5 rounded-full bg-amber-500 mt-2 shrink-0" />
+                    <li key={idx} className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground">
+                      <span className="h-1.5 w-1.5 rounded-full bg-amber-500 mt-1.5 md:mt-2 shrink-0" />
                       {item}
                     </li>
                   ))}
@@ -436,11 +475,11 @@ const CareerPath = () => {
               </div>
 
               <div>
-                <h4 className="font-medium mb-3">發展建議</h4>
-                <ul className="space-y-2">
+                <h4 className="font-medium mb-2 md:mb-3 text-sm md:text-base">發展建議</h4>
+                <ul className="space-y-1.5 md:space-y-2">
                   {selectedAnalysis.content.recommendations.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span className="h-1.5 w-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                    <li key={idx} className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground">
+                      <span className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 md:mt-2 shrink-0" />
                       {item}
                     </li>
                   ))}
@@ -450,7 +489,7 @@ const CareerPath = () => {
           )}
         </RightDrawer>
       </div>
-    </ProtectedRoute>
+    </LoginRequired>
   );
 };
 

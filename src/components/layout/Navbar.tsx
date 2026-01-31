@@ -48,9 +48,6 @@ const Navbar = () => {
   }, {
     to: '/team',
     label: '關於我們'
-  }, {
-    to: '/faq',
-    label: '常見問答'
   }];
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -77,7 +74,7 @@ const Navbar = () => {
                 <Button variant="ghost">{link.label}</Button>
               </Link>)}
             
-            {/* Product Dropdown */}
+            {/* Product Dropdown - 服務項目 */}
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
@@ -104,6 +101,11 @@ const Navbar = () => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
+            
+            {/* 常見問答 - After 服務項目 */}
+            <Link to="/faq">
+              <Button variant="ghost">常見問答</Button>
+            </Link>
           </div>
 
           {/* Auth Section */}
