@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { AILoadingSpinner, ContentTransition } from '@/components/loading/LoadingStates';
 import AlertModal from '@/components/modals/AlertModal';
 import { motion } from 'framer-motion';
+import LoginRequired from '@/components/gatekeeper/LoginRequired';
 
 const questions = [
   {
@@ -93,125 +94,127 @@ const Personality = () => {
   };
 
   return (
-    <div className="container py-12 animate-fade-in">
-      <div className="text-center mb-12">
-        <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-6">
-          <Brain className="h-8 w-8 text-primary" />
+    <LoginRequired>
+      <div className="container py-8 md:py-12 animate-fade-in">
+        <div className="text-center mb-8 md:mb-12">
+          <div className="inline-flex items-center justify-center h-14 w-14 md:h-16 md:w-16 rounded-full bg-primary/10 mb-4 md:mb-6">
+            <Brain className="h-7 w-7 md:h-8 md:w-8 text-primary" />
+          </div>
+          <h1 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">職涯問卷</h1>
+          <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
+            了解您的職場性格特質，獲得更精準的職涯建議
+          </p>
         </div>
-        <h1 className="text-3xl font-bold mb-4">職涯問卷</h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          了解您的職場性格特質，獲得更精準的職涯建議
-        </p>
-      </div>
 
-      <div className="max-w-2xl mx-auto">
-        <ContentTransition
-          isLoading={isAnalyzing}
-          skeleton={<AILoadingSpinner message="正在分析您的職涯傾向..." />}
-        >
-          {result ? (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
-            >
-              <Card className="border-primary/20 bg-primary/5">
-                <CardContent className="p-6 text-center">
-                  <div className="text-5xl font-bold text-primary mb-2">{result.type}</div>
-                  <p className="text-lg font-medium">{result.title}</p>
-                </CardContent>
-              </Card>
+        <div className="max-w-2xl mx-auto">
+          <ContentTransition
+            isLoading={isAnalyzing}
+            skeleton={<AILoadingSpinner message="正在分析您的職涯傾向..." />}
+          >
+            {result ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-4 md:space-y-6"
+              >
+                <Card className="border-primary/20 bg-primary/5">
+                  <CardContent className="p-4 md:p-6 text-center">
+                    <div className="text-4xl md:text-5xl font-bold text-primary mb-2">{result.type}</div>
+                    <p className="text-base md:text-lg font-medium">{result.title}</p>
+                  </CardContent>
+                </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>性格分析</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-muted-foreground">{result.description}</p>
-                  <div>
-                    <h4 className="font-medium mb-2">核心特質</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {result.traits.map((trait: string) => (
-                        <span key={trait} className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                          {trait}
-                        </span>
-                      ))}
+                <Card>
+                  <CardHeader className="pb-2 md:pb-4">
+                    <CardTitle className="text-base md:text-lg">性格分析</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-muted-foreground text-sm md:text-base">{result.description}</p>
+                    <div>
+                      <h4 className="font-medium mb-2 text-sm md:text-base">核心特質</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {result.traits.map((trait: string) => (
+                          <span key={trait} className="px-2.5 py-1 md:px-3 md:py-1 bg-primary/10 text-primary rounded-full text-xs md:text-sm">
+                            {trait}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
 
-              <Button onClick={() => navigate('/member/center')} className="w-full gradient-primary">
-                返回會員中心
-              </Button>
-            </motion.div>
-          ) : (
-            <div className="space-y-6">
-              {/* Progress */}
-              <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-                <span>問題 {currentQuestion + 1} / {questions.length}</span>
-                <div className="flex gap-1">
-                  {questions.map((_, i) => (
-                    <div 
-                      key={i} 
-                      className={`h-2 w-8 rounded-full ${i <= currentQuestion ? 'bg-primary' : 'bg-muted'}`} 
-                    />
-                  ))}
+                <Button onClick={() => navigate('/member/center')} className="w-full gradient-primary text-sm md:text-base">
+                  返回會員中心
+                </Button>
+              </motion.div>
+            ) : (
+              <div className="space-y-4 md:space-y-6">
+                {/* Progress */}
+                <div className="flex items-center justify-between text-xs md:text-sm text-muted-foreground mb-2 md:mb-4">
+                  <span>問題 {currentQuestion + 1} / {questions.length}</span>
+                  <div className="flex gap-1">
+                    {questions.map((_, i) => (
+                      <div 
+                        key={i} 
+                        className={`h-1.5 md:h-2 w-6 md:w-8 rounded-full ${i <= currentQuestion ? 'bg-primary' : 'bg-muted'}`} 
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <Card>
+                  <CardHeader className="pb-2 md:pb-4">
+                    <CardDescription className="text-sm md:text-base">{questions[currentQuestion].question}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <RadioGroup 
+                      value={answers[currentQuestion] || ''} 
+                      onValueChange={handleAnswer}
+                    >
+                      {questions[currentQuestion].options.map((option) => (
+                        <div 
+                          key={option.value} 
+                          className="flex items-center space-x-2 p-2.5 md:p-3 rounded-lg hover:bg-muted transition-colors"
+                        >
+                          <RadioGroupItem value={option.value} id={`q${currentQuestion}-${option.value}`} />
+                          <Label htmlFor={`q${currentQuestion}-${option.value}`} className="flex-1 cursor-pointer text-sm md:text-base">
+                            {option.label}
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                  </CardContent>
+                </Card>
+
+                <div className="flex justify-between gap-3">
+                  <Button variant="outline" onClick={handlePrev} disabled={currentQuestion === 0} className="flex-1 sm:flex-none text-sm md:text-base">
+                    上一題
+                  </Button>
+                  {currentQuestion === questions.length - 1 ? (
+                    <Button onClick={handleComplete} className="gradient-primary flex-1 sm:flex-none text-sm md:text-base">
+                      完成測驗
+                    </Button>
+                  ) : (
+                    <Button onClick={handleNext} className="gradient-primary flex-1 sm:flex-none text-sm md:text-base">
+                      下一題
+                    </Button>
+                  )}
                 </div>
               </div>
+            )}
+          </ContentTransition>
+        </div>
 
-              <Card>
-                <CardHeader>
-                  <CardDescription>{questions[currentQuestion].question}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <RadioGroup 
-                    value={answers[currentQuestion] || ''} 
-                    onValueChange={handleAnswer}
-                  >
-                    {questions[currentQuestion].options.map((option) => (
-                      <div 
-                        key={option.value} 
-                        className="flex items-center space-x-2 p-3 rounded-lg hover:bg-muted transition-colors"
-                      >
-                        <RadioGroupItem value={option.value} id={`q${currentQuestion}-${option.value}`} />
-                        <Label htmlFor={`q${currentQuestion}-${option.value}`} className="flex-1 cursor-pointer">
-                          {option.label}
-                        </Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
-                </CardContent>
-              </Card>
-
-              <div className="flex justify-between">
-                <Button variant="outline" onClick={handlePrev} disabled={currentQuestion === 0}>
-                  上一題
-                </Button>
-                {currentQuestion === questions.length - 1 ? (
-                  <Button onClick={handleComplete} className="gradient-primary">
-                    完成測驗
-                  </Button>
-                ) : (
-                  <Button onClick={handleNext} className="gradient-primary">
-                    下一題
-                  </Button>
-                )}
-              </div>
-            </div>
-          )}
-        </ContentTransition>
+        <AlertModal
+          open={showIncompleteAlert}
+          onClose={() => setShowIncompleteAlert(false)}
+          type="warning"
+          title="請完成所有題目"
+          message="請先回答當前問題後再繼續"
+          confirmLabel="了解"
+        />
       </div>
-
-      <AlertModal
-        open={showIncompleteAlert}
-        onClose={() => setShowIncompleteAlert(false)}
-        type="warning"
-        title="請完成所有題目"
-        message="請先回答當前問題後再繼續"
-        confirmLabel="了解"
-      />
-    </div>
+    </LoginRequired>
   );
 };
 
