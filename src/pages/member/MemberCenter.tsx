@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, FileText, BarChart3, Settings, Edit } from 'lucide-react';
+import { User, FileText, Map, Settings, Edit, Star } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,7 +13,7 @@ const MemberCenter = () => {
 
   const quickLinks = [
     { to: '/member/my-resumes', icon: FileText, label: '我的履歷' },
-    { to: '/member/career-path', icon: BarChart3, label: '職涯路徑' },
+    { to: '/member/career-path', icon: Map, label: '職涯地圖' },
     { to: '/member/password', icon: Settings, label: '密碼設定' },
   ];
 
@@ -28,37 +28,76 @@ const MemberCenter = () => {
           <p className="text-muted-foreground">管理您的帳戶與職涯資訊</p>
         </div>
 
-        {/* Profile Card */}
-        <Card className="mb-8">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle>個人資料</CardTitle>
-              <CardDescription>您的基本資訊</CardDescription>
-            </div>
-            <Button variant="outline" size="sm" onClick={() => setEditModalOpen(true)}>
-              <Edit className="h-4 w-4 mr-2" />
-              修改資料
-            </Button>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">姓名</p>
-              <p className="font-medium">會員姓名</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">電子郵件</p>
-              <p className="font-medium">member@example.com</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">電話</p>
-              <p className="font-medium">0912-345-678</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">職稱</p>
-              <p className="font-medium">軟體工程師</p>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Premium Tech Profile Card */}
+        <div className="relative mb-8 rounded-2xl overflow-hidden">
+          {/* Radial gradient background */}
+          <div 
+            className="absolute inset-0"
+            style={{
+              background: `
+                radial-gradient(ellipse 80% 60% at 20% 30%, hsl(152 50% 85% / 0.9) 0%, hsl(165 40% 92% / 0.6) 50%, transparent 80%),
+                linear-gradient(135deg, hsl(165 35% 94%) 0%, hsl(152 30% 90%) 100%)
+              `
+            }}
+          />
+          
+          {/* Glassmorphism decorative shape */}
+          <div 
+            className="absolute -bottom-6 -right-6 w-32 h-32 rounded-2xl rotate-12"
+            style={{
+              background: 'hsl(152 45% 35% / 0.15)',
+              backdropFilter: 'blur(8px)',
+              border: '1px solid hsl(152 45% 35% / 0.2)'
+            }}
+          />
+          <div 
+            className="absolute -bottom-3 -right-3 w-20 h-20 rounded-xl rotate-6"
+            style={{
+              background: 'hsl(152 50% 40% / 0.2)',
+              backdropFilter: 'blur(4px)',
+            }}
+          />
+          
+          {/* Left accent bar */}
+          <div className="absolute left-0 top-4 bottom-4 w-1 rounded-r-full bg-primary" />
+          
+          {/* Card content */}
+          <Card className="relative bg-transparent border-0 shadow-none">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
+                  <Star className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-foreground">個人資料</CardTitle>
+                  <CardDescription>您的基本資訊</CardDescription>
+                </div>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => setEditModalOpen(true)} className="bg-background/60 backdrop-blur-sm">
+                <Edit className="h-4 w-4 mr-2" />
+                修改資料
+              </Button>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-muted-foreground">姓名</p>
+                <p className="font-semibold text-foreground">會員姓名</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">電子郵件</p>
+                <p className="font-semibold text-foreground">member@example.com</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">電話</p>
+                <p className="font-semibold text-foreground">0912-345-678</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">職稱</p>
+                <p className="font-semibold text-foreground">軟體工程師</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Status Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
