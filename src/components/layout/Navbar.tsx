@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { useAppState } from '@/contexts/AppContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
-import { FileText, BarChart3, MessageSquare, User, Menu, LogOut, Settings, FileUp, Search, Target, ChevronDown, Compass, Star } from 'lucide-react';
+import { FileText, BarChart3, MessageSquare, User, Menu, LogOut, Settings, FileUp, Search, Target, ChevronDown, Compass, Star, Map, ClipboardList, Heart } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -132,15 +133,28 @@ const Navbar = () => {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
+                    <Link to="/member/career-path" className="flex items-center gap-2">
+                      <Map className="h-4 w-4" />
+                      職涯地圖
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
                     <Link to="/member/upload-resume" className="flex items-center gap-2">
                       <FileUp className="h-4 w-4" />
-                      上傳履歷
+                      履歷上傳
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/member/career-path" className="flex items-center gap-2">
-                      <BarChart3 className="h-4 w-4" />
-                      職涯路徑
+                    <Link to="/member/survey/personality" className="flex items-center gap-2">
+                      <ClipboardList className="h-4 w-4" />
+                      職涯問卷
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/member/survey/preference" className="flex items-center gap-2">
+                      <Heart className="h-4 w-4" />
+                      工作偏好
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

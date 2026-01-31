@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TrendingUp, ChevronRight } from 'lucide-react';
+import { Map, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import RightDrawer from '@/components/panels/RightDrawer';
@@ -65,9 +65,9 @@ const CareerPath = () => {
     <div className="container py-12 animate-fade-in">
       <div className="text-center mb-12">
         <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-6">
-          <TrendingUp className="h-8 w-8 text-primary" />
+          <Map className="h-8 w-8 text-primary" />
         </div>
-        <h1 className="text-3xl font-bold mb-4">職涯路徑</h1>
+        <h1 className="text-3xl font-bold mb-4">職涯地圖</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
           規劃您的職涯發展藍圖
         </p>
