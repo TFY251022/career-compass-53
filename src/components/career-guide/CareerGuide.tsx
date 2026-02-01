@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { X, MessageCircle, Star, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const CareerGuide = () => {
+const CareerGuide = forwardRef<HTMLDivElement>((_, ref) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
@@ -201,6 +201,8 @@ const CareerGuide = () => {
       </AnimatePresence>
     </>
   );
-};
+});
+
+CareerGuide.displayName = 'CareerGuide';
 
 export default CareerGuide;
