@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { useAppState } from '@/contexts/AppContext';
 import { Check, Circle, LogIn, FileUp, ClipboardCheck, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface GatekeeperOverlayProps {
   open: boolean;
@@ -11,6 +11,7 @@ interface GatekeeperOverlayProps {
 }
 
 const GatekeeperOverlay = ({ open, onOpenChange, onLoginClick }: GatekeeperOverlayProps) => {
+  const navigate = useNavigate();
   const { isLoggedIn, isResumeUploaded, isPersonalityQuizDone, isJobPreferenceQuizDone } = useAppState();
 
   const tasks = [
@@ -50,6 +51,14 @@ const GatekeeperOverlay = ({ open, onOpenChange, onLoginClick }: GatekeeperOverl
   const completedCount = tasks.filter(t => t.completed).length;
   const progress = (completedCount / tasks.length) * 100;
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      // Navigate back to previous page when closing
+      navigate(-1);
+    }
+    onOpenChange(isOpen);
+  };
+
   return (
     <>
       {/* Backdrop Blur Overlay */}
@@ -57,7 +66,7 @@ const GatekeeperOverlay = ({ open, onOpenChange, onLoginClick }: GatekeeperOverl
         <div className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm" />
       )}
       
-      <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-lg z-50">
           <DialogHeader>
             <DialogTitle className="text-xl flex items-center gap-2">

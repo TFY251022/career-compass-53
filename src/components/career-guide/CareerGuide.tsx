@@ -1,13 +1,11 @@
 import { useState, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { X, MessageCircle, Star, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { X, MessageCircle, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const CareerGuide = forwardRef<HTMLDivElement>((_, ref) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const navigate = useNavigate();
 
   const slides = [
     {
@@ -19,22 +17,16 @@ const CareerGuide = forwardRef<HTMLDivElement>((_, ref) => {
       icon: '📄',
       title: '上傳你的履歷',
       description: '首先上傳你的履歷，我們會幫你分析技能並提供優化建議。',
-      action: () => navigate('/member/upload-resume'),
-      actionLabel: '上傳履歷',
     },
     {
       icon: '🎯',
       title: '探索職缺匹配',
       description: '根據你的技能和偏好，我們會推薦最適合的職缺給你。',
-      action: () => navigate('/jobs/recommendations'),
-      actionLabel: '查看推薦',
     },
     {
       icon: '💼',
       title: '準備面試',
       description: '使用我們的面試輔助工具，模擬練習並生成感謝函！',
-      action: () => navigate('/interview/prep'),
-      actionLabel: '開始準備',
     },
   ];
 
@@ -47,14 +39,6 @@ const CareerGuide = forwardRef<HTMLDivElement>((_, ref) => {
   const prevSlide = () => {
     if (currentSlide > 0) {
       setCurrentSlide(prev => prev - 1);
-    }
-  };
-
-  const handleAction = () => {
-    const slide = slides[currentSlide];
-    if (slide.action) {
-      slide.action();
-      setIsOpen(false);
     }
   };
 
@@ -154,23 +138,14 @@ const CareerGuide = forwardRef<HTMLDivElement>((_, ref) => {
                     上一步
                   </Button>
 
-                  {slides[currentSlide].action ? (
-                    <Button
-                      size="sm"
-                      className="gradient-primary gap-1"
-                      onClick={handleAction}
-                    >
-                      {slides[currentSlide].actionLabel}
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  ) : currentSlide < slides.length - 1 ? (
+                  {currentSlide < slides.length - 1 ? (
                     <Button
                       size="sm"
                       className="gradient-primary gap-1"
                       onClick={nextSlide}
                     >
-                      開始導覽
-                      <ArrowRight className="h-4 w-4" />
+                      {currentSlide === 0 ? '開始導覽' : '下一步'}
+                      <ChevronRight className="h-4 w-4" />
                     </Button>
                   ) : (
                     <Button
@@ -179,18 +154,6 @@ const CareerGuide = forwardRef<HTMLDivElement>((_, ref) => {
                       onClick={() => setIsOpen(false)}
                     >
                       完成
-                    </Button>
-                  )}
-
-                  {currentSlide < slides.length - 1 && slides[currentSlide].action && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={nextSlide}
-                      className="gap-1"
-                    >
-                      下一步
-                      <ChevronRight className="h-4 w-4" />
                     </Button>
                   )}
                 </div>
