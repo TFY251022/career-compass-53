@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { useAppState } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Settings, X, ChevronUp, ChevronDown, Unlock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const DevStateToggles = () => {
+const DevStateToggles = forwardRef<HTMLDivElement>((_, ref) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const {
@@ -137,6 +137,8 @@ const DevStateToggles = () => {
       </motion.div>
     </AnimatePresence>
   );
-};
+});
+
+DevStateToggles.displayName = 'DevStateToggles';
 
 export default DevStateToggles;
