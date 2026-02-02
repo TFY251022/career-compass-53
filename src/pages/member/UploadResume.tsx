@@ -1,53 +1,247 @@
 import { useState, useRef } from 'react';
-import { Upload, FileText } from 'lucide-react';
+import { Upload, FileText, User, Camera, X, Briefcase, GraduationCap, Award, Languages, Phone, Mail } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAppState } from '@/contexts/AppContext';
 import { AILoadingSpinner, ContentTransition, AnalysisSkeleton } from '@/components/loading/LoadingStates';
 import AlertModal from '@/components/modals/AlertModal';
 import { motion } from 'framer-motion';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
+import { useNavigate } from 'react-router-dom';
+import { Progress } from '@/components/ui/progress';
+
+interface LanguageEntry {
+  language: string;
+  proficiency: string;
+}
+
+interface ResumeData {
+  avatar?: string;
+  name: string;
+  bio: string;
+  phone: string;
+  email: string;
+  education: string;
+  experience: string;
+  skills: string;
+  languages: LanguageEntry[];
+  certifications: string;
+  projects: string;
+  other: string;
+}
 
 const UploadResume = () => {
   const { setIsResumeUploaded } = useAppState();
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadComplete, setUploadComplete] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const navigate = useNavigate();
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisProgress, setAnalysisProgress] = useState(0);
+  const [showResult, setShowResult] = useState(false);
   const [showFormatError, setShowFormatError] = useState(false);
+  const [showValidationError, setShowValidationError] = useState(false);
+  const [validationMessage, setValidationMessage] = useState('');
+  const [uploadedFileName, setUploadedFileName] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  
+  // Form state
+  const [formData, setFormData] = useState<ResumeData>({
+    avatar: '',
+    name: '',
+    bio: '',
+    phone: '',
+    email: '',
+    education: '',
+    experience: '',
+    skills: '',
+    languages: [{ language: '', proficiency: '' }],
+    certifications: '',
+    projects: '',
+    other: '',
+  });
 
-  const validFormats = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+  const [resultData, setResultData] = useState<ResumeData | null>(null);
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const languageOptions = ['中文', '英文', '台語', '日文', '韓文', '法文', '德文', '西班牙文', '其他'];
+  const proficiencyOptions = [
+    { value: '1', label: '1 - 入門' },
+    { value: '2', label: '2 - 中等' },
+    { value: '3', label: '3 - 精通' },
+  ];
 
-    // Check file format
-    if (!validFormats.includes(file.type)) {
+  const simulateAnalysis = async () => {
+    setIsAnalyzing(true);
+    setAnalysisProgress(0);
+    
+    // Simulate progress
+    for (let i = 0; i <= 100; i += 10) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      setAnalysisProgress(i);
+    }
+    
+    await new Promise(resolve => setTimeout(resolve, 500));
+    setIsAnalyzing(false);
+    setShowResult(true);
+    setIsResumeUploaded(true);
+  };
+
+  const handlePdfUpload = async (file: File) => {
+    // Check file type
+    if (file.type !== 'application/pdf') {
       setShowFormatError(true);
       return;
     }
 
-    setIsUploading(true);
-    setUploadComplete(false);
+    // Check file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setValidationMessage('檔案大小超過 5MB 限制，請選擇較小的檔案');
+      setShowValidationError(true);
+      return;
+    }
+
+    setUploadedFileName(file.name);
     
-    // Simulate upload and analysis
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    setAnalysisResult({
-      score: 85,
-      strengths: ['技術技能描述完整', '經歷說明清晰', '排版美觀'],
-      improvements: ['可以加入更多量化成果', '建議增加專案連結'],
-      skills: ['React', 'TypeScript', 'Node.js', 'Git'],
+    // Simulate PDF parsing result
+    setResultData({
+      avatar: '',
+      name: '王小明',
+      bio: '擁有 5 年軟體開發經驗的全端工程師，專精於 React 與 Node.js 開發，熱愛學習新技術並解決複雜問題。',
+      phone: '0912-345-678',
+      email: 'example@email.com',
+      education: '國立台灣大學 資訊工程學系 碩士 (2018-2020)',
+      experience: '資深前端工程師 - ABC科技公司 (2020-至今)\n前端工程師 - XYZ新創 (2018-2020)',
+      skills: 'React, TypeScript, Node.js, Python, SQL, Git, Docker',
+      languages: [
+        { language: '中文', proficiency: '3' },
+        { language: '英文', proficiency: '2' },
+        { language: '台語', proficiency: '2' },
+      ],
+      certifications: 'AWS Certified Developer, Google Cloud Professional',
+      projects: '電商平台重構專案、企業內部管理系統開發',
+      other: '',
     });
-    
-    setIsUploading(false);
-    setUploadComplete(true);
-    setIsResumeUploaded(true);
+
+    await simulateAnalysis();
   };
 
-  const handleClick = () => {
-    fileInputRef.current?.click();
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handlePdfUpload(file);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      handlePdfUpload(file);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, avatar: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const addLanguage = () => {
+    setFormData(prev => ({
+      ...prev,
+      languages: [...prev.languages, { language: '', proficiency: '' }],
+    }));
+  };
+
+  const removeLanguage = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      languages: prev.languages.filter((_, i) => i !== index),
+    }));
+  };
+
+  const updateLanguage = (index: number, field: 'language' | 'proficiency', value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      languages: prev.languages.map((lang, i) => 
+        i === index ? { ...lang, [field]: value } : lang
+      ),
+    }));
+  };
+
+  const validateForm = (): boolean => {
+    const requiredFields = [
+      { field: 'name', label: '姓名' },
+      { field: 'bio', label: '自傳' },
+      { field: 'phone', label: '聯絡電話' },
+      { field: 'email', label: '聯絡信箱' },
+      { field: 'education', label: '教育背景' },
+      { field: 'experience', label: '工作經歷' },
+      { field: 'skills', label: '技能專長' },
+    ];
+
+    for (const { field, label } of requiredFields) {
+      if (!formData[field as keyof ResumeData] || (formData[field as keyof ResumeData] as string).trim() === '') {
+        setValidationMessage(`請填寫必填欄位：${label}`);
+        setShowValidationError(true);
+        return false;
+      }
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setValidationMessage('請輸入有效的電子郵件地址');
+      setShowValidationError(true);
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleFormSubmit = async () => {
+    if (!validateForm()) return;
+
+    setResultData(formData);
+    await simulateAnalysis();
+  };
+
+  const handleReset = () => {
+    setShowResult(false);
+    setResultData(null);
+    setUploadedFileName('');
+    setAnalysisProgress(0);
+    setFormData({
+      avatar: '',
+      name: '',
+      bio: '',
+      phone: '',
+      email: '',
+      education: '',
+      experience: '',
+      skills: '',
+      languages: [{ language: '', proficiency: '' }],
+      certifications: '',
+      projects: '',
+      other: '',
+    });
+  };
+
+  const getProficiencyLabel = (value: string) => {
+    const option = proficiencyOptions.find(opt => opt.value === value);
+    return option ? option.label : value;
   };
 
   return (
@@ -63,95 +257,96 @@ const UploadResume = () => {
           </p>
         </div>
 
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <ContentTransition
-            isLoading={isUploading}
+            isLoading={isAnalyzing}
             skeleton={
               <div className="space-y-6">
-                <AILoadingSpinner message="正在分析您的履歷內容..." />
+                <Card className="border-primary/20">
+                  <CardContent className="p-8 text-center">
+                    <AILoadingSpinner message="正在分析中..." />
+                    <div className="mt-6 max-w-md mx-auto">
+                      <Progress value={analysisProgress} className="h-2" />
+                      <p className="text-sm text-muted-foreground mt-2">{analysisProgress}%</p>
+                    </div>
+                  </CardContent>
+                </Card>
                 <AnalysisSkeleton />
               </div>
             }
           >
-            {uploadComplete && analysisResult ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-4 md:space-y-6"
-              >
-                {/* Score Card */}
-                <Card className="border-primary/20 bg-primary/5">
-                  <CardContent className="p-4 md:p-6 text-center">
-                    <div className="text-4xl md:text-5xl font-bold text-primary mb-2">{analysisResult.score}</div>
-                    <p className="text-muted-foreground text-sm md:text-base">履歷評分</p>
-                  </CardContent>
-                </Card>
-
-                {/* Strengths */}
-                <Card>
-                  <CardHeader className="pb-2 md:pb-4">
-                    <CardTitle className="text-base md:text-lg text-green-600">✓ 優勢項目</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {analysisResult.strengths.map((s: string, i: number) => (
-                        <li key={i} className="flex items-center gap-2 text-xs md:text-sm">
-                          <span className="h-1.5 w-1.5 rounded-full bg-green-500 shrink-0" />
-                          {s}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                {/* Improvements */}
-                <Card>
-                  <CardHeader className="pb-2 md:pb-4">
-                    <CardTitle className="text-base md:text-lg text-amber-600">⚡ 改善建議</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {analysisResult.improvements.map((s: string, i: number) => (
-                        <li key={i} className="flex items-center gap-2 text-xs md:text-sm">
-                          <span className="h-1.5 w-1.5 rounded-full bg-amber-500 shrink-0" />
-                          {s}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                <Button onClick={() => { setUploadComplete(false); setAnalysisResult(null); }} variant="outline" className="w-full text-sm md:text-base">
-                  重新上傳
-                </Button>
-              </motion.div>
+            {showResult && resultData ? (
+              <ResultView 
+                data={resultData} 
+                onReset={handleReset}
+                onNavigate={() => navigate('/career-quiz')}
+              />
             ) : (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base md:text-lg">選擇履歷檔案</CardTitle>
-                  <CardDescription className="text-xs md:text-sm">支援 PDF、DOC、DOCX 格式，檔案大小上限 10MB</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".pdf,.doc,.docx"
-                    onChange={handleFileSelect}
-                    className="hidden"
+              <Tabs defaultValue="upload" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 mb-6">
+                  <TabsTrigger value="upload" className="flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    上傳 PDF 履歷
+                  </TabsTrigger>
+                  <TabsTrigger value="form" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    手動填寫履歷
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="upload">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-base md:text-lg">上傳履歷檔案</CardTitle>
+                      <CardDescription className="text-xs md:text-sm">
+                        僅支援 PDF 格式，檔案大小不超過 5MB
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".pdf"
+                        onChange={handleFileSelect}
+                        className="hidden"
+                      />
+                      <div 
+                        className="border-2 border-dashed border-primary/30 rounded-xl p-8 md:p-12 text-center hover:border-primary/60 hover:bg-primary/5 transition-all cursor-pointer group"
+                        onClick={() => fileInputRef.current?.click()}
+                        onDrop={handleDrop}
+                        onDragOver={handleDragOver}
+                      >
+                        <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
+                          <FileText className="h-8 w-8 md:h-10 md:w-10 text-primary" />
+                        </div>
+                        <p className="text-base md:text-lg font-medium mb-2">拖曳 PDF 檔案至此處</p>
+                        <p className="text-muted-foreground text-sm mb-6">或點擊選擇檔案</p>
+                        <Button className="gradient-primary pointer-events-none text-sm md:text-base">
+                          選擇 PDF 檔案
+                        </Button>
+                        <p className="text-xs text-muted-foreground mt-4">
+                          支援格式：PDF｜檔案上限：5MB
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="form">
+                  <ResumeForm 
+                    formData={formData}
+                    setFormData={setFormData}
+                    avatarInputRef={avatarInputRef}
+                    handleAvatarChange={handleAvatarChange}
+                    languageOptions={languageOptions}
+                    proficiencyOptions={proficiencyOptions}
+                    addLanguage={addLanguage}
+                    removeLanguage={removeLanguage}
+                    updateLanguage={updateLanguage}
+                    onSubmit={handleFormSubmit}
                   />
-                  <div 
-                    className="border-2 border-dashed border-border rounded-lg p-8 md:p-12 text-center hover:border-primary/50 transition-colors cursor-pointer"
-                    onClick={handleClick}
-                  >
-                    <FileText className="h-12 w-12 md:h-16 md:w-16 text-muted-foreground mx-auto mb-3 md:mb-4" />
-                    <p className="text-base md:text-lg font-medium mb-2">拖曳檔案至此處</p>
-                    <p className="text-muted-foreground text-sm mb-4 md:mb-6">或點擊選擇檔案</p>
-                    <Button className="gradient-primary pointer-events-none text-sm md:text-base">
-                      選擇檔案
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                </TabsContent>
+              </Tabs>
             )}
           </ContentTransition>
         </div>
@@ -161,11 +356,408 @@ const UploadResume = () => {
           onClose={() => setShowFormatError(false)}
           type="error"
           title="格式不符"
-          message="請上傳 PDF、DOC 或 DOCX 格式的履歷檔案"
+          message="請上傳 PDF 格式的履歷檔案"
+          confirmLabel="了解"
+        />
+
+        <AlertModal
+          open={showValidationError}
+          onClose={() => setShowValidationError(false)}
+          type="error"
+          title="資料不完整"
+          message={validationMessage}
           confirmLabel="了解"
         />
       </div>
     </LoginRequired>
+  );
+};
+
+interface ResumeFormProps {
+  formData: ResumeData;
+  setFormData: React.Dispatch<React.SetStateAction<ResumeData>>;
+  avatarInputRef: React.RefObject<HTMLInputElement>;
+  handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  languageOptions: string[];
+  proficiencyOptions: { value: string; label: string }[];
+  addLanguage: () => void;
+  removeLanguage: (index: number) => void;
+  updateLanguage: (index: number, field: 'language' | 'proficiency', value: string) => void;
+  onSubmit: () => void;
+}
+
+const ResumeForm = ({
+  formData,
+  setFormData,
+  avatarInputRef,
+  handleAvatarChange,
+  languageOptions,
+  proficiencyOptions,
+  addLanguage,
+  removeLanguage,
+  updateLanguage,
+  onSubmit,
+}: ResumeFormProps) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base md:text-lg">填寫履歷資料</CardTitle>
+        <CardDescription className="text-xs md:text-sm">
+          請填寫以下資訊，標註 * 為必填欄位
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Avatar Upload */}
+        <div className="flex flex-col items-center">
+          <input
+            ref={avatarInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarChange}
+            className="hidden"
+          />
+          <div 
+            className="relative h-24 w-24 md:h-32 md:w-32 rounded-full bg-muted border-2 border-dashed border-primary/30 flex items-center justify-center cursor-pointer hover:border-primary/60 transition-colors overflow-hidden group"
+            onClick={() => avatarInputRef.current?.click()}
+          >
+            {formData.avatar ? (
+              <img src={formData.avatar} alt="Avatar" className="h-full w-full object-cover" />
+            ) : (
+              <User className="h-10 w-10 md:h-12 md:w-12 text-muted-foreground" />
+            )}
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Camera className="h-6 w-6 text-white" />
+            </div>
+          </div>
+          <p className="text-sm text-muted-foreground mt-2">點擊上傳大頭貼</p>
+        </div>
+
+        {/* Basic Info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">姓名 *</Label>
+            <Input
+              id="name"
+              placeholder="請輸入您的姓名"
+              value={formData.name}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="phone">聯絡電話 *</Label>
+            <div className="relative">
+              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="phone"
+                placeholder="0912-345-678"
+                className="pl-10"
+                value={formData.phone}
+                onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="email">聯絡信箱 *</Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="your@email.com"
+              className="pl-10"
+              value={formData.email}
+              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="bio">自傳 *</Label>
+          <Textarea
+            id="bio"
+            placeholder="請簡述您的專業背景、職涯目標及個人特質..."
+            className="min-h-[120px]"
+            value={formData.bio}
+            onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
+          />
+        </div>
+
+        {/* Education */}
+        <div className="space-y-2">
+          <Label htmlFor="education" className="flex items-center gap-2">
+            <GraduationCap className="h-4 w-4" />
+            教育背景 *
+          </Label>
+          <Textarea
+            id="education"
+            placeholder="學校名稱、科系、學位、畢業年份..."
+            value={formData.education}
+            onChange={(e) => setFormData(prev => ({ ...prev, education: e.target.value }))}
+          />
+        </div>
+
+        {/* Experience */}
+        <div className="space-y-2">
+          <Label htmlFor="experience" className="flex items-center gap-2">
+            <Briefcase className="h-4 w-4" />
+            工作經歷 *
+          </Label>
+          <Textarea
+            id="experience"
+            placeholder="公司名稱、職稱、任職期間、工作內容..."
+            className="min-h-[100px]"
+            value={formData.experience}
+            onChange={(e) => setFormData(prev => ({ ...prev, experience: e.target.value }))}
+          />
+        </div>
+
+        {/* Skills */}
+        <div className="space-y-2">
+          <Label htmlFor="skills">技能專長 *</Label>
+          <Textarea
+            id="skills"
+            placeholder="請列出您的專業技能，如：程式語言、設計軟體、語言能力等..."
+            value={formData.skills}
+            onChange={(e) => setFormData(prev => ({ ...prev, skills: e.target.value }))}
+          />
+        </div>
+
+        {/* Language Abilities */}
+        <div className="space-y-3">
+          <Label className="flex items-center gap-2">
+            <Languages className="h-4 w-4" />
+            語言能力
+          </Label>
+          {formData.languages.map((lang, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <Select
+                value={lang.language}
+                onValueChange={(value) => updateLanguage(index, 'language', value)}
+              >
+                <SelectTrigger className="flex-1">
+                  <SelectValue placeholder="選擇語言" />
+                </SelectTrigger>
+                <SelectContent>
+                  {languageOptions.map((option) => (
+                    <SelectItem key={option} value={option}>{option}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select
+                value={lang.proficiency}
+                onValueChange={(value) => updateLanguage(index, 'proficiency', value)}
+              >
+                <SelectTrigger className="w-32 md:w-40">
+                  <SelectValue placeholder="熟練度" />
+                </SelectTrigger>
+                <SelectContent>
+                  {proficiencyOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {formData.languages.length > 1 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => removeLanguage(index)}
+                  className="shrink-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          ))}
+          <Button type="button" variant="outline" size="sm" onClick={addLanguage}>
+            + 新增語言
+          </Button>
+        </div>
+
+        {/* Certifications */}
+        <div className="space-y-2">
+          <Label htmlFor="certifications" className="flex items-center gap-2">
+            <Award className="h-4 w-4" />
+            證照與專案成就（選填）
+          </Label>
+          <Textarea
+            id="certifications"
+            placeholder="相關證照、專案經驗、成就..."
+            value={formData.certifications}
+            onChange={(e) => setFormData(prev => ({ ...prev, certifications: e.target.value }))}
+          />
+        </div>
+
+        {/* Projects */}
+        <div className="space-y-2">
+          <Label htmlFor="projects">專案作品（選填）</Label>
+          <Textarea
+            id="projects"
+            placeholder="個人專案、作品集連結..."
+            value={formData.projects}
+            onChange={(e) => setFormData(prev => ({ ...prev, projects: e.target.value }))}
+          />
+        </div>
+
+        {/* Other */}
+        <div className="space-y-2">
+          <Label htmlFor="other">其他（選填）</Label>
+          <Textarea
+            id="other"
+            placeholder="其他想補充的資訊..."
+            value={formData.other}
+            onChange={(e) => setFormData(prev => ({ ...prev, other: e.target.value }))}
+          />
+        </div>
+
+        <Button onClick={onSubmit} className="w-full gradient-primary">
+          提交履歷資料
+        </Button>
+      </CardContent>
+    </Card>
+  );
+};
+
+interface ResultViewProps {
+  data: ResumeData;
+  onReset: () => void;
+  onNavigate: () => void;
+}
+
+const ResultView = ({ data, onReset, onNavigate }: ResultViewProps) => {
+  const getProficiencyLabel = (value: string) => {
+    const labels: Record<string, string> = {
+      '1': '入門',
+      '2': '中等',
+      '3': '精通',
+    };
+    return labels[value] || value;
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6"
+    >
+      <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+        <CardHeader className="text-center pb-2">
+          <div className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 mx-auto mb-2">
+            <FileText className="h-6 w-6 text-primary" />
+          </div>
+          <CardTitle className="text-xl">履歷摘要報告</CardTitle>
+          <CardDescription>以下是您的履歷資訊摘要</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Avatar and Basic Info */}
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-4 p-4 bg-background rounded-lg border">
+            {data.avatar ? (
+              <img src={data.avatar} alt="Avatar" className="h-20 w-20 rounded-full object-cover border-2 border-primary/20" />
+            ) : (
+              <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center border-2 border-primary/20">
+                <User className="h-10 w-10 text-muted-foreground" />
+              </div>
+            )}
+            <div className="text-center md:text-left flex-1">
+              <h3 className="text-lg font-semibold">{data.name}</h3>
+              <div className="flex flex-col md:flex-row gap-2 md:gap-4 mt-2 text-sm text-muted-foreground">
+                <span className="flex items-center justify-center md:justify-start gap-1">
+                  <Phone className="h-4 w-4" /> {data.phone}
+                </span>
+                <span className="flex items-center justify-center md:justify-start gap-1">
+                  <Mail className="h-4 w-4" /> {data.email}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Bio */}
+          <div className="space-y-2">
+            <h4 className="font-medium text-sm text-muted-foreground">自傳</h4>
+            <p className="text-sm bg-background p-3 rounded-lg border">{data.bio}</p>
+          </div>
+
+          {/* Education */}
+          <div className="space-y-2">
+            <h4 className="font-medium text-sm text-muted-foreground flex items-center gap-2">
+              <GraduationCap className="h-4 w-4" /> 教育背景
+            </h4>
+            <p className="text-sm bg-background p-3 rounded-lg border whitespace-pre-line">{data.education}</p>
+          </div>
+
+          {/* Experience */}
+          <div className="space-y-2">
+            <h4 className="font-medium text-sm text-muted-foreground flex items-center gap-2">
+              <Briefcase className="h-4 w-4" /> 工作經歷
+            </h4>
+            <p className="text-sm bg-background p-3 rounded-lg border whitespace-pre-line">{data.experience}</p>
+          </div>
+
+          {/* Skills */}
+          <div className="space-y-2">
+            <h4 className="font-medium text-sm text-muted-foreground">技能專長</h4>
+            <p className="text-sm bg-background p-3 rounded-lg border">{data.skills}</p>
+          </div>
+
+          {/* Languages */}
+          {data.languages.some(lang => lang.language) && (
+            <div className="space-y-2">
+              <h4 className="font-medium text-sm text-muted-foreground flex items-center gap-2">
+                <Languages className="h-4 w-4" /> 語言能力
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {data.languages.filter(lang => lang.language).map((lang, index) => (
+                  <span key={index} className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
+                    {lang.language}
+                    {lang.proficiency && (
+                      <span className="text-xs opacity-75">({getProficiencyLabel(lang.proficiency)})</span>
+                    )}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Certifications */}
+          {data.certifications && (
+            <div className="space-y-2">
+              <h4 className="font-medium text-sm text-muted-foreground flex items-center gap-2">
+                <Award className="h-4 w-4" /> 證照與專案成就
+              </h4>
+              <p className="text-sm bg-background p-3 rounded-lg border whitespace-pre-line">{data.certifications}</p>
+            </div>
+          )}
+
+          {/* Projects */}
+          {data.projects && (
+            <div className="space-y-2">
+              <h4 className="font-medium text-sm text-muted-foreground">專案作品</h4>
+              <p className="text-sm bg-background p-3 rounded-lg border whitespace-pre-line">{data.projects}</p>
+            </div>
+          )}
+
+          {/* Other */}
+          {data.other && (
+            <div className="space-y-2">
+              <h4 className="font-medium text-sm text-muted-foreground">其他</h4>
+              <p className="text-sm bg-background p-3 rounded-lg border whitespace-pre-line">{data.other}</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* CTA Buttons */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Button variant="outline" onClick={onReset} className="flex-1">
+          重新上傳 / 填寫
+        </Button>
+        <Button onClick={onNavigate} className="flex-1 gradient-primary">
+          填寫職涯問卷
+        </Button>
+      </div>
+    </motion.div>
   );
 };
 
