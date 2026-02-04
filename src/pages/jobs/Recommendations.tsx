@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Target, Search, MapPin, Building2, Banknote, Filter, ExternalLink, ChevronLeft, ChevronRight, Briefcase, Star } from 'lucide-react';
+import { Search, MapPin, Building2, Banknote, Filter, ExternalLink, ChevronLeft, ChevronRight, Briefcase, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppState } from '@/contexts/AppContext';
 import GatekeeperOverlay from '@/components/gatekeeper/GatekeeperOverlay';
 import AuthModal from '@/components/auth/AuthModal';
-import { useNavigate } from 'react-router-dom';
 import icon104 from '@/assets/104-icon.png';
 
 // Mock job data generator
@@ -154,16 +153,21 @@ const JobCard = ({ job }: { job: JobData }) => (
 
 const Recommendations = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { isLoggedIn, isResumeUploaded, isPersonalityQuizDone, isJobPreferenceQuizDone } = useAppState();
   
   // Access control states
   const [showGatekeeper, setShowGatekeeper] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   
+  // Initialize page from URL params
+  const urlPage = parseInt(searchParams.get('page') || '1', 10);
+  const initialPage = isNaN(urlPage) || urlPage < 1 ? 1 : urlPage;
+  
   // Page states
   const [isLoading, setIsLoading] = useState(true);
   const [jobs, setJobs] = useState<JobData[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(initialPage);
   const [totalPages] = useState(5); // Mock 5 pages
   
   // Filter states
@@ -199,6 +203,8 @@ const Recommendations = () => {
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
+    // Update URL params
+    setSearchParams({ page: page.toString() });
     // Smooth scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -206,8 +212,18 @@ const Recommendations = () => {
   const handleApplyFilters = () => {
     setAppliedFilters({ keyword, salaryRange });
     setCurrentPage(1);
+    setSearchParams({ page: '1' });
     loadJobs(1);
   };
+  
+  // Sync page state when URL params change (browser back/forward)
+  useEffect(() => {
+    const urlPageParam = parseInt(searchParams.get('page') || '1', 10);
+    const validPage = isNaN(urlPageParam) || urlPageParam < 1 ? 1 : Math.min(urlPageParam, totalPages);
+    if (validPage !== currentPage) {
+      setCurrentPage(validPage);
+    }
+  }, [searchParams, totalPages]);
 
   const handleLoginClick = () => {
     setShowAuthModal(true);
