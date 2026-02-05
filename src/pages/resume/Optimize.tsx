@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Download, Edit3, Save, RotateCcw, Palette, ChevronRight, Briefcase, GraduationCap, Mail, Phone, Globe, Award, Languages, User, Star, Sparkles, Check } from 'lucide-react';
+import { FileText, Download, Edit3, Save, RotateCcw, Palette, ChevronRight, Briefcase, GraduationCap, Mail, Phone, Globe, Award, Languages, User, Star, Sparkles, Check, ChevronLeft, BookOpen, ArrowLeft, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,8 @@ import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import AlertModal from '@/components/modals/AlertModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import html2pdf from 'html2pdf.js';
+import RightDrawer from '@/components/panels/RightDrawer';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 type Phase = 'initial' | 'analyzing' | 'suggestions' | 'templates' | 'generating' | 'result';
 
@@ -28,6 +30,7 @@ interface ResumeData {
   portfolio: string;
   autobiography: string;
   other: string;
+  summary?: string;
 }
 
 interface Suggestion {
@@ -102,7 +105,8 @@ const mockResumeData: ResumeData = {
   certifications: 'AWS Certified Developer, Google Analytics 認證',
   portfolio: 'https://portfolio.example.com',
   autobiography: '我是一名前端工程師，具備 5 年軟體開發經驗。熱愛學習新技術，善於團隊合作。',
-  other: '可配合加班、可接受外派'
+  other: '可配合加班、可接受外派',
+  summary: '',
 };
 
 const mockSuggestions: Suggestion[] = [
@@ -122,6 +126,22 @@ const mockSuggestions: Suggestion[] = [
     optimized: '具備 5 年經驗的全端工程師，專注於打造高效能、可擴展的現代 Web 應用，曾帶領 3 人團隊完成多項關鍵專案' 
   },
 ];
+
+// All 12 editable fields configuration
+const resumeFields = [
+  { key: 'name', label: '姓名', icon: User, multiline: false, placeholder: '請輸入您的姓名' },
+  { key: 'email', label: '電子郵件', icon: Mail, multiline: false, placeholder: '請輸入您的電子郵件' },
+  { key: 'phone', label: '聯絡電話', icon: Phone, multiline: false, placeholder: '請輸入您的聯絡電話' },
+  { key: 'education', label: '教育背景', icon: GraduationCap, multiline: true, placeholder: '請輸入您的教育背景，如：學校名稱、科系、學位、畢業年份' },
+  { key: 'experience', label: '工作經歷', icon: Briefcase, multiline: true, placeholder: '請輸入您的工作經歷，包含公司名稱、職位、工作內容與成就' },
+  { key: 'skills', label: '技能專長', icon: Star, multiline: false, placeholder: '請輸入您的技能，以逗號分隔' },
+  { key: 'languages', label: '語言能力', icon: Languages, multiline: false, placeholder: '請輸入您的語言能力，如：中文 (精通), 英文 (中等)' },
+  { key: 'certifications', label: '證照成就', icon: Award, multiline: true, placeholder: '請輸入您的證照與成就 (選填)' },
+  { key: 'portfolio', label: '作品集連結', icon: Globe, multiline: false, placeholder: '請輸入您的作品集網址 (選填)' },
+  { key: 'autobiography', label: '自傳簡介', icon: FileText, multiline: true, placeholder: '請輸入您的自我介紹與職涯目標' },
+  { key: 'summary', label: '專業摘要', icon: Sparkles, multiline: true, placeholder: '請輸入一段專業摘要，突顯您的核心優勢 (選填)' },
+  { key: 'other', label: '其他資訊', icon: FileText, multiline: true, placeholder: '其他補充資訊，如可配合事項等 (選填)' },
+] as const;
 
 const templates = [
   {
@@ -165,6 +185,8 @@ const Optimize = () => {
   const [accessAlertMessage, setAccessAlertMessage] = useState('');
   const [isDownloading, setIsDownloading] = useState(false);
   const resumeRef = useRef<HTMLDivElement>(null);
+  const [showSuggestionsDrawer, setShowSuggestionsDrawer] = useState(false);
+  const [editPhase, setEditPhase] = useState<'view' | 'edit'>('view');
 
   // Check access conditions
   useEffect(() => {
@@ -279,12 +301,41 @@ const Optimize = () => {
     setShowSaveConfirm(false);
   };
 
+  // Handle entering edit mode from suggestions phase
+  const handleEnterEditMode = () => {
+    setEditedData(resumeData);
+    setEditPhase('edit');
+  };
+
+  // Handle exiting edit mode
+  const handleExitEditMode = () => {
+    setEditPhase('view');
+    setShowSuggestionsDrawer(false);
+  };
+
+  // Handle smart back navigation
+  const handleSmartBack = () => {
+    if (editPhase === 'edit') {
+      handleExitEditMode();
+    } else if (phase === 'suggestions') {
+      setPhase('initial');
+    } else if (phase === 'templates') {
+      setPhase('suggestions');
+    } else if (phase === 'result') {
+      setPhase('templates');
+    } else {
+      navigate(-1);
+    }
+  };
+
   const handleReset = () => {
     setPhase('initial');
     setSelectedTemplate('');
     setSelectedColorScheme('brand-green');
     setIsEditing(false);
     setEditedData(mockResumeData);
+    setEditPhase('view');
+    setShowSuggestionsDrawer(false);
   };
 
   const handleBackToTemplates = () => {
@@ -373,11 +424,30 @@ const Optimize = () => {
 
               {/* Phase: Suggestions */}
               {phase === 'suggestions' && (
-                <SuggestionsPhase
-                  suggestions={suggestions}
-                  onDownload={handleDownloadSuggestions}
-                  onGenerate={() => setPhase('templates')}
-                />
+                <>
+                  {editPhase === 'view' ? (
+                    <SuggestionsPhase
+                      suggestions={suggestions}
+                      onDownload={handleDownloadSuggestions}
+                      onGenerate={() => setPhase('templates')}
+                      onEdit={handleEnterEditMode}
+                      onBack={handleSmartBack}
+                    />
+                  ) : (
+                    <ResumeEditMode
+                      resumeData={editedData}
+                      suggestions={suggestions}
+                      onChange={setEditedData}
+                      onSave={() => setShowSaveConfirm(true)}
+                      onCancel={handleExitEditMode}
+                      onDownload={handleDownloadResume}
+                      isDownloading={isDownloading}
+                      showSuggestionsDrawer={showSuggestionsDrawer}
+                      setShowSuggestionsDrawer={setShowSuggestionsDrawer}
+                      onBack={handleSmartBack}
+                    />
+                  )}
+                </>
               )}
 
               {/* Phase: Template Selection */}
@@ -562,11 +632,15 @@ const ResumeField = ({
 const SuggestionsPhase = ({ 
   suggestions, 
   onDownload, 
-  onGenerate 
+  onGenerate,
+  onEdit,
+  onBack,
 }: { 
   suggestions: Suggestion[]; 
   onDownload: () => void; 
   onGenerate: () => void;
+  onEdit: () => void;
+  onBack: () => void;
 }) => (
   <motion.div
     key="suggestions"
@@ -575,13 +649,25 @@ const SuggestionsPhase = ({
     exit={{ opacity: 0, y: -20 }}
     className="space-y-6"
   >
+    {/* Back Button */}
+    <Button variant="ghost" className="gap-2 -ml-2" onClick={onBack}>
+      <ChevronLeft className="h-4 w-4" />
+      返回上一步
+    </Button>
+
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
-          履歷優化建議
-        </CardTitle>
-        <CardDescription>AI 已分析您的履歷，以下是專業優化建議</CardDescription>
+      <CardHeader className="flex flex-row items-start justify-between">
+        <div>
+          <CardTitle className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            履歷優化建議
+          </CardTitle>
+          <CardDescription>AI 已分析您的履歷，以下是專業優化建議</CardDescription>
+        </div>
+        <Button variant="outline" className="gap-2 shrink-0" onClick={onEdit}>
+          <Edit3 className="h-4 w-4" />
+          編輯履歷
+        </Button>
       </CardHeader>
       <CardContent className="space-y-6">
         {suggestions.map((s, i) => (
@@ -623,6 +709,168 @@ const SuggestionsPhase = ({
     </div>
   </motion.div>
 );
+
+// Resume Edit Mode Component with Side-by-Side Reference Panel
+const ResumeEditMode = ({
+  resumeData,
+  suggestions,
+  onChange,
+  onSave,
+  onCancel,
+  onDownload,
+  isDownloading,
+  showSuggestionsDrawer,
+  setShowSuggestionsDrawer,
+  onBack,
+}: {
+  resumeData: ResumeData;
+  suggestions: Suggestion[];
+  onChange: (data: ResumeData) => void;
+  onSave: () => void;
+  onCancel: () => void;
+  onDownload: () => void;
+  isDownloading: boolean;
+  showSuggestionsDrawer: boolean;
+  setShowSuggestionsDrawer: (open: boolean) => void;
+  onBack: () => void;
+}) => {
+  const handleFieldChange = (field: keyof ResumeData, value: string) => {
+    onChange({ ...resumeData, [field]: value });
+  };
+
+  return (
+    <motion.div
+      key="edit-mode"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="space-y-6"
+    >
+      {/* Top Navigation Bar */}
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" className="gap-2 -ml-2" onClick={onBack}>
+          <ChevronLeft className="h-4 w-4" />
+          返回優化建議
+        </Button>
+        <Button
+          variant="outline"
+          className="gap-2 border-primary text-primary hover:bg-primary/10"
+          onClick={() => setShowSuggestionsDrawer(true)}
+        >
+          <BookOpen className="h-4 w-4" />
+          查看優化建議
+        </Button>
+      </div>
+
+      {/* Edit Form Card */}
+      <Card className="ring-2 ring-primary/30 shadow-[0_0_20px_rgba(34,197,94,0.15)]">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Edit3 className="h-5 w-5 text-primary" />
+            履歷編輯表單
+          </CardTitle>
+          <CardDescription>
+            根據優化建議修改您的履歷內容，所有欄位皆可編輯
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {resumeFields.map((field) => {
+            const Icon = field.icon;
+            const value = resumeData[field.key as keyof ResumeData] || '';
+            
+            return (
+              <div key={field.key} className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium">
+                  <Icon className="h-4 w-4 text-primary" />
+                  {field.label}
+                </label>
+                {field.multiline ? (
+                  <Textarea
+                    value={value}
+                    onChange={(e) => handleFieldChange(field.key as keyof ResumeData, e.target.value)}
+                    placeholder={field.placeholder}
+                    className="ring-1 ring-primary/20 focus:ring-primary/50 shadow-[0_0_8px_rgba(34,197,94,0.1)] focus:shadow-[0_0_12px_rgba(34,197,94,0.2)] transition-all"
+                    rows={4}
+                  />
+                ) : (
+                  <Input
+                    value={value}
+                    onChange={(e) => handleFieldChange(field.key as keyof ResumeData, e.target.value)}
+                    placeholder={field.placeholder}
+                    className="ring-1 ring-primary/20 focus:ring-primary/50 shadow-[0_0_8px_rgba(34,197,94,0.1)] focus:shadow-[0_0_12px_rgba(34,197,94,0.2)] transition-all"
+                  />
+                )}
+              </div>
+            );
+          })}
+        </CardContent>
+      </Card>
+
+      {/* Fixed Footer Actions */}
+      <div className="sticky bottom-4 bg-background/95 backdrop-blur-sm border rounded-lg p-4 shadow-lg flex gap-4">
+        <Button variant="outline" className="flex-1" onClick={onCancel}>
+          取消編輯
+        </Button>
+        <Button
+          className="flex-1 gradient-primary gap-2"
+          onClick={onSave}
+        >
+          <Save className="h-4 w-4" />
+          儲存變更
+        </Button>
+        <Button
+          variant="outline"
+          className="flex-1 gap-2 border-primary text-primary hover:bg-primary/10"
+          onClick={onDownload}
+          disabled={isDownloading}
+        >
+          {isDownloading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              生成中...
+            </>
+          ) : (
+            <>
+              <Download className="h-4 w-4" />
+              下載履歷
+            </>
+          )}
+        </Button>
+      </div>
+
+      {/* Suggestions Reference Drawer */}
+      <RightDrawer
+        open={showSuggestionsDrawer}
+        onClose={() => setShowSuggestionsDrawer(false)}
+        title="優化建議參考"
+        subtitle="對照修改您的履歷內容"
+      >
+        <ScrollArea className="h-full pr-4">
+          <div className="space-y-6">
+            {suggestions.map((s, i) => (
+              <div key={i} className="space-y-3 pb-4 border-b border-border last:border-0">
+                <h4 className="font-medium text-primary flex items-center gap-2">
+                  <ChevronRight className="h-4 w-4" />
+                  {s.section}
+                </h4>
+                <div className="space-y-3">
+                  <div className="p-3 bg-muted/50 rounded-lg">
+                    <p className="text-xs text-muted-foreground mb-1">原始內容</p>
+                    <p className="text-sm">{s.original}</p>
+                  </div>
+                  <div className="p-3 bg-primary/5 rounded-lg border border-primary/20">
+                    <p className="text-xs text-primary mb-1">優化建議</p>
+                    <p className="text-sm">{s.optimized}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+      </RightDrawer>
+    </motion.div>
+  );
+};
 
 // Template Selection Phase Component with Color Scheme
 const TemplateSelectionPhase = ({ 
