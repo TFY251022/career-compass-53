@@ -104,12 +104,44 @@ const JOB_CATEGORIES: JobCategory[] = [
 
 // ── Icon helper ──────────────────────────────────────────────────
 
+// Manual overrides for skill names that don't map cleanly to filenames
+const ICON_NAME_MAP: Record<string, string> = {
+  'Node.js': 'nodejs',
+  'Vue.js': 'vuejs',
+  'Next.js': 'nextjs',
+  'CSS/Tailwind': 'css_tailwind',
+  'Webpack/Vite': 'webpack_vite',
+  'Java/Spring': 'java_spring',
+  'React + Node.js': 'react_nodejs',
+  'REST API 設計': 'rest_api',
+  'Python/Pandas': 'python_pandas',
+  'SQL 進階': 'sql_advanced',
+  'Tableau/Power BI': 'tableau_powerbi',
+  'TensorFlow/PyTorch': 'tensorflow_pytorch',
+  'Computer Vision': 'computer_vision',
+  'LLM/RAG': 'llm_rag',
+  '統計與機率': 'statistics',
+  '演算法與資料結構': 'algorithm',
+  'CI/CD': 'cicd',
+  'CI/CD Pipeline': 'cicd_pipeline',
+  'AWS/GCP': 'aws_gcp',
+  'Spark': 'spark',
+  'ETL Pipeline': 'etl_pipeline',
+  '監控/Grafana': 'grafana',
+  'Linux 系統管理': 'linux',
+  '資安基礎': 'security',
+};
+
+const getIconFileName = (skillName: string): string => {
+  if (ICON_NAME_MAP[skillName]) return ICON_NAME_MAP[skillName];
+  return skillName.toLowerCase().replace(/[\s\/\+\.#]/g, '_');
+};
+
 const SkillIcon = ({ skillName }: { skillName: string }) => {
-  const [imgError, setImgError] = useState(true); // default to fallback until icons are uploaded
-  const iconPath = `/icons/${skillName.toLowerCase().replace(/[\s\/\+\.]/g, '_')}_icon.png`;
+  const [imgError, setImgError] = useState(false);
+  const iconPath = `/icons/${getIconFileName(skillName)}_icon.png`;
 
   if (imgError) {
-    // Alternate between two placeholder icons for visual variety
     const hash = skillName.charCodeAt(0);
     return hash % 2 === 0
       ? <Code className="h-8 w-8 text-primary" />
