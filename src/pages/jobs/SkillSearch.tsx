@@ -106,35 +106,48 @@ const JOB_CATEGORIES: JobCategory[] = [
 
 // Manual overrides for skill names that don't map cleanly to filenames
 const ICON_NAME_MAP: Record<string, string> = {
-  'Node.js': 'nodejs',
-  'Vue.js': 'vuejs',
-  'Next.js': 'nextjs',
+  // Exact skill name → file prefix (before _icon.png)
+  'React': 'React',
+  'TypeScript': 'TypeScript',
+  'Vue.js': 'Vue',
   'CSS/Tailwind': 'css_tailwind',
+  'Next.js': 'Nextjs',
   'Webpack/Vite': 'webpack_vite',
-  'Java/Spring': 'java_spring',
-  'React + Node.js': 'react_nodejs',
+  'Node.js': 'Nodejs',
+  'Python': 'Python',
+  'Java/Spring': 'SpringBoot',
+  'PostgreSQL': 'PostgreSQL',
+  'Redis': 'Redis',
+  'GraphQL': 'graphql',
+  'React + Node.js': 'Nodejs',
+  'Docker': 'docker',
   'REST API 設計': 'rest_api',
-  'Python/Pandas': 'python_pandas',
-  'SQL 進階': 'sql_advanced',
+  'CI/CD': 'Jenkins',
+  'MongoDB': 'MongoDB',
+  'AWS/GCP': 'AWS',
+  'Python/Pandas': 'Python',
+  'SQL 進階': 'MySQL',
   'Tableau/Power BI': 'tableau_powerbi',
-  'TensorFlow/PyTorch': 'tensorflow_pytorch',
-  'Computer Vision': 'computer_vision',
-  'LLM/RAG': 'llm_rag',
   '統計與機率': 'statistics',
-  '演算法與資料結構': 'algorithm',
-  'CI/CD': 'cicd',
-  'CI/CD Pipeline': 'cicd_pipeline',
-  'AWS/GCP': 'aws_gcp',
   'Spark': 'spark',
   'ETL Pipeline': 'etl_pipeline',
+  'TensorFlow/PyTorch': 'tensorflow_pytorch',
+  'NLP': 'nlp',
+  'Computer Vision': 'computer_vision',
+  'MLOps': 'mlops',
+  'LLM/RAG': 'llm_rag',
+  '演算法與資料結構': 'algorithm',
+  'Kubernetes': 'Kubernetes',
+  'Terraform': 'Terraform',
   '監控/Grafana': 'grafana',
   'Linux 系統管理': 'linux',
+  'CI/CD Pipeline': 'Jenkins',
   '資安基礎': 'security',
 };
 
 const getIconFileName = (skillName: string): string => {
   if (ICON_NAME_MAP[skillName]) return ICON_NAME_MAP[skillName];
-  return skillName.toLowerCase().replace(/[\s\/\+\.#]/g, '_');
+  return skillName;
 };
 
 const SkillIcon = ({ skillName }: { skillName: string }) => {
