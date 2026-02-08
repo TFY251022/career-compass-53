@@ -24,7 +24,7 @@ import Password from "./pages/member/Password";
 import CareerPath from "./pages/member/CareerPath";
 import MyResumes from "./pages/member/MyResumes";
 import Personality from "./pages/member/survey/Personality";
-import Preference from "./pages/member/survey/Preference";
+
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -69,7 +69,7 @@ const App = () => (
               <Route path="/member/career-path" element={<CareerPath />} />
               <Route path="/member/my-resumes" element={<MyResumes />} />
               <Route path="/member/survey/personality" element={<Personality />} />
-              <Route path="/member/survey/preference" element={<Preference />} />
+              
               
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />

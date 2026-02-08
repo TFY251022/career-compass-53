@@ -12,7 +12,7 @@ interface GatekeeperOverlayProps {
 
 const GatekeeperOverlay = ({ open, onOpenChange, onLoginClick }: GatekeeperOverlayProps) => {
   const navigate = useNavigate();
-  const { isLoggedIn, isResumeUploaded, isPersonalityQuizDone, isJobPreferenceQuizDone } = useAppState();
+  const { isLoggedIn, isResumeUploaded, isPersonalityQuizDone } = useAppState();
 
   const tasks = [
     {
@@ -38,13 +38,6 @@ const GatekeeperOverlay = ({ open, onOpenChange, onLoginClick }: GatekeeperOverl
       icon: ClipboardCheck,
       to: '/member/survey/personality',
       actionLabel: '開始測驗',
-    },
-    {
-      label: '完成工作偏好設定',
-      completed: isJobPreferenceQuizDone,
-      icon: ClipboardCheck,
-      to: '/member/survey/preference',
-      actionLabel: '設定偏好',
     },
   ];
 
