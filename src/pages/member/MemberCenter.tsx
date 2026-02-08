@@ -10,7 +10,7 @@ import LoginRequired from '@/components/gatekeeper/LoginRequired';
 
 const MemberCenter = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const { isResumeUploaded, isPersonalityQuizDone, isJobPreferenceQuizDone } = useAppState();
+  const { isResumeUploaded, isPersonalityQuizDone } = useAppState();
 
   const quickLinks = [
     { to: '/member/my-resumes', icon: FileText, label: '我的履歷' },
@@ -102,7 +102,7 @@ const MemberCenter = () => {
           </div>
 
           {/* Status Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-8">
             <Card>
               <CardContent className="pt-4 md:pt-6">
                 <div className="flex items-center justify-between">
@@ -129,21 +129,6 @@ const MemberCenter = () => {
                 {!isPersonalityQuizDone && (
                   <Link to="/member/survey/personality">
                     <Button variant="link" className="px-0 mt-1 md:mt-2 text-xs md:text-sm h-auto">開始測驗</Button>
-                  </Link>
-                )}
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-4 md:pt-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs md:text-sm font-medium">工作偏好</span>
-                  <Badge variant={isJobPreferenceQuizDone ? 'default' : 'secondary'} className="text-xs">
-                    {isJobPreferenceQuizDone ? '已完成' : '未完成'}
-                  </Badge>
-                </div>
-                {!isJobPreferenceQuizDone && (
-                  <Link to="/member/survey/preference">
-                    <Button variant="link" className="px-0 mt-1 md:mt-2 text-xs md:text-sm h-auto">開始填寫</Button>
                   </Link>
                 )}
               </CardContent>

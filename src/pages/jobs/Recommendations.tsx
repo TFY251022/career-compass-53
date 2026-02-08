@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Search, MapPin, Building2, Banknote, Filter, ExternalLink, ChevronLeft, ChevronRight, Briefcase, Star } from 'lucide-react';
+import { MapPin, Building2, Banknote, ExternalLink, ChevronLeft, ChevronRight, Briefcase, Star, Heart, RefreshCw } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Slider } from '@/components/ui/slider';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppState } from '@/contexts/AppContext';
-import GatekeeperOverlay from '@/components/gatekeeper/GatekeeperOverlay';
-import AuthModal from '@/components/auth/AuthModal';
+import { AILoadingSpinner } from '@/components/loading/LoadingStates';
+import EmbeddedPreferenceSurvey from '@/components/survey/EmbeddedPreferenceSurvey';
+import AlertModal from '@/components/modals/AlertModal';
 import icon104 from '@/assets/104-icon.png';
 
 // Mock job data generator
@@ -30,7 +29,7 @@ const generateMockJobs = (page: number) => {
     { title: '業務主管', desc: '帶領業務團隊開拓市場，達成營收成長目標' },
   ];
   const companies = ['科技新創', '金融集團', '跨國企業', '本土龍頭', '上市公司', '獨角獸', '百年老店', '新興品牌'];
-  
+
   return positions.map((pos, idx) => ({
     id: (page - 1) * 10 + idx + 1,
     title: pos.title,
@@ -43,7 +42,7 @@ const generateMockJobs = (page: number) => {
   }));
 };
 
-// Job Card Skeleton Component
+// Job Card Skeleton
 const JobCardSkeleton = () => (
   <Card className="overflow-hidden">
     <CardHeader className="pb-3">
@@ -70,7 +69,6 @@ const JobCardSkeleton = () => (
   </Card>
 );
 
-// Job Card Component
 interface JobData {
   id: number;
   title: string;
@@ -83,140 +81,93 @@ interface JobData {
 }
 
 const JobCard = ({ job }: { job: JobData }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.3 }}
-  >
-    <Card className="overflow-hidden hover:shadow-medium hover:-translate-y-1 transition-all duration-300 group border-border hover:border-primary/30 hover:shadow-[0_8px_30px_rgba(34,197,94,0.12)]">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors truncate">
-              {job.title}
-            </h3>
-            <div className="flex items-center gap-2 mt-1 text-muted-foreground">
-              <Building2 className="h-4 w-4 flex-shrink-0" />
-              <span className="text-sm truncate">{job.company}</span>
-            </div>
-          </div>
-          <div className="flex-shrink-0">
-            <img 
-              src={icon104} 
-              alt="104人力銀行" 
-              className="h-8 w-8 rounded-full shadow-sm"
-            />
+  <Card className="overflow-hidden hover:shadow-medium hover:-translate-y-1 transition-all duration-300 group border-border hover:border-primary/30 hover:shadow-[0_8px_30px_rgba(34,197,94,0.12)]">
+    <CardHeader className="pb-3">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+            {job.title}
+          </h3>
+          <div className="flex items-center gap-2 mt-1 text-muted-foreground">
+            <Building2 className="h-4 w-4 flex-shrink-0" />
+            <span className="text-sm truncate">{job.company}</span>
           </div>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-muted-foreground text-sm line-clamp-2">
-          {job.description}
-        </p>
-        
-        <div className="flex flex-wrap gap-2">
-          <Badge variant="secondary" className="flex items-center gap-1">
-            <MapPin className="h-3 w-3" />
-            {job.city}
-          </Badge>
-          <Badge variant="secondary" className="flex items-center gap-1">
-            <Banknote className="h-3 w-3" />
-            {job.salary}
-          </Badge>
-          <Badge variant="outline" className="flex items-center gap-1">
-            <Briefcase className="h-3 w-3" />
-            {job.industry}
-          </Badge>
+        <div className="flex-shrink-0">
+          <img src={icon104} alt="104人力銀行" className="h-8 w-8 rounded-full shadow-sm" />
         </div>
-
-        <div className="flex gap-3 pt-2">
-          <Link to={`/jobs/${job.id}`}>
-            <Button size="sm" className="gap-1">
-              查看詳細
-            </Button>
-          </Link>
-          <a 
-            href={job.externalUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-          >
-            <Button size="sm" variant="outline" className="gap-1">
-              立即投遞
-              <ExternalLink className="h-3 w-3" />
-            </Button>
-          </a>
-        </div>
-      </CardContent>
-    </Card>
-  </motion.div>
+      </div>
+    </CardHeader>
+    <CardContent className="space-y-4">
+      <p className="text-muted-foreground text-sm line-clamp-2">{job.description}</p>
+      <div className="flex flex-wrap gap-2">
+        <Badge variant="secondary" className="flex items-center gap-1">
+          <MapPin className="h-3 w-3" />{job.city}
+        </Badge>
+        <Badge variant="secondary" className="flex items-center gap-1">
+          <Banknote className="h-3 w-3" />{job.salary}
+        </Badge>
+        <Badge variant="outline" className="flex items-center gap-1">
+          <Briefcase className="h-3 w-3" />{job.industry}
+        </Badge>
+      </div>
+      <div className="flex gap-3 pt-2">
+        <Link to={`/jobs/${job.id}`}>
+          <Button size="sm" className="gap-1">查看詳細</Button>
+        </Link>
+        <a href={job.externalUrl} target="_blank" rel="noopener noreferrer">
+          <Button size="sm" variant="outline" className="gap-1">
+            立即投遞
+            <ExternalLink className="h-3 w-3" />
+          </Button>
+        </a>
+      </div>
+    </CardContent>
+  </Card>
 );
 
+// ─── Stage type ───
+type Stage = 'survey' | 'loading' | 'results';
+
 const Recommendations = () => {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { isLoggedIn, isResumeUploaded, isPersonalityQuizDone, isJobPreferenceQuizDone } = useAppState();
-  
-  // Access control states
-  const [showGatekeeper, setShowGatekeeper] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  
-  // Initialize page from URL params
+  const { isJobPreferenceQuizDone, setIsJobPreferenceQuizDone } = useAppState();
+
+  // Determine initial stage
+  const [stage, setStage] = useState<Stage>(isJobPreferenceQuizDone ? 'results' : 'survey');
+  const [showRefillAlert, setShowRefillAlert] = useState(false);
+
+  // Results state
   const urlPage = parseInt(searchParams.get('page') || '1', 10);
   const initialPage = isNaN(urlPage) || urlPage < 1 ? 1 : urlPage;
-  
-  // Page states
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [jobs, setJobs] = useState<JobData[]>([]);
   const [currentPage, setCurrentPage] = useState(initialPage);
-  const [totalPages] = useState(5); // Mock 5 pages
-  
-  // Filter states
-  const [keyword, setKeyword] = useState('');
-  const [salaryRange, setSalaryRange] = useState([30, 150]);
-  const [appliedFilters, setAppliedFilters] = useState({ keyword: '', salaryRange: [30, 150] });
+  const [totalPages] = useState(5);
 
-  // Check access control
+  // Sync stage when global state changes externally
   useEffect(() => {
-    const allConditionsMet = isLoggedIn && isResumeUploaded && isPersonalityQuizDone && isJobPreferenceQuizDone;
-    if (!allConditionsMet) {
-      setShowGatekeeper(true);
-    } else {
-      setShowGatekeeper(false);
+    if (isJobPreferenceQuizDone && stage === 'survey') {
+      setStage('results');
     }
-  }, [isLoggedIn, isResumeUploaded, isPersonalityQuizDone, isJobPreferenceQuizDone]);
+  }, [isJobPreferenceQuizDone]);
 
-  // Load jobs with skeleton simulation
+  // Load jobs
   const loadJobs = (page: number) => {
     setIsLoading(true);
-    // Simulate API call
     setTimeout(() => {
-      const mockJobs = generateMockJobs(page);
-      setJobs(mockJobs);
+      setJobs(generateMockJobs(page));
       setIsLoading(false);
     }, 1200);
   };
 
   useEffect(() => {
-    loadJobs(currentPage);
-  }, [currentPage]);
+    if (stage === 'results') {
+      loadJobs(currentPage);
+    }
+  }, [currentPage, stage]);
 
-  const handlePageChange = (page: number) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-    // Update URL params
-    setSearchParams({ page: page.toString() });
-    // Smooth scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleApplyFilters = () => {
-    setAppliedFilters({ keyword, salaryRange });
-    setCurrentPage(1);
-    setSearchParams({ page: '1' });
-    loadJobs(1);
-  };
-  
-  // Sync page state when URL params change (browser back/forward)
+  // Sync URL params
   useEffect(() => {
     const urlPageParam = parseInt(searchParams.get('page') || '1', 10);
     const validPage = isNaN(urlPageParam) || urlPageParam < 1 ? 1 : Math.min(urlPageParam, totalPages);
@@ -225,25 +176,36 @@ const Recommendations = () => {
     }
   }, [searchParams, totalPages]);
 
-  const handleLoginClick = () => {
-    setShowAuthModal(true);
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    setSearchParams({ page: page.toString() });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleGatekeeperClose = (isOpen: boolean) => {
-    setShowGatekeeper(isOpen);
-    if (!isOpen) {
-      navigate(-1);
-    }
+  // Survey complete → loading → results
+  const handleSurveyComplete = () => {
+    setStage('loading');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    setTimeout(() => {
+      setIsJobPreferenceQuizDone(true);
+      setStage('results');
+      setCurrentPage(1);
+      setSearchParams({ page: '1' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 1800);
   };
 
-  const handleAuthModalClose = (isOpen: boolean) => {
-    setShowAuthModal(isOpen);
-    if (!isOpen && !isLoggedIn) {
-      navigate(-1);
-    }
+  // Refill flow
+  const handleRefillConfirm = () => {
+    setShowRefillAlert(false);
+    setIsJobPreferenceQuizDone(false);
+    setStage('survey');
+    setJobs([]);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Generate page numbers for pagination
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
     if (totalPages <= 7) {
@@ -261,200 +223,188 @@ const Recommendations = () => {
   };
 
   return (
-    <>
-      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
-        {/* Header Section */}
-        <div className="container py-12">
-          <motion.div 
-            className="text-center mb-10"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full gradient-primary mb-6 shadow-medium">
-              <Star className="h-8 w-8 text-primary-foreground" />
-            </div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">為您推薦的專屬職缺</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-              我們根據您的履歷、個性特質與工作偏好，精心挑選最適合您的職位機會
-            </p>
-          </motion.div>
-
-          {/* Filter Section */}
-          <motion.div 
-            className="bg-card rounded-xl border shadow-soft p-6 mb-8 max-w-4xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-              {/* Keyword Search */}
-              <div className="md:col-span-5">
-                <label className="text-sm font-medium text-foreground mb-2 block">
-                  關鍵字搜尋
-                </label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="職位名稱、公司、技能..."
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
-                    className="pl-10"
-                  />
+    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+      <div className="container py-8 md:py-12">
+        <AnimatePresence mode="wait">
+          {/* ─── Stage 1: Survey ─── */}
+          {stage === 'survey' && (
+            <motion.div
+              key="survey"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="text-center mb-8 md:mb-12">
+                <div className="inline-flex items-center justify-center h-14 w-14 md:h-16 md:w-16 rounded-full bg-primary/10 mb-4 md:mb-6">
+                  <Heart className="h-7 w-7 md:h-8 md:w-8 text-primary" />
                 </div>
+                <h1 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">設定您的工作偏好</h1>
+                <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
+                  告訴我們您的工作偏好，我們將為您精準匹配最適合的職缺
+                </p>
               </div>
-
-              {/* Salary Range */}
-              <div className="md:col-span-5">
-                <label className="text-sm font-medium text-foreground mb-2 block">
-                  薪資範圍 (K)
-                </label>
-                <div className="px-2">
-                  <Slider
-                    value={salaryRange}
-                    onValueChange={setSalaryRange}
-                    min={30}
-                    max={200}
-                    step={5}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>{salaryRange[0]}K</span>
-                    <span>{salaryRange[1]}K+</span>
-                  </div>
-                </div>
+              <div className="max-w-2xl mx-auto">
+                <EmbeddedPreferenceSurvey onComplete={handleSurveyComplete} />
               </div>
+            </motion.div>
+          )}
 
-              {/* Filter Button */}
-              <div className="md:col-span-2">
-                <Button 
-                  onClick={handleApplyFilters}
-                  className="w-full gap-2"
-                >
-                  <Filter className="h-4 w-4" />
-                  篩選
-                </Button>
-              </div>
-            </div>
+          {/* ─── Stage 2: Loading ─── */}
+          {stage === 'loading' && (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="flex items-center justify-center min-h-[60vh]"
+            >
+              <AILoadingSpinner message="正在根據您的偏好為您尋找合適職缺..." />
+            </motion.div>
+          )}
 
-            {/* Applied Filters Display */}
-            {(appliedFilters.keyword || appliedFilters.salaryRange[0] !== 30 || appliedFilters.salaryRange[1] !== 150) && (
-              <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
-                <span className="text-sm text-muted-foreground">目前篩選：</span>
-                {appliedFilters.keyword && (
-                  <Badge variant="secondary">關鍵字: {appliedFilters.keyword}</Badge>
-                )}
-                <Badge variant="secondary">
-                  薪資: {appliedFilters.salaryRange[0]}K - {appliedFilters.salaryRange[1]}K
-                </Badge>
-              </div>
-            )}
-          </motion.div>
-
-          {/* Job List */}
-          <div className="max-w-4xl mx-auto">
-            <AnimatePresence mode="wait">
-              {isLoading ? (
-                <motion.div
-                  key="skeleton"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="grid gap-4"
-                >
-                  {[...Array(5)].map((_, i) => (
-                    <JobCardSkeleton key={i} />
-                  ))}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="content"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="grid gap-4"
-                >
-                  {jobs.map((job, index) => (
-                    <motion.div
-                      key={job.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
-                      <JobCard job={job} />
-                    </motion.div>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Pagination */}
-            {!isLoading && (
-              <motion.div 
-                className="flex justify-center items-center gap-2 mt-10 pb-8"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
+          {/* ─── Stage 3: Results ─── */}
+          {stage === 'results' && (
+            <motion.div
+              key="results"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* Header */}
+              <motion.div
+                className="text-center mb-8 md:mb-10"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
               >
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className="gap-1"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  上一頁
-                </Button>
-
-                <div className="flex gap-1">
-                  {getPageNumbers().map((page, idx) => (
-                    typeof page === 'number' ? (
-                      <Button
-                        key={idx}
-                        variant={currentPage === page ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => handlePageChange(page)}
-                        className="w-10"
-                      >
-                        {page}
-                      </Button>
-                    ) : (
-                      <span key={idx} className="flex items-center justify-center w-10 text-muted-foreground">
-                        {page}
-                      </span>
-                    )
-                  ))}
+                <div className="inline-flex items-center justify-center h-16 w-16 rounded-full gradient-primary mb-6 shadow-medium">
+                  <Star className="h-8 w-8 text-primary-foreground" />
                 </div>
+                <h1 className="text-3xl md:text-4xl font-bold mb-4">為您推薦的專屬職缺</h1>
+                <p className="text-muted-foreground max-w-2xl mx-auto text-base md:text-lg">
+                  我們根據您的履歷、個性特質與工作偏好，精心挑選最適合您的職位機會
+                </p>
+              </motion.div>
 
+              {/* Refill Button */}
+              <div className="max-w-4xl mx-auto mb-6">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className="gap-1"
+                  className="gap-2"
+                  onClick={() => setShowRefillAlert(true)}
                 >
-                  下一頁
-                  <ChevronRight className="h-4 w-4" />
+                  <RefreshCw className="h-4 w-4" />
+                  重新填寫工作偏好
                 </Button>
-              </motion.div>
-            )}
-          </div>
-        </div>
+              </div>
+
+              {/* Job List */}
+              <div className="max-w-4xl mx-auto">
+                <AnimatePresence mode="wait">
+                  {isLoading ? (
+                    <motion.div
+                      key="skeleton"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="grid gap-4"
+                    >
+                      {[...Array(5)].map((_, i) => (
+                        <JobCardSkeleton key={i} />
+                      ))}
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="content"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="grid gap-4"
+                    >
+                      {jobs.map((job, index) => (
+                        <motion.div
+                          key={job.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                        >
+                          <JobCard job={job} />
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Pagination */}
+                {!isLoading && jobs.length > 0 && (
+                  <motion.div
+                    className="flex justify-center items-center gap-2 mt-10 pb-8"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="gap-1"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      上一頁
+                    </Button>
+                    <div className="flex gap-1">
+                      {getPageNumbers().map((page, idx) =>
+                        typeof page === 'number' ? (
+                          <Button
+                            key={idx}
+                            variant={currentPage === page ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => handlePageChange(page)}
+                            className="w-10"
+                          >
+                            {page}
+                          </Button>
+                        ) : (
+                          <span key={idx} className="flex items-center justify-center w-10 text-muted-foreground">
+                            {page}
+                          </span>
+                        )
+                      )}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="gap-1"
+                    >
+                      下一頁
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* Gatekeeper Overlay */}
-      <GatekeeperOverlay
-        open={showGatekeeper}
-        onOpenChange={handleGatekeeperClose}
-        onLoginClick={handleLoginClick}
+      {/* Refill Confirmation Alert */}
+      <AlertModal
+        open={showRefillAlert}
+        onClose={() => setShowRefillAlert(false)}
+        type="warning"
+        title="確認重新填寫？"
+        message="重新填寫將會更新您的推薦職缺清單，是否確認重新填寫？"
+        confirmLabel="確認重新填寫"
+        onConfirm={handleRefillConfirm}
+        showCancel
       />
-
-      {/* Auth Modal */}
-      <AuthModal
-        open={showAuthModal}
-        onOpenChange={handleAuthModalClose}
-      />
-    </>
+    </div>
   );
 };
 
