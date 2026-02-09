@@ -20,7 +20,7 @@ import Prep from "./pages/interview/Prep";
 import MemberCenter from "./pages/member/MemberCenter";
 import RegisterForm from "./pages/auth/RegisterForm";
 import UploadResume from "./pages/member/UploadResume";
-import Password from "./pages/member/Password";
+
 import CareerPath from "./pages/member/CareerPath";
 import MyResumes from "./pages/member/MyResumes";
 import Personality from "./pages/member/survey/Personality";
@@ -65,7 +65,7 @@ const App = () => (
               <Route path="/member/center" element={<MemberCenter />} />
               <Route path="/auth/register-form" element={<RegisterForm />} />
               <Route path="/member/upload-resume" element={<UploadResume />} />
-              <Route path="/member/password" element={<Password />} />
+              
               <Route path="/member/career-path" element={<CareerPath />} />
               <Route path="/member/my-resumes" element={<MyResumes />} />
               <Route path="/member/survey/personality" element={<Personality />} />
