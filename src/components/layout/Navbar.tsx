@@ -3,12 +3,13 @@ import { Button } from '@/components/ui/button';
 import { useAppState } from '@/contexts/AppContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
-import { FileText, BarChart3, MessageSquare, User, Menu, LogOut, Settings, FileUp, Search, Target, ChevronDown, Compass, Star, Map, ClipboardList } from 'lucide-react';
+import { FileText, BarChart3, MessageSquare, User, Menu, LogOut, Settings, FileUp, Search, Target, ChevronDown, Compass, Star, Map, ClipboardList, Lock } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import AuthModal from '@/components/auth/AuthModal';
+import PasswordModal from '@/components/member/PasswordModal';
 const Navbar = () => {
   const {
     isLoggedIn,
@@ -16,6 +17,7 @@ const Navbar = () => {
   } = useAppState();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const productLinks = [{
     to: '/jobs/skill-search',
     label: '職缺核心技能查詢',
@@ -154,11 +156,9 @@ const Navbar = () => {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/member/password" className="flex items-center gap-2">
-                      <Settings className="h-4 w-4" />
-                      密碼設定
-                    </Link>
+                  <DropdownMenuItem onClick={() => setPasswordModalOpen(true)} className="flex items-center gap-2 cursor-pointer">
+                    <Lock className="h-4 w-4" />
+                    密碼設定
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-destructive">
                     <LogOut className="h-4 w-4" />
@@ -236,6 +236,7 @@ const Navbar = () => {
       </nav>
 
       <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
+      <PasswordModal open={passwordModalOpen} onOpenChange={setPasswordModalOpen} />
     </>;
 };
 export default Navbar;
