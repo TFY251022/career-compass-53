@@ -1,21 +1,22 @@
 import { useState } from 'react';
-import { User, FileText, Map, Settings, Edit, Star } from 'lucide-react';
+import { User, FileText, Map, Edit, Star, Lock } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { useAppState } from '@/contexts/AppContext';
 import EditProfileModal from '@/components/member/EditProfileModal';
+import PasswordModal from '@/components/member/PasswordModal';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
 
 const MemberCenter = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const { isResumeUploaded, isPersonalityQuizDone } = useAppState();
 
   const quickLinks = [
     { to: '/member/my-resumes', icon: FileText, label: '我的履歷' },
     { to: '/member/career-path', icon: Map, label: '職涯地圖' },
-    { to: '/member/password', icon: Settings, label: '密碼設定' },
   ];
 
   return (
@@ -75,10 +76,16 @@ const MemberCenter = () => {
                     <CardDescription className="text-xs md:text-sm">您的基本資訊</CardDescription>
                   </div>
                 </div>
-                <Button variant="outline" size="sm" onClick={() => setEditModalOpen(true)} className="bg-background/60 backdrop-blur-sm w-full sm:w-auto">
-                  <Edit className="h-4 w-4 mr-2" />
-                  修改資料
-                </Button>
+                <div className="flex flex-col gap-2 w-full sm:w-auto">
+                  <Button variant="outline" size="sm" onClick={() => setEditModalOpen(true)} className="bg-background/60 backdrop-blur-sm w-full">
+                    <Edit className="h-4 w-4 mr-2" />
+                    修改資料
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => setPasswordModalOpen(true)} className="bg-background/60 backdrop-blur-sm w-full border-primary/40 text-primary hover:bg-primary/5 hover:shadow-[0_0_8px_hsl(var(--primary)/0.15)] hover:-translate-y-0.5 transition-all">
+                    <Lock className="h-4 w-4 mr-2" />
+                    變更密碼
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                 <div>
@@ -153,6 +160,7 @@ const MemberCenter = () => {
         </div>
 
         <EditProfileModal open={editModalOpen} onOpenChange={setEditModalOpen} />
+        <PasswordModal open={passwordModalOpen} onOpenChange={setPasswordModalOpen} />
       </div>
     </LoginRequired>
   );
