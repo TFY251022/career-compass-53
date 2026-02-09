@@ -27,6 +27,30 @@ const MemberCenter = () => {
             <p className="text-muted-foreground text-sm md:text-base">管理您的帳戶與職涯資訊</p>
           </div>
 
+          {/* Profile Info Card */}
+          <Card className="mb-6 md:mb-8">
+            <CardContent className="pt-5 md:pt-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground min-w-[4rem]">姓名</span>
+                  <span className="font-medium">王小明</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground min-w-[4rem]">電子郵件</span>
+                  <span className="font-medium">user@example.com</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground min-w-[4rem]">電話</span>
+                  <span className="font-medium">0912-345-678</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground min-w-[4rem]">職稱</span>
+                  <span className="font-medium">前端工程師</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Account Actions */}
           <div className="flex justify-center gap-3 mb-6 md:mb-8">
             <Button variant="outline" size="sm" onClick={() => setEditModalOpen(true)}>
