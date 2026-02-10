@@ -11,7 +11,11 @@ interface Props {
 const RadioQuestion = ({ question, value, onChange }: Props) => {
   return (
     <div className="space-y-3">
-      <p className="font-medium text-sm md:text-base">{question.question}</p>
+      <p className="font-medium text-sm md:text-base">
+        {question.required && <span className="text-destructive mr-1">*</span>}
+        {question.question}
+        <span className="text-xs text-muted-foreground ml-1.5">(單選)</span>
+      </p>
       <RadioGroup
         value={value !== undefined ? String(value) : ''}
         onValueChange={(v) => {
@@ -31,9 +35,6 @@ const RadioQuestion = ({ question, value, onChange }: Props) => {
             <RadioGroupItem value={String(option.value)} id={`${question.id}-${option.value}`} className="mt-0.5" />
             <Label htmlFor={`${question.id}-${option.value}`} className="flex-1 cursor-pointer text-sm md:text-base leading-relaxed">
               {option.label}
-              {option.level && (
-                <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-primary/10 text-primary">{option.level}</span>
-              )}
             </Label>
           </div>
         ))}

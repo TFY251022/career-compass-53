@@ -35,7 +35,10 @@ const CategorizedSkillSelector = ({ question, value, onChange }: Props) => {
 
   return (
     <div className="space-y-3">
-      <p className="font-medium text-sm md:text-base">{question.question}</p>
+      <p className="font-medium text-sm md:text-base">
+        {question.required && <span className="text-destructive mr-1">*</span>}
+        {question.question}
+      </p>
       <p className="text-xs text-muted-foreground">{question.meta.scale_desc}</p>
 
       {/* Selected skills */}

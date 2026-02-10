@@ -48,6 +48,7 @@ const Personality = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showIncompleteAlert, setShowIncompleteAlert] = useState(false);
   const [showResult, setShowResult] = useState(false);
+  const [invalidIds, setInvalidIds] = useState<Set<string>>(new Set());
 
   const { hasSkillBase, answers, currentStep } = progress;
 
@@ -73,20 +74,35 @@ const Personality = () => {
       ...prev,
       answers: { ...prev.answers, [questionId]: value },
     }));
+    // Clear red border when user answers
+    setInvalidIds((prev) => {
+      if (!prev.has(questionId)) return prev;
+      const next = new Set(prev);
+      next.delete(questionId);
+      return next;
+    });
   }, []);
 
-  // Validate current module
+  // Check if a single question is invalid
+  const isQuestionInvalid = (q: any): boolean => {
+    if (!q.required) return false;
+    const ans = answers[q.id];
+    if (ans === undefined || ans === null || ans === '') return true;
+    if (q.type === 'checkbox' && (!Array.isArray(ans) || ans.length === 0)) return true;
+    if (q.type === 'rank' && (!Array.isArray(ans) || ans.length < (q as any).validation.max_selection)) return true;
+    if (q.type === 'categorized_skill_selector' && (!Array.isArray(ans) || ans.length === 0)) return true;
+    return false;
+  };
+
+  // Validate current module and return invalid IDs
   const validateCurrentModule = (): boolean => {
     if (!currentModule) return false;
+    const newInvalid = new Set<string>();
     for (const q of currentModule.questions) {
-      if (!q.required) continue;
-      const ans = answers[q.id];
-      if (ans === undefined || ans === null || ans === '') return false;
-      if (q.type === 'checkbox' && (!Array.isArray(ans) || ans.length === 0)) return false;
-      if (q.type === 'rank' && (!Array.isArray(ans) || ans.length < (q as any).validation.max_selection)) return false;
-      if (q.type === 'categorized_skill_selector' && (!Array.isArray(ans) || ans.length === 0)) return false;
+      if (isQuestionInvalid(q)) newInvalid.add(q.id);
     }
-    return true;
+    setInvalidIds(newInvalid);
+    return newInvalid.size === 0;
   };
 
   const handleNext = () => {
@@ -275,7 +291,6 @@ const Personality = () => {
                       >
                         <Zap className="h-6 w-6 text-primary mb-2" />
                         <p className="font-semibold text-sm md:text-base">我有相關技能基礎</p>
-                        <p className="text-xs text-muted-foreground mt-1">完整問卷 (A→B→C→D)</p>
                       </button>
                       <button
                         onClick={() => handleChoosePath(false)}
@@ -283,7 +298,6 @@ const Personality = () => {
                       >
                         <BookOpen className="h-6 w-6 text-primary mb-2" />
                         <p className="font-semibold text-sm md:text-base">我目前沒有技能基礎</p>
-                        <p className="text-xs text-muted-foreground mt-1">精簡問卷 (B→C→D)</p>
                       </button>
                     </div>
                   </CardContent>
@@ -310,12 +324,23 @@ const Personality = () => {
                 {/* Module description */}
                 <p className="text-xs text-muted-foreground">{currentModule?.description}</p>
 
-                {/* Questions */}
-                <Card>
-                  <CardContent className="p-5 md:p-6 space-y-6">
-                    {currentModule?.questions.map((q) => renderQuestion(q))}
-                  </CardContent>
-                </Card>
+                {/* Questions — one card per question */}
+                <div className="space-y-4">
+                  {currentModule?.questions.map((q) => (
+                    <Card
+                      key={q.id}
+                      className={`transition-all ${
+                        invalidIds.has(q.id)
+                          ? 'border-destructive shadow-[0_0_8px_hsl(var(--destructive)/0.25)]'
+                          : ''
+                      }`}
+                    >
+                      <CardContent className="p-5 md:p-6">
+                        {renderQuestion(q)}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
 
                 {/* Navigation */}
                 <div className="flex justify-between gap-3">
