@@ -225,8 +225,8 @@ const CareerLadder = ({ isLoading }: { isLoading: boolean }) => {
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-2 md:pb-4">
+    <Card className="overflow-hidden">
+      <CardHeader className="pb-2 md:pb-4 overflow-hidden">
         {/* Template switcher */}
         <div className="flex flex-wrap gap-1.5 mb-3">
           {templateKeys.map((key) => (
@@ -254,21 +254,21 @@ const CareerLadder = ({ isLoading }: { isLoading: boolean }) => {
           </div>
 
           {/* Large stable mascot */}
-          <div className="relative flex-shrink-0">
+          <div className="relative flex-shrink-0 overflow-hidden">
             <div className="absolute inset-0 bg-primary/15 rounded-full blur-2xl scale-75" />
             <img
               src={template.mascot}
               alt={`${template.name} 吉祥物`}
-              className="relative object-contain drop-shadow-lg"
-              style={{ width: isMobile ? 160 : 260, height: isMobile ? 160 : 260 }}
+              className="relative object-contain drop-shadow-lg max-w-full"
+              style={{ width: isMobile ? 140 : 220, height: isMobile ? 140 : 220 }}
             />
           </div>
         </div>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="overflow-hidden p-2 md:p-6">
         {/* Horizontally scrollable ladder */}
-        <div className="w-full max-w-full overflow-x-auto pb-3 career-ladder-scroll">
+        <div className="w-full overflow-x-auto pb-3 career-ladder-scroll">
           <div className="flex items-start gap-0 w-max min-w-0">
             {steps.map((step, index) => {
               const isCurrentStep = index === lastRealIndex;
