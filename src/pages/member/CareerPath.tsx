@@ -114,7 +114,7 @@ const CareerPath = () => {
 
   return (
     <LoginRequired>
-      <div className="container py-6 md:py-8 animate-fade-in">
+      <div className="container py-6 md:py-8 animate-fade-in max-w-full overflow-x-hidden">
         {/* Page Header */}
         <div className="text-center mb-6 md:mb-8">
           <div className="inline-flex items-center justify-center h-14 w-14 md:h-16 md:w-16 rounded-full bg-primary/10 mb-3 md:mb-4">
