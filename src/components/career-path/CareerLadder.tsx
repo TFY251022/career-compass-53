@@ -15,8 +15,8 @@ interface StepData {
   subtitle?: string;
 }
 
-/* ── Chevron Arrow Component ── */
-const ChevronStep = ({
+/* ── Chevron Arrow (title only) ── */
+const ChevronArrow = ({
   step,
   isCurrentStep,
   isReal,
@@ -27,48 +27,37 @@ const ChevronStep = ({
   isReal: boolean;
   isMobile: boolean;
 }) => {
-  const w = isMobile ? 140 : 170;
-  const h = isMobile ? 200 : 230;
-  const point = 18; // arrow tip depth
+  const w = isMobile ? 140 : 180;
+  const h = isMobile ? 48 : 56;
+  const point = 16;
 
-  // SVG chevron/arrow shape
   const pathD = `M0,0 L${w - point},0 L${w},${h / 2} L${w - point},${h} L0,${h} L${point},${h / 2} Z`;
 
   const fillColor = isCurrentStep
     ? 'hsl(152 69% 45%)'
     : isReal
-      ? 'hsl(152 60% 88%)'
-      : 'hsl(150 15% 95%)';
+      ? 'hsl(152 55% 82%)'
+      : 'hsl(150 12% 92%)';
 
   const strokeColor = isCurrentStep
     ? 'hsl(152 65% 35%)'
     : isReal
-      ? 'hsl(152 50% 70%)'
-      : 'hsl(150 15% 85%)';
+      ? 'hsl(152 45% 68%)'
+      : 'hsl(150 10% 82%)';
 
   const textColor = isCurrentStep
-    ? 'text-primary-foreground'
+    ? 'text-white font-bold'
     : isReal
-      ? 'text-foreground'
-      : 'text-muted-foreground';
+      ? 'text-foreground font-semibold'
+      : 'text-muted-foreground font-medium';
 
   return (
-    <div
-      className="relative flex-shrink-0"
-      style={{ width: w, height: h }}
-    >
-      {/* SVG chevron background */}
-      <svg
-        className="absolute inset-0"
-        width={w}
-        height={h}
-        viewBox={`0 0 ${w} ${h}`}
-      >
-        {/* Glow filter for current step */}
+    <div className="relative flex-shrink-0" style={{ width: w, height: h }}>
+      <svg className="absolute inset-0" width={w} height={h} viewBox={`0 0 ${w} ${h}`}>
         {isCurrentStep && (
           <defs>
-            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="6" result="blur" />
+            <filter id="chevron-glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
@@ -80,82 +69,105 @@ const ChevronStep = ({
           d={pathD}
           fill={fillColor}
           stroke={strokeColor}
-          strokeWidth="2"
-          filter={isCurrentStep ? 'url(#glow)' : undefined}
+          strokeWidth="1.5"
+          filter={isCurrentStep ? 'url(#chevron-glow)' : undefined}
         />
       </svg>
 
-      {/* Content overlay */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center px-5 py-3 text-center" style={{ paddingLeft: point + 8, paddingRight: point + 4 }}>
-        {/* Status label */}
-        <span className={cn(
-          'text-[9px] font-bold uppercase tracking-wider mb-1',
-          isCurrentStep ? 'text-primary-foreground/80' : isReal ? 'text-primary' : 'text-muted-foreground'
-        )}>
-          {isCurrentStep ? '📍 當前' : isReal ? '✅ 完成' : `步驟 ${step.id}`}
-        </span>
-
-        {/* Job title – auto-shrink for long text */}
-        <h4 className={cn(
-          'font-bold leading-tight mb-1.5',
-          textColor,
-          step.title.length > 8 ? (isMobile ? 'text-[11px]' : 'text-xs') : (isMobile ? 'text-xs' : 'text-sm'),
-        )}>
-          {step.title}
-        </h4>
-
-        {/* Subtitle */}
-        {step.subtitle && (
-          <p className={cn(
-            'text-[9px] mb-1.5',
-            isCurrentStep ? 'text-primary-foreground/70' : 'text-muted-foreground'
+      <div
+        className={cn('absolute inset-0 flex items-center justify-center text-center', textColor)}
+        style={{ paddingLeft: point + 6, paddingRight: point + 6 }}
+      >
+        {/* Step label */}
+        <div className="flex flex-col items-center gap-0.5">
+          <span className={cn(
+            'text-[9px] uppercase tracking-wider opacity-70',
+            isCurrentStep ? 'text-white' : ''
           )}>
-            {step.subtitle}
-          </p>
-        )}
-
-        {/* Duties */}
-        <ul className="space-y-0.5 w-full">
-          {step.duties.slice(0, 3).map((duty, idx) => (
-            <li key={idx} className={cn(
-              'text-[9px] leading-tight flex items-start gap-1',
-              isCurrentStep ? 'text-primary-foreground/80' : isReal ? 'text-foreground/70' : 'text-muted-foreground'
-            )}>
-              <span className={cn(
-                'h-1 w-1 rounded-full mt-[3px] shrink-0',
-                isCurrentStep ? 'bg-primary-foreground/60' : isReal ? 'bg-primary/50' : 'bg-muted-foreground/40'
-              )} />
-              {duty}
-            </li>
-          ))}
-        </ul>
-
-        {/* Current indicator */}
-        {isCurrentStep && (
-          <span className="mt-1.5 text-[9px] text-primary-foreground font-semibold animate-pulse">
-            ▸ 目前位置
+            {isCurrentStep ? '📍 當前' : isReal ? `步驟 ${step.id}` : `步驟 ${step.id}`}
           </span>
-        )}
+          <span className={cn(
+            'leading-tight',
+            step.title.length > 8 ? (isMobile ? 'text-[10px]' : 'text-xs') : (isMobile ? 'text-xs' : 'text-sm'),
+          )}>
+            {step.title}
+          </span>
+        </div>
       </div>
+    </div>
+  );
+};
+
+/* ── Content Block (duties below chevron) ── */
+const ContentBlock = ({
+  step,
+  isCurrentStep,
+  isReal,
+  isMobile,
+}: {
+  step: StepData;
+  isCurrentStep: boolean;
+  isReal: boolean;
+  isMobile: boolean;
+}) => {
+  const w = isMobile ? 140 : 180;
+
+  return (
+    <div
+      className={cn(
+        'rounded-lg border p-3 flex-shrink-0',
+        isCurrentStep
+          ? 'border-primary/50 bg-primary/5'
+          : isReal
+            ? 'border-primary/20 bg-primary/[0.03]'
+            : 'border-border bg-muted/30',
+      )}
+      style={{ width: w, minHeight: isMobile ? 90 : 110 }}
+    >
+      {/* Subtitle */}
+      {step.subtitle && (
+        <p className={cn(
+          'text-[10px] mb-2 font-medium',
+          isCurrentStep ? 'text-primary' : 'text-muted-foreground'
+        )}>
+          {step.subtitle}
+        </p>
+      )}
+
+      {/* Duties */}
+      <ul className="space-y-1">
+        {step.duties.slice(0, 4).map((duty, idx) => (
+          <li key={idx} className={cn(
+            'text-[11px] leading-snug flex items-start gap-1.5',
+            isReal ? 'text-foreground/80' : 'text-muted-foreground'
+          )}>
+            <span className={cn(
+              'h-1 w-1 rounded-full mt-[5px] shrink-0',
+              isCurrentStep ? 'bg-primary' : isReal ? 'bg-primary/50' : 'bg-muted-foreground/40'
+            )} />
+            {duty}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
 
 /* ── Transition Marker ── */
 const TransitionMarker = ({ isMobile }: { isMobile: boolean }) => (
-  <div className={cn('flex flex-col items-center justify-center flex-shrink-0', isMobile ? 'mx-1' : 'mx-2')}>
-    <div className="w-px h-6 border-l-2 border-dashed border-primary/60" />
-    <div className="relative my-1">
+  <div className={cn('flex flex-col items-center justify-center flex-shrink-0 self-stretch', isMobile ? 'mx-1' : 'mx-2')}>
+    <div className="flex-1 w-px border-l-2 border-dashed border-primary/50" />
+    <div className="relative my-1.5">
       <div className="absolute inset-0 bg-primary/20 rounded-full blur-md" />
       <span className="relative text-[10px] font-semibold text-primary bg-primary/10 border border-primary/30 px-2.5 py-1 rounded-full whitespace-nowrap">
         建議路徑
       </span>
     </div>
-    <div className="w-px h-6 border-l-2 border-dashed border-primary/60" />
+    <div className="flex-1 w-px border-l-2 border-dashed border-primary/50" />
   </div>
 );
 
-/* ── Template Switcher (Dev Tool) ── */
+/* ── Template Switcher ── */
 const templateKeys = Object.keys(careerTemplates) as Array<keyof typeof careerTemplates>;
 const templateLabels: Record<string, string> = {
   frontend: '前端',
@@ -206,7 +218,7 @@ const CareerLadder = ({ isLoading }: { isLoading: boolean }) => {
         <CardContent>
           <div className="flex gap-2 overflow-x-auto pb-4">
             {[1, 2, 3, 4, 5].map((i) => (
-              <Skeleton key={i} className={cn('rounded-lg flex-shrink-0', isMobile ? 'w-[140px] h-[200px]' : 'w-[170px] h-[230px]')} />
+              <Skeleton key={i} className={cn('rounded-lg flex-shrink-0', isMobile ? 'w-[140px] h-[160px]' : 'w-[180px] h-[190px]')} />
             ))}
           </div>
         </CardContent>
@@ -257,39 +269,49 @@ const CareerLadder = ({ isLoading }: { isLoading: boolean }) => {
       </CardHeader>
 
       <CardContent>
-        {/* Chevron ladder – horizontally scrollable */}
-        <div className="flex items-center gap-0 overflow-x-auto pb-4">
-          {steps.map((step, index) => {
-            const isCurrentStep = index === lastRealIndex;
-            const isReal = step.source === 'real';
-            const showTransition = index === lastRealIndex + 1;
+        {/* Horizontally scrollable ladder */}
+        <div className="overflow-x-auto pb-3 career-ladder-scroll">
+          <div className="flex items-start gap-0 w-max">
+            {steps.map((step, index) => {
+              const isCurrentStep = index === lastRealIndex;
+              const isReal = step.source === 'real';
+              const showTransition = index === lastRealIndex + 1;
 
-            return (
-              <div key={step.id} className="flex items-center flex-shrink-0">
-                {showTransition && <TransitionMarker isMobile={isMobile} />}
-                <ChevronStep
-                  step={step}
-                  isCurrentStep={isCurrentStep}
-                  isReal={isReal}
-                  isMobile={isMobile}
-                />
-              </div>
-            );
-          })}
+              return (
+                <div key={step.id} className="flex items-start flex-shrink-0">
+                  {showTransition && <TransitionMarker isMobile={isMobile} />}
+                  <div className={cn('flex flex-col gap-2', isMobile ? 'mr-1' : 'mr-1.5')}>
+                    <ChevronArrow
+                      step={step}
+                      isCurrentStep={isCurrentStep}
+                      isReal={isReal}
+                      isMobile={isMobile}
+                    />
+                    <ContentBlock
+                      step={step}
+                      isCurrentStep={isCurrentStep}
+                      isReal={isReal}
+                      isMobile={isMobile}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Legend */}
         <div className="flex items-center gap-4 mt-3 text-[10px] md:text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-sm" style={{ background: 'hsl(152 60% 88%)' }} />
+            <span className="h-2.5 w-2.5 rounded-sm" style={{ background: 'hsl(152 55% 82%)' }} />
             真實經歷
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-sm bg-secondary border border-border" />
+            <span className="h-2.5 w-2.5 rounded-sm bg-muted border border-border" />
             AI 預測路徑
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-sm bg-primary shadow-sm" style={{ boxShadow: '0 0 6px hsl(152 69% 45% / 0.5)' }} />
+            <span className="h-2.5 w-2.5 rounded-sm bg-primary" style={{ boxShadow: '0 0 6px hsl(152 69% 45% / 0.5)' }} />
             當前位置
           </span>
         </div>
