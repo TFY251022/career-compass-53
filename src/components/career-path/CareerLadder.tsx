@@ -266,10 +266,11 @@ const CareerLadder = ({ isLoading }: { isLoading: boolean }) => {
         </div>
       </CardHeader>
 
-      <CardContent className="overflow-hidden p-2 md:p-6">
-        {/* Horizontally scrollable ladder */}
-        <div className="w-full overflow-x-auto pb-3 career-ladder-scroll">
-          <div className="flex items-start gap-0 w-max min-w-0">
+      <CardContent className="p-2 md:p-6">
+        {/* Outer lock: strict width, local scroll only */}
+        <div className="w-full max-w-full overflow-x-auto overflow-y-hidden pb-3 career-ladder-scroll" style={{ maxWidth: '100%' }}>
+          {/* Inner content: flex row, naturally wider than parent */}
+          <div className="flex items-start gap-0 flex-nowrap" style={{ width: 'max-content' }}>
             {steps.map((step, index) => {
               const isCurrentStep = index === lastRealIndex;
               const isReal = step.source === 'real';
