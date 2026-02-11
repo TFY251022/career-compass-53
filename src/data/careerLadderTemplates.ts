@@ -10,7 +10,7 @@ export interface CareerLevel {
 export interface CareerTemplate {
   id: string;
   name: string;
-  mascot: string; // path to cat mascot image
+  mascot: string;
   levels: CareerLevel[];
 }
 
@@ -89,19 +89,25 @@ export const careerTemplates: Record<string, CareerTemplate> = {
   },
 };
 
-// Mock: resume work experiences (real past)
+// Mock: 3 resume experiences (including career changer scenario)
 export const mockResumeExperiences = [
   {
-    title: '初級前端工程師',
-    company: 'ABC 科技',
-    period: '2020-2022',
-    duties: ['UI 元件開發', '修復 Bug', '基礎 HTML/CSS/JS'],
+    title: '行政人員',
+    company: '大同企業',
+    period: '2018-2020',
+    duties: ['文書處理與歸檔', '會議安排與紀錄', '行政流程優化'],
   },
   {
-    title: '中級前端工程師',
-    company: 'XYZ 軟體',
+    title: '專案助理',
+    company: 'ABC 科技',
+    period: '2020-2022',
+    duties: ['專案進度追蹤', '跨部門溝通協調', '需求文件整理'],
+  },
+  {
+    title: '轉職學習中',
+    company: '自學 / 培訓班',
     period: '2022-2024',
-    duties: ['React 框架開發', '效能優化', '模組化開發'],
+    duties: ['線上課程學習', '個人作品集開發', '參加技術社群'],
   },
 ];
 
