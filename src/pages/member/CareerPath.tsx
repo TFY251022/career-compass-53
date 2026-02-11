@@ -165,9 +165,9 @@ const CareerPath = () => {
           )}
 
           {/* Right Main Content */}
-          <main className="flex-1 space-y-6 md:space-y-8">
+          <main className="flex-1 min-w-0 space-y-6 md:space-y-8 overflow-hidden">
             {/* Career Ladder Section */}
-            <section ref={roadmapRef}>
+            <section ref={roadmapRef} className="overflow-hidden">
               <CareerLadder isLoading={isLoading} />
             </section>
 
