@@ -193,10 +193,8 @@ const CareerLadder = ({ isLoading }: { isLoading: boolean }) => {
       subtitle: `${exp.company} · ${exp.period}`,
     }));
 
-    const futureStart = realSteps.length;
-    const futureLevels = template.levels.slice(futureStart);
-    const futureSteps: StepData[] = futureLevels.map((lvl, i) => ({
-      id: futureStart + i + 1,
+    const futureSteps: StepData[] = template.levels.map((lvl, i) => ({
+      id: realSteps.length + i + 1,
       title: lvl.title,
       duties: lvl.duties,
       source: 'ai' as const,
@@ -308,7 +306,7 @@ const CareerLadder = ({ isLoading }: { isLoading: boolean }) => {
           </span>
           <span className="flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-sm bg-muted border border-border" />
-            AI 預測路徑
+            建議路徑
           </span>
           <span className="flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-sm bg-primary" style={{ boxShadow: '0 0 6px hsl(152 69% 45% / 0.5)' }} />
