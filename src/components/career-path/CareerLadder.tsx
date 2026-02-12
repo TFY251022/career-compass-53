@@ -34,16 +34,16 @@ const ChevronArrow = ({
   const pathD = `M0,0 L${w - point},0 L${w},${h / 2} L${w - point},${h} L0,${h} L${point},${h / 2} Z`;
 
   const fillColor = isCurrentStep
-    ? 'hsl(152 69% 45%)'
+    ? 'hsl(20 60% 45%)'
     : isReal
-      ? 'hsl(152 55% 82%)'
-      : 'hsl(150 12% 92%)';
+      ? 'hsl(25 45% 80%)'
+      : 'hsl(30 12% 92%)';
 
   const strokeColor = isCurrentStep
-    ? 'hsl(152 65% 35%)'
+    ? 'hsl(20 55% 35%)'
     : isReal
-      ? 'hsl(152 45% 68%)'
-      : 'hsl(150 10% 82%)';
+      ? 'hsl(25 40% 68%)'
+      : 'hsl(30 10% 82%)';
 
   const textColor = isCurrentStep
     ? 'text-white font-bold'
@@ -302,7 +302,7 @@ const CareerLadder = ({ isLoading }: { isLoading: boolean }) => {
         {/* Legend */}
         <div className="flex items-center gap-4 mt-3 text-[10px] md:text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-sm" style={{ background: 'hsl(152 55% 82%)' }} />
+            <span className="h-2.5 w-2.5 rounded-sm" style={{ background: 'hsl(25 45% 80%)' }} />
             真實經歷
           </span>
           <span className="flex items-center gap-1.5">
@@ -310,7 +310,7 @@ const CareerLadder = ({ isLoading }: { isLoading: boolean }) => {
             建議路徑
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-sm bg-primary" style={{ boxShadow: '0 0 6px hsl(152 69% 45% / 0.5)' }} />
+            <span className="h-2.5 w-2.5 rounded-sm bg-primary" style={{ boxShadow: '0 0 6px hsl(20 60% 45% / 0.5)' }} />
             當前位置
           </span>
         </div>

@@ -6,33 +6,33 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 150 10% 15%;
+    --background: 40 30% 97%;
+    --foreground: 25 25% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 150 10% 15%;
+    --card-foreground: 25 25% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 150 10% 15%;
+    --popover-foreground: 25 25% 15%;
 
-    /* Primary Green - Main CTA color */
-    --primary: 152 69% 45%;
+    /* Primary Copper/Earth Brown - Main CTA color */
+    --primary: 20 60% 45%;
     --primary-foreground: 0 0% 100%;
 
-    /* Bright accent green for highlights */
-    --primary-bright: 152 76% 52%;
-    --primary-dark: 152 65% 35%;
+    /* Bright copper for highlights */
+    --primary-bright: 20 65% 52%;
+    --primary-dark: 20 55% 35%;
 
-    --secondary: 150 20% 96%;
-    --secondary-foreground: 150 10% 15%;
+    --secondary: 35 25% 95%;
+    --secondary-foreground: 25 25% 15%;
 
-    --muted: 150 15% 95%;
-    --muted-foreground: 150 10% 45%;
+    --muted: 35 20% 93%;
+    --muted-foreground: 25 15% 42%;
 
-    --accent: 152 60% 40%;
+    --accent: 20 55% 42%;
     --accent-foreground: 0 0% 100%;
 
-    --success: 152 69% 45%;
+    --success: 152 60% 42%;
     --success-foreground: 0 0% 100%;
 
     --warning: 38 92% 50%;
@@ -41,84 +41,84 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 150 15% 90%;
-    --input: 150 15% 90%;
-    --ring: 152 69% 45%;
+    --border: 30 18% 88%;
+    --input: 30 18% 88%;
+    --ring: 20 60% 45%;
 
     --radius: 0.75rem;
 
-    /* Footer darker green */
-    --footer-bg: 152 45% 18%;
-    --footer-foreground: 150 20% 90%;
+    /* Footer deep coffee */
+    --footer-bg: 25 35% 16%;
+    --footer-foreground: 35 20% 90%;
 
-    /* Custom tokens - Professional Green Theme */
-    --gradient-primary: linear-gradient(135deg, hsl(152 69% 45%) 0%, hsl(165 60% 42%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(152 69% 45%) 0%, hsl(160 50% 40%) 50%, hsl(165 60% 42%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(150 20% 98%) 100%);
-    --gradient-light: linear-gradient(135deg, hsl(152 50% 95%) 0%, hsl(165 40% 93%) 100%);
-    --shadow-soft: 0 4px 6px -1px hsl(152 69% 45% / 0.1), 0 2px 4px -2px hsl(152 69% 45% / 0.1);
-    --shadow-medium: 0 10px 15px -3px hsl(152 69% 45% / 0.1), 0 4px 6px -4px hsl(152 69% 45% / 0.1);
-    --shadow-large: 0 25px 50px -12px hsl(152 69% 45% / 0.25);
+    /* Custom tokens - Earth Tone Theme */
+    --gradient-primary: linear-gradient(135deg, hsl(20 60% 45%) 0%, hsl(15 55% 42%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(35 40% 92%) 0%, hsl(30 35% 90%) 50%, hsl(38 30% 88%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(35 25% 97%) 100%);
+    --gradient-light: linear-gradient(135deg, hsl(35 35% 95%) 0%, hsl(30 30% 93%) 100%);
+    --shadow-soft: 0 4px 6px -1px hsl(25 30% 30% / 0.08), 0 2px 4px -2px hsl(25 30% 30% / 0.06);
+    --shadow-medium: 0 10px 15px -3px hsl(25 30% 30% / 0.1), 0 4px 6px -4px hsl(25 30% 30% / 0.08);
+    --shadow-large: 0 25px 50px -12px hsl(25 30% 30% / 0.2);
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 150 10% 26%;
-    --sidebar-primary: 152 69% 45%;
+    --sidebar-background: 40 20% 97%;
+    --sidebar-foreground: 25 20% 26%;
+    --sidebar-primary: 20 60% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 150 20% 96%;
-    --sidebar-accent-foreground: 150 10% 15%;
-    --sidebar-border: 150 15% 91%;
-    --sidebar-ring: 152 69% 55%;
+    --sidebar-accent: 35 25% 95%;
+    --sidebar-accent-foreground: 25 25% 15%;
+    --sidebar-border: 30 18% 90%;
+    --sidebar-ring: 20 60% 50%;
   }
 
   .dark {
-    --background: 150 15% 8%;
-    --foreground: 150 20% 98%;
+    --background: 25 20% 8%;
+    --foreground: 35 20% 95%;
 
-    --card: 150 15% 11%;
-    --card-foreground: 150 20% 98%;
+    --card: 25 18% 12%;
+    --card-foreground: 35 20% 95%;
 
-    --popover: 150 15% 11%;
-    --popover-foreground: 150 20% 98%;
+    --popover: 25 18% 12%;
+    --popover-foreground: 35 20% 95%;
 
-    --primary: 152 69% 50%;
-    --primary-foreground: 150 15% 8%;
+    --primary: 20 60% 50%;
+    --primary-foreground: 25 20% 8%;
 
-    --primary-bright: 152 76% 55%;
-    --primary-dark: 152 65% 40%;
+    --primary-bright: 20 65% 55%;
+    --primary-dark: 20 55% 40%;
 
-    --secondary: 150 20% 17%;
-    --secondary-foreground: 150 20% 98%;
+    --secondary: 25 18% 18%;
+    --secondary-foreground: 35 20% 95%;
 
-    --muted: 150 20% 17%;
-    --muted-foreground: 150 15% 65%;
+    --muted: 25 18% 18%;
+    --muted-foreground: 30 15% 60%;
 
-    --accent: 152 60% 45%;
-    --accent-foreground: 150 15% 8%;
+    --accent: 20 55% 48%;
+    --accent-foreground: 25 20% 8%;
 
-    --success: 152 69% 50%;
+    --success: 152 60% 45%;
     --success-foreground: 0 0% 100%;
 
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
 
     --destructive: 0 63% 31%;
-    --destructive-foreground: 150 20% 98%;
+    --destructive-foreground: 35 20% 95%;
 
-    --border: 150 20% 17%;
-    --input: 150 20% 17%;
-    --ring: 152 69% 55%;
+    --border: 25 18% 20%;
+    --input: 25 18% 20%;
+    --ring: 20 60% 50%;
 
-    --footer-bg: 152 45% 10%;
-    --footer-foreground: 150 20% 85%;
+    --footer-bg: 25 30% 10%;
+    --footer-foreground: 35 20% 85%;
 
-    --sidebar-background: 150 15% 10%;
-    --sidebar-foreground: 150 20% 96%;
-    --sidebar-primary: 152 69% 50%;
+    --sidebar-background: 25 20% 10%;
+    --sidebar-foreground: 35 20% 94%;
+    --sidebar-primary: 20 60% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 150 15% 16%;
-    --sidebar-accent-foreground: 150 20% 96%;
-    --sidebar-border: 150 15% 16%;
-    --sidebar-ring: 152 69% 55%;
+    --sidebar-accent: 25 18% 16%;
+    --sidebar-accent-foreground: 35 20% 94%;
+    --sidebar-border: 25 18% 18%;
+    --sidebar-ring: 20 60% 55%;
   }
 }
 
@@ -180,11 +180,11 @@
     @apply bg-card/80 backdrop-blur-sm border border-border/50;
   }
 
-  /* Hero section background - Light green with radial gradient */
+  /* Hero section background - Warm beige with radial gradient */
   .hero-bg {
     background: 
-      radial-gradient(ellipse 80% 60% at 50% 45%, hsl(152 75% 75% / 0.6) 0%, hsl(152 60% 85% / 0.3) 40%, transparent 70%),
-      linear-gradient(180deg, hsl(152 40% 92%) 0%, hsl(152 35% 88%) 100%);
+      radial-gradient(ellipse 80% 60% at 50% 45%, hsl(30 35% 85% / 0.6) 0%, hsl(35 30% 90% / 0.3) 40%, transparent 70%),
+      linear-gradient(180deg, hsl(35 35% 93%) 0%, hsl(35 30% 90%) 100%);
   }
 
   /* Feature card hover effect */
@@ -215,7 +215,7 @@
     animation-delay: 1s;
   }
 
-  /* Footer dark green background */
+  /* Footer dark coffee background */
   .footer-bg {
     background: hsl(var(--footer-bg));
     color: hsl(var(--footer-foreground));
