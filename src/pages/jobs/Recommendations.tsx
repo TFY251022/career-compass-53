@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAppState } from '@/contexts/AppContext';
 import { AILoadingSpinner } from '@/components/loading/LoadingStates';
 import EmbeddedPreferenceSurvey from '@/components/survey/EmbeddedPreferenceSurvey';
+import ResumeSelector from '@/components/survey/ResumeSelector';
 import AlertModal from '@/components/modals/AlertModal';
 import icon104 from '@/assets/104-icon.png';
 
@@ -244,7 +245,8 @@ const Recommendations = () => {
                   告訴我們您的工作偏好，我們將為您精準匹配最適合的職缺
                 </p>
               </div>
-              <div className="max-w-2xl mx-auto">
+              <div className="max-w-2xl mx-auto space-y-4 md:space-y-6">
+                <ResumeSelector />
                 <EmbeddedPreferenceSurvey onComplete={handleSurveyComplete} />
               </div>
             </motion.div>

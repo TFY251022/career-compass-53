@@ -6,66 +6,15 @@ import { Link } from 'react-router-dom';
 import RightDrawer from '@/components/panels/RightDrawer';
 import { motion } from 'framer-motion';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
-
-interface Resume {
-  id: number;
-  name: string;
-  updatedAt: string;
-  content: string;
-}
+import { useResumes, type ResumeItem } from '@/contexts/ResumeContext';
 
 const MyResumes = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedResume, setSelectedResume] = useState<Resume | null>(null);
+  const [selectedResume, setSelectedResume] = useState<ResumeItem | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  const { resumes } = useResumes();
 
-  const resumes: Resume[] = [
-    { 
-      id: 1, 
-      name: '軟體工程師履歷_v2.pdf', 
-      updatedAt: '2024-01-15',
-      content: `王小明
-前端工程師
-
-聯絡方式
-Email: xiaoming@example.com
-電話: 0912-345-678
-
-工作經歷
-
-科技公司 A | 前端工程師 | 2022 - 現在
-• 開發維護公司核心產品前端
-• 使用 React + TypeScript 建構現代化 UI
-• 優化效能，提升載入速度 40%
-
-新創公司 B | 初階工程師 | 2020 - 2022
-• 參與多個客戶專案開發
-• 學習並應用前端最佳實踐
-
-技能
-React, TypeScript, JavaScript, CSS, Git, Node.js`
-    },
-    { 
-      id: 2, 
-      name: '前端工程師履歷.docx', 
-      updatedAt: '2024-01-10',
-      content: `王小明 - 前端工程師履歷
-
-專精於 React 生態系統的前端開發者，
-具備 3 年以上實戰經驗。
-
-核心技能：
-- React / Next.js
-- TypeScript
-- Tailwind CSS
-- REST API 整合
-
-期望職位：資深前端工程師
-期望薪資：NT$ 70,000 - 90,000`
-    },
-  ];
-
-  const handlePreview = (resume: Resume) => {
+  const handlePreview = (resume: ResumeItem) => {
     setSelectedResume(resume);
     setDrawerOpen(true);
   };
