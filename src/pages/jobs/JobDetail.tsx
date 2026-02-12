@@ -226,7 +226,7 @@ const JobDetail = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+      <div className="min-h-screen">
         <div className="container py-8 animate-fade-in">
           <div className="max-w-4xl mx-auto">
             {/* Smart Back Navigation */}

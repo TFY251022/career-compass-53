@@ -325,7 +325,7 @@
          onLoginClick={handleGatekeeperLoginClick}
        />
  
-       <div className="min-h-screen bg-background">
+       <div className="min-h-screen">
          {/* Header */}
          <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-30">
            <div className="container py-6">
