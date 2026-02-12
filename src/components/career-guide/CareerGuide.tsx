@@ -67,7 +67,7 @@ const CareerGuide = forwardRef<HTMLDivElement>((_, ref) => {
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
           >
-            <div className="bg-background rounded-2xl shadow-large border overflow-hidden">
+            <div className="ui-white rounded-2xl border overflow-hidden">
               {/* Header */}
               <div className="bg-primary p-4 flex items-center justify-between text-primary-foreground">
                 <div className="flex items-center gap-3">

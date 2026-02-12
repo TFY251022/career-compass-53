@@ -117,7 +117,7 @@ const PasswordModal = ({ open, onOpenChange }: PasswordModalProps) => {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             >
-              <div className="bg-background rounded-2xl shadow-large border overflow-hidden">
+              <div className="ui-white rounded-2xl border overflow-hidden">
                 {/* Header */}
                 <div className="relative p-5 pb-3 border-b">
                   <div className="flex items-center gap-3">
