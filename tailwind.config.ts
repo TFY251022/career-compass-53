@@ -61,6 +61,11 @@ export default {
           DEFAULT: "hsl(var(--footer-bg))",
           foreground: "hsl(var(--footer-foreground))",
         },
+        news: {
+          DEFAULT: "hsl(var(--news-bg))",
+        },
+        "icon-dark": "hsl(var(--icon-dark))",
+        "icon-light": "hsl(var(--icon-light))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

@@ -69,15 +69,15 @@ const Footer = () => {
             <h4 className="font-semibold mb-4 text-white">聯絡資訊</h4>
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-sm text-white/70">
-                <Mail className="h-4 w-4 text-white/60" />
+                <Mail className="h-4 w-4 text-icon-light" />
                 <span>contact@careerpilot.com</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-white/70">
-                <Phone className="h-4 w-4 text-white/60" />
+                <Phone className="h-4 w-4 text-icon-light" />
                 <span>+886 2 1234 5678</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-white/70">
-                <MapPin className="h-4 w-4 text-white/60 mt-0.5" />
+                <MapPin className="h-4 w-4 text-icon-light mt-0.5" />
                 <span>台北市信義區信義路五段7號</span>
               </li>
             </ul>
