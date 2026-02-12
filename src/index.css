@@ -2,34 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 150 10% 15%;
+    /* Earth Tone Palette from 網頁最終配色.png */
+    --background: 27 73% 95%;        /* #fbf1e8 beige */
+    --foreground: 0 0% 0%;            /* #000000 pure black for titles */
 
-    --card: 0 0% 100%;
-    --card-foreground: 150 10% 15%;
+    --card: 0 0% 100%;                /* #ffffff white cards */
+    --card-foreground: 0 0% 0%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 150 10% 15%;
+    --popover-foreground: 0 0% 0%;
 
-    /* Primary Green - Main CTA color */
-    --primary: 152 69% 45%;
+    /* Primary Copper - Brand accent #8d4903 */
+    --primary: 30 96% 28%;
     --primary-foreground: 0 0% 100%;
 
-    /* Bright accent green for highlights */
-    --primary-bright: 152 76% 52%;
-    --primary-dark: 152 65% 35%;
+    /* Bright/Dark variants */
+    --primary-bright: 30 90% 35%;
+    --primary-dark: 30 96% 22%;
 
-    --secondary: 150 20% 96%;
-    --secondary-foreground: 150 10% 15%;
+    --secondary: 27 40% 92%;
+    --secondary-foreground: 23 21% 33%;
 
-    --muted: 150 15% 95%;
-    --muted-foreground: 150 10% 45%;
+    --muted: 27 30% 91%;
+    --muted-foreground: 23 21% 33%;    /* #675143 */
 
-    --accent: 152 60% 40%;
+    --accent: 30 96% 28%;
     --accent-foreground: 0 0% 100%;
 
     --success: 152 69% 45%;
@@ -41,59 +42,66 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 150 15% 90%;
-    --input: 150 15% 90%;
-    --ring: 152 69% 45%;
+    --border: 27 30% 85%;
+    --input: 27 30% 85%;
+    --ring: 30 96% 28%;
 
     --radius: 0.75rem;
 
-    /* Footer darker green */
-    --footer-bg: 152 45% 18%;
-    --footer-foreground: 150 20% 90%;
+    /* Header & Footer - Deep Coffee #222a26 */
+    --footer-bg: 150 11% 15%;
+    --footer-foreground: 27 40% 92%;
 
-    /* Custom tokens - Professional Green Theme */
-    --gradient-primary: linear-gradient(135deg, hsl(152 69% 45%) 0%, hsl(165 60% 42%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(152 69% 45%) 0%, hsl(160 50% 40%) 50%, hsl(165 60% 42%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(150 20% 98%) 100%);
-    --gradient-light: linear-gradient(135deg, hsl(152 50% 95%) 0%, hsl(165 40% 93%) 100%);
-    --shadow-soft: 0 4px 6px -1px hsl(152 69% 45% / 0.1), 0 2px 4px -2px hsl(152 69% 45% / 0.1);
-    --shadow-medium: 0 10px 15px -3px hsl(152 69% 45% / 0.1), 0 4px 6px -4px hsl(152 69% 45% / 0.1);
-    --shadow-large: 0 25px 50px -12px hsl(152 69% 45% / 0.25);
+    /* Custom tokens - Earth Tone Theme */
+    --gradient-primary: linear-gradient(135deg, hsl(30 96% 28%) 0%, hsl(25 80% 35%) 100%);
+    --gradient-hero: radial-gradient(ellipse 80% 50% at 50% 50%, hsl(30 60% 75% / 0.4) 0%, hsl(27 50% 80% / 0.2) 50%, transparent 80%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(27 40% 98%) 100%);
+    --gradient-light: linear-gradient(135deg, hsl(27 50% 95%) 0%, hsl(27 40% 93%) 100%);
+    --shadow-soft: 0 4px 6px -1px hsl(30 40% 30% / 0.08), 0 2px 4px -2px hsl(30 40% 30% / 0.06);
+    --shadow-medium: 0 10px 15px -3px hsl(30 40% 30% / 0.1), 0 4px 6px -4px hsl(30 40% 30% / 0.08);
+    --shadow-warm: 0 4px 16px -2px hsl(27 40% 50% / 0.12);
+    --shadow-large: 0 25px 50px -12px hsl(30 40% 30% / 0.2);
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 150 10% 26%;
-    --sidebar-primary: 152 69% 45%;
+    /* Stat number color #9a6752 */
+    --stat-number: 17 31% 46%;
+    /* Icon on light bg #8d4903, icon on dark bg light */
+    --icon-dark: 30 96% 28%;
+    --icon-light: 26 42% 76%;         /* #dabea8 */
+
+    --sidebar-background: 27 40% 97%;
+    --sidebar-foreground: 23 21% 33%;
+    --sidebar-primary: 30 96% 28%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 150 20% 96%;
-    --sidebar-accent-foreground: 150 10% 15%;
-    --sidebar-border: 150 15% 91%;
-    --sidebar-ring: 152 69% 55%;
+    --sidebar-accent: 27 40% 92%;
+    --sidebar-accent-foreground: 23 21% 33%;
+    --sidebar-border: 27 30% 88%;
+    --sidebar-ring: 30 96% 35%;
   }
 
   .dark {
-    --background: 150 15% 8%;
-    --foreground: 150 20% 98%;
+    --background: 23 15% 10%;
+    --foreground: 27 40% 95%;
 
-    --card: 150 15% 11%;
-    --card-foreground: 150 20% 98%;
+    --card: 23 15% 14%;
+    --card-foreground: 27 40% 95%;
 
-    --popover: 150 15% 11%;
-    --popover-foreground: 150 20% 98%;
+    --popover: 23 15% 14%;
+    --popover-foreground: 27 40% 95%;
 
-    --primary: 152 69% 50%;
-    --primary-foreground: 150 15% 8%;
+    --primary: 30 90% 35%;
+    --primary-foreground: 0 0% 100%;
 
-    --primary-bright: 152 76% 55%;
-    --primary-dark: 152 65% 40%;
+    --primary-bright: 30 85% 42%;
+    --primary-dark: 30 96% 28%;
 
-    --secondary: 150 20% 17%;
-    --secondary-foreground: 150 20% 98%;
+    --secondary: 23 15% 18%;
+    --secondary-foreground: 27 40% 90%;
 
-    --muted: 150 20% 17%;
-    --muted-foreground: 150 15% 65%;
+    --muted: 23 15% 18%;
+    --muted-foreground: 27 25% 60%;
 
-    --accent: 152 60% 45%;
-    --accent-foreground: 150 15% 8%;
+    --accent: 30 90% 35%;
+    --accent-foreground: 0 0% 100%;
 
     --success: 152 69% 50%;
     --success-foreground: 0 0% 100%;
@@ -102,23 +110,27 @@
     --warning-foreground: 0 0% 100%;
 
     --destructive: 0 63% 31%;
-    --destructive-foreground: 150 20% 98%;
+    --destructive-foreground: 27 40% 95%;
 
-    --border: 150 20% 17%;
-    --input: 150 20% 17%;
-    --ring: 152 69% 55%;
+    --border: 23 15% 22%;
+    --input: 23 15% 22%;
+    --ring: 30 90% 40%;
 
-    --footer-bg: 152 45% 10%;
-    --footer-foreground: 150 20% 85%;
+    --footer-bg: 150 11% 10%;
+    --footer-foreground: 27 40% 85%;
 
-    --sidebar-background: 150 15% 10%;
-    --sidebar-foreground: 150 20% 96%;
-    --sidebar-primary: 152 69% 50%;
+    --stat-number: 17 31% 55%;
+    --icon-dark: 30 90% 40%;
+    --icon-light: 26 42% 76%;
+
+    --sidebar-background: 23 15% 12%;
+    --sidebar-foreground: 27 40% 90%;
+    --sidebar-primary: 30 90% 35%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 150 15% 16%;
-    --sidebar-accent-foreground: 150 20% 96%;
-    --sidebar-border: 150 15% 16%;
-    --sidebar-ring: 152 69% 55%;
+    --sidebar-accent: 23 15% 18%;
+    --sidebar-accent-foreground: 27 40% 90%;
+    --sidebar-border: 23 15% 20%;
+    --sidebar-ring: 30 90% 40%;
   }
 }
 
@@ -136,7 +148,7 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif;
+    font-family: 'Noto Sans TC', 'Inter', system-ui, sans-serif;
     overflow-x: hidden !important;
     max-width: 100vw !important;
     width: 100% !important;
@@ -144,6 +156,7 @@
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
+    font-family: 'Noto Sans TC', system-ui, sans-serif;
   }
 }
 
@@ -172,6 +185,10 @@
     box-shadow: var(--shadow-medium);
   }
 
+  .shadow-warm {
+    box-shadow: var(--shadow-warm);
+  }
+
   .shadow-large {
     box-shadow: var(--shadow-large);
   }
@@ -180,16 +197,17 @@
     @apply bg-card/80 backdrop-blur-sm border border-border/50;
   }
 
-  /* Hero section background - Light green with radial gradient */
+  /* Hero section background - Warm beige with radial copper glow */
   .hero-bg {
-    background: 
-      radial-gradient(ellipse 80% 60% at 50% 45%, hsl(152 75% 75% / 0.6) 0%, hsl(152 60% 85% / 0.3) 40%, transparent 70%),
-      linear-gradient(180deg, hsl(152 40% 92%) 0%, hsl(152 35% 88%) 100%);
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 45%, hsl(30 60% 75% / 0.35) 0%, hsl(27 50% 80% / 0.15) 50%, transparent 75%),
+      hsl(27, 73%, 95%);
   }
 
-  /* Feature card hover effect */
+  /* Feature card with warm shadow on beige bg */
   .feature-card {
     @apply bg-card border border-border rounded-xl p-6 transition-all duration-300;
+    box-shadow: var(--shadow-warm);
   }
 
   .feature-card:hover {
@@ -198,12 +216,8 @@
 
   /* Floating animation for hero cards */
   @keyframes float {
-    0%, 100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
   }
 
   .animate-float {
@@ -215,10 +229,14 @@
     animation-delay: 1s;
   }
 
-  /* Footer dark green background */
+  /* Footer & Header dark coffee background */
   .footer-bg {
     background: hsl(var(--footer-bg));
     color: hsl(var(--footer-foreground));
+  }
+
+  .header-dark {
+    background: hsl(150 11% 15%);
   }
 }
 
@@ -226,6 +244,10 @@
   .text-gradient {
     @apply bg-clip-text text-transparent;
     background: var(--gradient-primary);
+  }
+
+  .text-stat {
+    color: hsl(var(--stat-number));
   }
 }
 

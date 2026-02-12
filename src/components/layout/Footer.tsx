@@ -1,46 +1,23 @@
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Star } from 'lucide-react';
+
 const Footer = () => {
-  const quickLinks = [{
-    to: '/',
-    label: '首頁'
-  }, {
-    to: '/team',
-    label: '關於我們'
-  }, {
-    to: '/faq',
-    label: '常見問題'
-  }];
-  const serviceLinks = [{
-    to: '/jobs/skill-search',
-    label: '職缺分析'
-  }, {
-    to: '/resume/optimize',
-    label: '履歷優化'
-  }, {
-    to: '/jobs/recommendations',
-    label: '職位匹配'
-  }, {
-    to: '/interview/prep',
-    label: '面試準備'
-  }, {
-    to: '/analysis/skills',
-    label: '職涯地圖'
-  }];
-  const memberLinks = [{
-    to: '/member/center',
-    label: '會員中心'
-  }, {
-    to: '/member/my-resumes',
-    label: '我的履歷'
-  }, {
-    to: '/member/upload-resume',
-    label: '上傳履歷'
-  }, {
-    to: '/member/career-path',
-    label: '職涯路徑'
-  }];
-  return <footer className="footer-bg">
+  const quickLinks = [
+    { to: '/', label: '首頁' },
+    { to: '/team', label: '關於我們' },
+    { to: '/faq', label: '常見問題' },
+  ];
+
+  const serviceLinks = [
+    { to: '/jobs/skill-search', label: '職缺分析' },
+    { to: '/resume/optimize', label: '履歷優化' },
+    { to: '/jobs/recommendations', label: '職位匹配' },
+    { to: '/interview/prep', label: '面試準備' },
+    { to: '/analysis/skills', label: '職涯地圖' },
+  ];
+
+  return (
+    <footer className="footer-bg">
       <div className="container py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
@@ -63,11 +40,13 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4 text-white">快速連結</h4>
             <ul className="space-y-2">
-              {quickLinks.map(link => <li key={link.to}>
+              {quickLinks.map(link => (
+                <li key={link.to}>
                   <Link to={link.to} className="text-sm text-white/70 hover:text-white transition-colors">
                     {link.label}
                   </Link>
-                </li>)}
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -75,28 +54,30 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4 text-white">服務項目</h4>
             <ul className="space-y-2">
-              {serviceLinks.map(link => <li key={link.to}>
+              {serviceLinks.map(link => (
+                <li key={link.to}>
                   <Link to={link.to} className="text-sm text-white/70 hover:text-white transition-colors">
                     {link.label}
                   </Link>
-                </li>)}
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Contact Info - icons use light color on dark bg */}
           <div>
             <h4 className="font-semibold mb-4 text-white">聯絡資訊</h4>
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-sm text-white/70">
-                <Mail className="h-4 w-4 text-primary" />
+                <Mail className="h-4 w-4 text-white/60" />
                 <span>contact@careerpilot.com</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-white/70">
-                <Phone className="h-4 w-4 text-primary" />
+                <Phone className="h-4 w-4 text-white/60" />
                 <span>+886 2 1234 5678</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-white/70">
-                <MapPin className="h-4 w-4 text-primary mt-0.5" />
+                <MapPin className="h-4 w-4 text-white/60 mt-0.5" />
                 <span>台北市信義區信義路五段7號</span>
               </li>
             </ul>
@@ -106,18 +87,16 @@ const Footer = () => {
         {/* Copyright */}
         <div className="border-t border-white/10 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-white/60">
-            © 2024 Career Pilot 職星領航員. All rights reserved.
+            © 2026 Career Pilot 職星領航員. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">
-              隱私政策
-            </Link>
-            <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">
-              服務條款
-            </Link>
+            <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">隱私政策</Link>
+            <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">服務條款</Link>
           </div>
         </div>
       </div>
-    </footer>;
+    </footer>
+  );
 };
+
 export default Footer;
