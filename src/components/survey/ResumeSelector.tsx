@@ -19,7 +19,7 @@ const ResumeSelector = () => {
     >
       <Card className={`transition-all duration-300 ${
         selectedResumeId
-          ? 'border-primary/40 shadow-[0_0_12px_hsl(20_60%_45%/0.15)]'
+          ? 'border-primary/40 shadow-[0_0_12px_hsl(30_96%_28%/0.15)]'
           : 'border-border'
       }`}>
         <CardHeader className="pb-2 md:pb-4">

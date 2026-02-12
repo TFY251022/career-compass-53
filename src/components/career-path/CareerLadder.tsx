@@ -33,17 +33,18 @@ const ChevronArrow = ({
 
   const pathD = `M0,0 L${w - point},0 L${w},${h / 2} L${w - point},${h} L0,${h} L${point},${h / 2} Z`;
 
+  /* Figma: brand-primary #8d4903 = hsl(30 96% 28%) */
   const fillColor = isCurrentStep
-    ? 'hsl(20 60% 45%)'
+    ? 'hsl(30 96% 28%)'
     : isReal
-      ? 'hsl(25 45% 80%)'
-      : 'hsl(30 12% 92%)';
+      ? 'hsl(26 40% 76%)'  /* Figma: 圖標淺 #dabea8 */
+      : 'hsl(28 50% 92%)';
 
   const strokeColor = isCurrentStep
-    ? 'hsl(20 55% 35%)'
+    ? 'hsl(30 96% 22%)'
     : isReal
-      ? 'hsl(25 40% 68%)'
-      : 'hsl(30 10% 82%)';
+      ? 'hsl(26 35% 65%)'
+      : 'hsl(26 30% 82%)';
 
   const textColor = isCurrentStep
     ? 'text-white font-bold'
@@ -302,7 +303,7 @@ const CareerLadder = ({ isLoading }: { isLoading: boolean }) => {
         {/* Legend */}
         <div className="flex items-center gap-4 mt-3 text-[10px] md:text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-sm" style={{ background: 'hsl(25 45% 80%)' }} />
+            <span className="h-2.5 w-2.5 rounded-sm" style={{ background: 'hsl(26 40% 76%)' }} />
             真實經歷
           </span>
           <span className="flex items-center gap-1.5">
@@ -310,7 +311,7 @@ const CareerLadder = ({ isLoading }: { isLoading: boolean }) => {
             建議路徑
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-sm bg-primary" style={{ boxShadow: '0 0 6px hsl(20 60% 45% / 0.5)' }} />
+            <span className="h-2.5 w-2.5 rounded-sm bg-primary" style={{ boxShadow: '0 0 6px hsl(30 96% 28% / 0.5)' }} />
             當前位置
           </span>
         </div>
