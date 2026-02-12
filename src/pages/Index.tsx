@@ -244,8 +244,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* News Section - Beige background */}
-      <section className="py-16 md:py-20 bg-background">
+      {/* News Section - Muted sub-section #FFFBF5 */}
+      <section className="py-16 md:py-20 bg-news">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -253,11 +253,7 @@ const Index = () => {
             viewport={{ once: true }}
             className="mb-8"
           >
-            <div className="flex items-center gap-2 mb-2">
-              <DiamondStar className="h-3 w-3 text-primary" />
-              <p className="text-primary font-medium text-sm">最新消息</p>
-            </div>
-            <h2 className="text-2xl md:text-[36px] font-bold mb-4 text-foreground">動態與公告</h2>
+            <h2 className="text-2xl md:text-[36px] font-bold mb-4 text-foreground">最新消息</h2>
             <p className="text-muted-foreground font-light">
               了解職星領航員的最新動態與更新資訊
             </p>
@@ -271,14 +267,14 @@ const Index = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="flex items-center gap-6 p-4 bg-card rounded-xl border border-border shadow-warm hover:shadow-medium transition-shadow"
+                className="flex items-center gap-6 p-4 bg-card rounded-xl border border-border transition-colors"
               >
                 <div className="flex-shrink-0 text-center border-r border-border pr-6">
                   <p className="text-2xl font-bold text-primary">{item.date}</p>
                   <p className="text-xs text-muted-foreground">{item.month}</p>
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1 text-foreground">{item.title}</h3>
+                  <h3 className="font-semibold mb-1 text-primary">{item.title}</h3>
                   <p className="text-sm text-muted-foreground font-light">{item.description}</p>
                 </div>
               </motion.div>
@@ -313,8 +309,8 @@ const Index = () => {
               viewport={{ once: true }}
               className="flex items-start gap-4"
             >
-              <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Mail className="h-6 w-6 text-primary" />
+              <div className="flex-shrink-0 h-12 w-12 rounded-full bg-icon-dark flex items-center justify-center">
+                <Mail className="h-6 w-6 text-icon-light" />
               </div>
               <div>
                 <h3 className="font-semibold mb-1 text-foreground">電子信箱</h3>
@@ -329,8 +325,8 @@ const Index = () => {
               transition={{ delay: 0.1 }}
               className="flex items-start gap-4"
             >
-              <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Phone className="h-6 w-6 text-primary" />
+              <div className="flex-shrink-0 h-12 w-12 rounded-full bg-icon-dark flex items-center justify-center">
+                <Phone className="h-6 w-6 text-icon-light" />
               </div>
               <div>
                 <h3 className="font-semibold mb-1 text-foreground">專案諮詢</h3>

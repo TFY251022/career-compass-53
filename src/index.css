@@ -62,6 +62,8 @@
     --shadow-warm: 0 4px 16px -2px hsl(27 40% 50% / 0.12);
     --shadow-large: 0 25px 50px -12px hsl(30 40% 30% / 0.2);
 
+    /* News / muted sub-section bg #FFFBF5 */
+    --news-bg: 36 100% 98%;
     /* Stat number color #9a6752 */
     --stat-number: 17 31% 46%;
     /* Icon on light bg #8d4903, icon on dark bg light */
@@ -119,6 +121,7 @@
     --footer-bg: 150 11% 10%;
     --footer-foreground: 27 40% 85%;
 
+    --news-bg: 36 50% 95%;
     --stat-number: 17 31% 55%;
     --icon-dark: 30 90% 40%;
     --icon-light: 26 42% 76%;
