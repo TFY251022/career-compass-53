@@ -12,7 +12,7 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden max-w-[100vw]">
       <Navbar />
-      <main className="flex-1 overflow-x-hidden max-w-full">{children}</main>
+      <main className="flex-1 overflow-x-hidden max-w-full bg-card">{children}</main>
       <Footer />
       <CareerGuide />
       <DevStateToggles />
