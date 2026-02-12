@@ -48,8 +48,10 @@
 
     --radius: 0.75rem;
 
-    /* Header & Footer - Deep Coffee #222a26 */
-    --footer-bg: 150 11% 15%;
+    /* Header - Warm Brown #966949 */
+    --header-bg: 27 32% 44%;
+    /* Footer - Deep Brown #502D03 */
+    --footer-bg: 30 94% 16%;
     --footer-foreground: 27 40% 92%;
 
     /* Custom tokens - Earth Tone Theme */
@@ -118,7 +120,8 @@
     --input: 23 15% 22%;
     --ring: 30 90% 40%;
 
-    --footer-bg: 150 11% 10%;
+    --header-bg: 27 32% 38%;
+    --footer-bg: 30 94% 13%;
     --footer-foreground: 27 40% 85%;
 
     --news-bg: 36 50% 95%;
@@ -232,14 +235,21 @@
     animation-delay: 1s;
   }
 
-  /* Footer & Header dark coffee background */
+  /* Footer dark brown background */
   .footer-bg {
     background: hsl(var(--footer-bg));
     color: hsl(var(--footer-foreground));
   }
 
-  .header-dark {
-    background: hsl(150 11% 15%);
+  /* Header warm brown background */
+  .header-bg {
+    background: hsl(var(--header-bg));
+  }
+
+  /* White UI component lockdown — modals, tooltips, alerts, chatbot */
+  .ui-white {
+    background: #ffffff !important;
+    box-shadow: var(--shadow-warm);
   }
 }
 

@@ -36,8 +36,8 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Dark coffee header #222a26 */}
-      <nav className="sticky top-0 z-50 w-full header-dark border-b border-white/10">
+      {/* Warm brown header #966949 */}
+      <nav className="sticky top-0 z-50 w-full header-bg border-b border-white/10">
         <div className="container flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
