@@ -285,7 +285,7 @@ ${currentTemplate.data.map(d => `- ${d.dimension}: 當前 ${d.user}% / 目標 ${
 
 三、職能差距分析
 - 自評職級: ${gapAnalysis.selfAssessment}
-- 評估等級: ${gapAnalysis.aiAssessment}
+- 評估職級: ${gapAnalysis.aiAssessment}
 - 匹配度: ${gapAnalysis.matchPercentage}%
 - 目標職位: ${gapAnalysis.targetPosition}
 
@@ -473,16 +473,16 @@ ${sideProjects.map(p => `- ${p.name} (技術: ${p.technologies.join(', ')})`).jo
         {/* Header */}
         <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-30">
           <div className="container py-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col items-center text-center gap-2">
+              <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
                   <Radar className="h-6 w-6 text-primary" />
                 </div>
-                <div>
-                  <h1 className="text-2xl font-bold">職能圖譜分析</h1>
-                  <p className="text-muted-foreground">深入分析您的技能優勢與發展潛力</p>
-                </div>
+                <h1 className="text-2xl font-bold">職能圖譜分析</h1>
               </div>
+              <p className="text-muted-foreground">深入分析您的技能優勢與發展潛力</p>
+            </div>
+            <div className="flex justify-end mt-4">
               {!isLoading && (
                 <Button className="gradient-primary gap-2 hidden sm:flex" onClick={handleDownloadReport}>
                   <FileText className="h-4 w-4" />
@@ -524,19 +524,9 @@ ${sideProjects.map(p => `- ${p.name} (技術: ${p.technologies.join(', ')})`).jo
 
                 <Card className="transition-all duration-300 hover:shadow-medium">
                   <CardContent className="pt-6">
-                    <div className="flex flex-col md:flex-row items-center gap-6">
-                      {/* Mascot */}
-                      <div className="shrink-0 flex flex-col items-center gap-2">
-                        <img
-                          src={currentTemplate.mascot}
-                          alt={currentTemplate.label}
-                          className="w-36 h-36 object-contain"
-                        />
-                        <span className="text-sm font-medium text-muted-foreground">{currentTemplate.label}</span>
-                      </div>
-
+                    <div className="flex flex-col md:flex-row items-center gap-8">
                       {/* Radar chart */}
-                      <div className="h-80 w-full">
+                      <div className="h-80 w-full md:flex-1">
                         <ResponsiveContainer width="100%" height="100%">
                           <RadarChart data={currentTemplate.data}>
                             <PolarGrid stroke="#dabea8" />
@@ -570,22 +560,36 @@ ${sideProjects.map(p => `- ${p.name} (技術: ${p.technologies.join(', ')})`).jo
                           </RadarChart>
                         </ResponsiveContainer>
                       </div>
+
+                      {/* Mascot - right side */}
+                      <div className="shrink-0 flex flex-col items-center gap-3 md:w-48">
+                        <img
+                          src={currentTemplate.mascot}
+                          alt={currentTemplate.label}
+                          className="w-48 h-48 object-contain"
+                        />
+                        <span className="text-sm font-semibold text-muted-foreground">{currentTemplate.label}</span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 {/* Global Summary Callout */}
-                <div className="p-5 rounded-xl bg-primary/10 border border-primary/20">
-                  <div className="flex items-start gap-3">
-                    <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                      <TrendingUp className="h-5 w-5 text-primary" />
+                <Card className="shadow-warm">
+                  <CardContent className="pt-6">
+                    <div className="p-5 rounded-xl" style={{ backgroundColor: '#fbf1e8' }}>
+                      <div className="flex items-start gap-3">
+                        <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                          <TrendingUp className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-foreground mb-1">整體評估結果</p>
+                          <p className="text-[#675143] leading-relaxed">{gapAnalysis.summary}</p>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-semibold text-foreground mb-1">整體評估結果</p>
-                      <p className="text-muted-foreground leading-relaxed">{gapAnalysis.summary}</p>
-                    </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               </motion.div>
             </ContentTransition>
           </section>
@@ -609,24 +613,28 @@ ${sideProjects.map(p => `- ${p.name} (技術: ${p.technologies.join(', ')})`).jo
                       <p className="text-2xl font-bold text-foreground">{gapAnalysis.selfAssessment}</p>
                     </CardContent>
                   </Card>
-                  <Card className="transition-all duration-300 hover:shadow-medium hover:-translate-y-1 border-primary/30 bg-primary/5">
+                  <Card className="transition-all duration-300 hover:shadow-medium hover:-translate-y-1 border-primary/30 shadow-warm">
                     <CardContent className="pt-6">
-                      <p className="text-sm text-muted-foreground mb-2">評估等級</p>
-                      <p className="text-2xl font-bold text-primary">{gapAnalysis.aiAssessment}</p>
+                      <div className="p-4 rounded-lg" style={{ backgroundColor: '#fbf1e8' }}>
+                        <p className="text-sm text-[#675143] mb-2">評估職級</p>
+                        <p className="text-2xl font-bold text-primary">{gapAnalysis.aiAssessment}</p>
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
 
                 {/* 評估說明 */}
-                <Card>
+                <Card className="shadow-warm">
                   <CardContent className="pt-6">
-                    <div className="flex items-start gap-3">
-                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                        <Info className="h-4 w-4 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-semibold mb-2">評估說明</p>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{gapAnalysis.assessmentExplanation}</p>
+                    <div className="p-5 rounded-xl" style={{ backgroundColor: '#FFFBF5' }}>
+                      <div className="flex items-start gap-3">
+                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                          <Info className="h-4 w-4 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-foreground mb-2">評估說明</p>
+                          <p className="text-sm text-[#675143] leading-relaxed">{gapAnalysis.assessmentExplanation}</p>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
@@ -710,12 +718,14 @@ ${sideProjects.map(p => `- ${p.name} (技術: ${p.technologies.join(', ')})`).jo
                   <h2 className="text-xl font-bold">推薦行動計畫</h2>
                 </div>
 
-                <Card className="ui-white">
+                <Card className="ui-white shadow-warm">
                   <CardContent className="pt-6">
-                    <p className="text-muted-foreground leading-relaxed">
+                    <div className="p-5 rounded-xl" style={{ backgroundColor: '#fbf1e8' }}>
+                    <p className="text-[#675143] leading-relaxed">
                       根據您的職能差距分析，我們為您精選以下學習資源。建議優先完成「高優先」技能的相關課程，
                       每週投入 5-10 小時，預計 3-6 個月內可達成目標職位的技能要求。
                     </p>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
