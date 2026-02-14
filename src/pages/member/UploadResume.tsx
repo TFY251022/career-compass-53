@@ -692,6 +692,8 @@ const EditableField = ({
   icon,
   multiline = false,
   placeholder,
+  required = false,
+  isInvalid = false,
 }: {
   label: string;
   value: string;
@@ -701,10 +703,14 @@ const EditableField = ({
   icon?: React.ReactNode;
   multiline?: boolean;
   placeholder?: string;
+  required?: boolean;
+  isInvalid?: boolean;
 }) => (
-  <div className="space-y-2">
+  <div className={`space-y-2 p-3 rounded-lg border transition-all ${
+    isInvalid ? 'border-destructive shadow-[0_0_8px_hsl(var(--destructive)/0.25)]' : 'border-transparent'
+  }`}>
     <h4 className="font-medium text-sm text-muted-foreground flex items-center gap-2">
-      {icon} {label}
+      {icon} {isEditing && required && <span className="text-destructive">*</span>} {label}
     </h4>
     <div className="transition-all duration-300 ease-in-out">
       {isEditing ? (
@@ -713,14 +719,14 @@ const EditableField = ({
             value={value}
             onChange={(e) => onChange(field, e.target.value)}
             placeholder={placeholder}
-            className="text-sm transition-all duration-300 ease-in-out focus:ring-2 focus:ring-primary/50 focus:shadow-[0_0_12px_rgba(34,197,94,0.2)] focus:border-primary/60"
+            className="text-sm transition-all duration-300 ease-in-out focus:ring-2 focus:ring-primary/50 focus:border-primary/60"
           />
         ) : (
           <Input
             value={value}
             onChange={(e) => onChange(field, e.target.value)}
             placeholder={placeholder}
-            className="text-sm transition-all duration-300 ease-in-out focus:ring-2 focus:ring-primary/50 focus:shadow-[0_0_12px_rgba(34,197,94,0.2)] focus:border-primary/60"
+            className="text-sm transition-all duration-300 ease-in-out focus:ring-2 focus:ring-primary/50 focus:border-primary/60"
           />
         )
       ) : (
@@ -736,6 +742,10 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<ResumeData>({ ...data });
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+  const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
+  const [showValidationAlert, setShowValidationAlert] = useState(false);
+
+  const requiredFields = ['name', 'phone', 'email', 'education', 'experience', 'skills'];
 
   const getProficiencyLabel = (value: string) => {
     const labels: Record<string, string> = { '1': '入門', '2': '中等', '3': '精通' };
@@ -745,21 +755,51 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
   const handleEnterEdit = () => {
     setEditData({ ...data });
     setIsEditing(true);
+    setInvalidFields(new Set());
   };
 
   const handleCancelEdit = () => {
     setEditData({ ...data });
     setIsEditing(false);
+    setInvalidFields(new Set());
   };
 
   const handleFieldChange = (field: string, value: string) => {
     setEditData(prev => ({ ...prev, [field]: value }));
+    // Clear red border when user fills in the field (same as questionnaire)
+    setInvalidFields(prev => {
+      if (!prev.has(field)) return prev;
+      const next = new Set(prev);
+      next.delete(field);
+      return next;
+    });
+  };
+
+  const validateEditForm = (): boolean => {
+    const newInvalid = new Set<string>();
+    for (const field of requiredFields) {
+      const val = editData[field as keyof ResumeData];
+      if (!val || (typeof val === 'string' && val.trim() === '')) {
+        newInvalid.add(field);
+      }
+    }
+    setInvalidFields(newInvalid);
+    return newInvalid.size === 0;
+  };
+
+  const handleSaveClick = () => {
+    if (!validateEditForm()) {
+      setShowValidationAlert(true);
+      return;
+    }
+    setShowSaveConfirm(true);
   };
 
   const handleConfirmSave = () => {
     onSave(editData);
     setIsEditing(false);
     setShowSaveConfirm(false);
+    setInvalidFields(new Set());
   };
 
   const languageOptions = ['中文', '英文', '台語', '日文', '韓文', '法文', '德文', '西班牙文', '其他'];
@@ -816,7 +856,11 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Avatar and Basic Info */}
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-4 p-4 bg-background rounded-lg border transition-all duration-300">
+          <div className={`flex flex-col md:flex-row items-center md:items-start gap-4 p-4 bg-background rounded-lg border transition-all duration-300 ${
+            isEditing && (invalidFields.has('name') || invalidFields.has('phone') || invalidFields.has('email'))
+              ? 'border-destructive shadow-[0_0_8px_hsl(var(--destructive)/0.25)]'
+              : ''
+          }`}>
             {displayData.avatar ? (
               <img src={displayData.avatar} alt="Avatar" className="h-20 w-20 rounded-full object-cover border-2 border-primary/20" />
             ) : (
@@ -826,35 +870,47 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
             )}
             <div className="text-center md:text-left flex-1 space-y-2">
               {isEditing ? (
-                <Input
-                  value={editData.name}
-                  onChange={(e) => handleFieldChange('name', e.target.value)}
-                  placeholder="姓名"
-                  className="text-lg font-semibold transition-all duration-300 focus:ring-2 focus:ring-primary/50 focus:shadow-[0_0_12px_rgba(34,197,94,0.2)] focus:border-primary/60"
-                />
+                <>
+                  <Label className="text-xs text-muted-foreground"><span className="text-destructive">*</span> 姓名</Label>
+                  <Input
+                    value={editData.name}
+                    onChange={(e) => handleFieldChange('name', e.target.value)}
+                    placeholder="姓名"
+                    className={`text-lg font-semibold transition-all duration-300 focus:ring-2 focus:ring-primary/50 focus:border-primary/60 ${invalidFields.has('name') ? 'border-destructive' : ''}`}
+                  />
+                </>
               ) : (
                 <h3 className="text-lg font-semibold transition-all duration-300">{displayData.name}</h3>
               )}
               {isEditing ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  <Input
-                    value={editData.phone}
-                    onChange={(e) => handleFieldChange('phone', e.target.value)}
-                    placeholder="聯絡電話"
-                    className="text-sm transition-all duration-300 focus:ring-2 focus:ring-primary/50 focus:shadow-[0_0_12px_rgba(34,197,94,0.2)] focus:border-primary/60"
-                  />
-                  <Input
-                    value={editData.email}
-                    onChange={(e) => handleFieldChange('email', e.target.value)}
-                    placeholder="電子郵件"
-                    className="text-sm transition-all duration-300 focus:ring-2 focus:ring-primary/50 focus:shadow-[0_0_12px_rgba(34,197,94,0.2)] focus:border-primary/60"
-                  />
-                  <Input
-                    value={editData.address}
-                    onChange={(e) => handleFieldChange('address', e.target.value)}
-                    placeholder="通訊地址（選填）"
-                    className="text-sm transition-all duration-300 focus:ring-2 focus:ring-primary/50 focus:shadow-[0_0_12px_rgba(34,197,94,0.2)] focus:border-primary/60 md:col-span-2"
-                  />
+                  <div>
+                    <Label className="text-xs text-muted-foreground"><span className="text-destructive">*</span> 聯絡電話</Label>
+                    <Input
+                      value={editData.phone}
+                      onChange={(e) => handleFieldChange('phone', e.target.value)}
+                      placeholder="聯絡電話"
+                      className={`text-sm transition-all duration-300 focus:ring-2 focus:ring-primary/50 focus:border-primary/60 ${invalidFields.has('phone') ? 'border-destructive' : ''}`}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground"><span className="text-destructive">*</span> 電子郵件</Label>
+                    <Input
+                      value={editData.email}
+                      onChange={(e) => handleFieldChange('email', e.target.value)}
+                      placeholder="電子郵件"
+                      className={`text-sm transition-all duration-300 focus:ring-2 focus:ring-primary/50 focus:border-primary/60 ${invalidFields.has('email') ? 'border-destructive' : ''}`}
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label className="text-xs text-muted-foreground">通訊地址（選填）</Label>
+                    <Input
+                      value={editData.address}
+                      onChange={(e) => handleFieldChange('address', e.target.value)}
+                      placeholder="通訊地址（選填）"
+                      className="text-sm transition-all duration-300 focus:ring-2 focus:ring-primary/50 focus:border-primary/60"
+                    />
+                  </div>
                 </div>
               ) : (
               <div className="flex flex-col md:flex-row gap-2 md:gap-4 text-sm text-muted-foreground flex-wrap">
@@ -874,9 +930,9 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
             </div>
           </div>
 
-          <EditableField label="教育背景" value={displayData.education} field="education" isEditing={isEditing} onChange={handleFieldChange} icon={<GraduationCap className="h-4 w-4" />} multiline placeholder="學校名稱、科系、學位..." />
-          <EditableField label="工作經歷" value={displayData.experience} field="experience" isEditing={isEditing} onChange={handleFieldChange} icon={<Briefcase className="h-4 w-4" />} multiline placeholder="公司名稱、職稱、任職期間..." />
-          <EditableField label="技能專長" value={displayData.skills} field="skills" isEditing={isEditing} onChange={handleFieldChange} multiline placeholder="程式語言、設計軟體..." />
+          <EditableField label="教育背景" value={displayData.education} field="education" isEditing={isEditing} onChange={handleFieldChange} icon={<GraduationCap className="h-4 w-4" />} multiline placeholder="學校名稱、科系、學位..." required isInvalid={invalidFields.has('education')} />
+          <EditableField label="工作經歷" value={displayData.experience} field="experience" isEditing={isEditing} onChange={handleFieldChange} icon={<Briefcase className="h-4 w-4" />} multiline placeholder="公司名稱、職稱、任職期間..." required isInvalid={invalidFields.has('experience')} />
+          <EditableField label="技能專長" value={displayData.skills} field="skills" isEditing={isEditing} onChange={handleFieldChange} multiline placeholder="程式語言、設計軟體..." required isInvalid={invalidFields.has('skills')} />
 
           {/* Languages */}
           <div className="space-y-2">
@@ -938,7 +994,7 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
       {/* Footer Actions */}
       {isEditing ? (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-          <Button onClick={() => setShowSaveConfirm(true)} className="w-full gradient-primary h-12 text-base font-semibold">
+          <Button onClick={handleSaveClick} className="w-full gradient-primary h-12 text-base font-semibold">
             確認並儲存
           </Button>
         </motion.div>
@@ -952,6 +1008,15 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
           </Button>
         </div>
       )}
+
+      <AlertModal
+        open={showValidationAlert}
+        onClose={() => setShowValidationAlert(false)}
+        type="warning"
+        title="請完成所有必填欄位"
+        message="請先填寫所有標示 * 的必填欄位後再儲存"
+        confirmLabel="了解"
+      />
 
       <AlertModal
         open={showSaveConfirm}
