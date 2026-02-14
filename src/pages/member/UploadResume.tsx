@@ -26,6 +26,7 @@ interface ResumeData {
   bio: string;
   phone: string;
   email: string;
+  address: string;
   education: string;
   experience: string;
   skills: string;
@@ -55,6 +56,7 @@ const UploadResume = () => {
     bio: '',
     phone: '',
     email: '',
+    address: '',
     education: '',
     experience: '',
     skills: '',
@@ -112,6 +114,7 @@ const UploadResume = () => {
       bio: '擁有 5 年軟體開發經驗的全端工程師，專精於 React 與 Node.js 開發，熱愛學習新技術並解決複雜問題。',
       phone: '0912-345-678',
       email: 'example@email.com',
+      address: '台北市大安區忠孝東路三段1號',
       education: '國立台灣大學 資訊工程學系 碩士 (2018-2020)',
       experience: '資深前端工程師 - ABC科技公司 (2020-至今)\n前端工程師 - XYZ新創 (2018-2020)',
       skills: 'React, TypeScript, Node.js, Python, SQL, Git, Docker',
@@ -184,7 +187,6 @@ const UploadResume = () => {
   const validateForm = (): boolean => {
     const requiredFields = [
       { field: 'name', label: '姓名' },
-      { field: 'bio', label: '自傳' },
       { field: 'phone', label: '聯絡電話' },
       { field: 'email', label: '聯絡信箱' },
       { field: 'education', label: '教育背景' },
@@ -229,6 +231,7 @@ const UploadResume = () => {
       bio: '',
       phone: '',
       email: '',
+      address: '',
       education: '',
       experience: '',
       skills: '',
@@ -477,14 +480,14 @@ const ResumeForm = ({
           </div>
         </div>
 
+        {/* Address (optional) */}
         <div className="space-y-2">
-          <Label htmlFor="bio">自傳 *</Label>
-          <Textarea
-            id="bio"
-            placeholder="請簡述您的專業背景、職涯目標及個人特質..."
-            className="min-h-[120px]"
-            value={formData.bio}
-            onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
+          <Label htmlFor="address">通訊地址（選填）</Label>
+          <Input
+            id="address"
+            placeholder="請輸入通訊地址"
+            value={formData.address}
+            onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
           />
         </div>
 
@@ -594,14 +597,26 @@ const ResumeForm = ({
           />
         </div>
 
-        {/* Projects */}
+        {/* Projects (作品集) */}
         <div className="space-y-2">
-          <Label htmlFor="projects">專案作品（選填）</Label>
+          <Label htmlFor="projects">作品集（選填）</Label>
           <Textarea
             id="projects"
             placeholder="個人專案、作品集連結..."
             value={formData.projects}
             onChange={(e) => setFormData(prev => ({ ...prev, projects: e.target.value }))}
+          />
+        </div>
+
+        {/* Bio (自傳 - optional) */}
+        <div className="space-y-2">
+          <Label htmlFor="bio">自傳（選填）</Label>
+          <Textarea
+            id="bio"
+            placeholder="請簡述您的專業背景、職涯目標及個人特質..."
+            className="min-h-[120px]"
+            value={formData.bio}
+            onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
           />
         </div>
 
@@ -797,21 +812,31 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
                     placeholder="電子郵件"
                     className="text-sm transition-all duration-300 focus:ring-2 focus:ring-primary/50 focus:shadow-[0_0_12px_rgba(34,197,94,0.2)] focus:border-primary/60"
                   />
+                  <Input
+                    value={editData.address}
+                    onChange={(e) => handleFieldChange('address', e.target.value)}
+                    placeholder="通訊地址（選填）"
+                    className="text-sm transition-all duration-300 focus:ring-2 focus:ring-primary/50 focus:shadow-[0_0_12px_rgba(34,197,94,0.2)] focus:border-primary/60 md:col-span-2"
+                  />
                 </div>
               ) : (
-                <div className="flex flex-col md:flex-row gap-2 md:gap-4 text-sm text-muted-foreground">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-4 text-sm text-muted-foreground flex-wrap">
                   <span className="flex items-center justify-center md:justify-start gap-1">
                     <Phone className="h-4 w-4" /> {displayData.phone}
                   </span>
                   <span className="flex items-center justify-center md:justify-start gap-1">
                     <Mail className="h-4 w-4" /> {displayData.email}
                   </span>
+                  {displayData.address && (
+                    <span className="flex items-center justify-center md:justify-start gap-1">
+                      📍 {displayData.address}
+                    </span>
+                  )}
                 </div>
               )}
             </div>
           </div>
 
-          <EditableField label="自傳" value={displayData.bio} field="bio" isEditing={isEditing} onChange={handleFieldChange} multiline placeholder="請簡述您的專業背景..." />
           <EditableField label="教育背景" value={displayData.education} field="education" isEditing={isEditing} onChange={handleFieldChange} icon={<GraduationCap className="h-4 w-4" />} multiline placeholder="學校名稱、科系、學位..." />
           <EditableField label="工作經歷" value={displayData.experience} field="experience" isEditing={isEditing} onChange={handleFieldChange} icon={<Briefcase className="h-4 w-4" />} multiline placeholder="公司名稱、職稱、任職期間..." />
           <EditableField label="技能專長" value={displayData.skills} field="skills" isEditing={isEditing} onChange={handleFieldChange} multiline placeholder="程式語言、設計軟體..." />
@@ -867,7 +892,8 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
           </div>
 
           <EditableField label="證照與專案成就" value={displayData.certifications} field="certifications" isEditing={isEditing} onChange={handleFieldChange} icon={<Award className="h-4 w-4" />} multiline placeholder="相關證照、專案經驗..." />
-          <EditableField label="專案作品" value={displayData.projects} field="projects" isEditing={isEditing} onChange={handleFieldChange} multiline placeholder="個人專案、作品集連結..." />
+          <EditableField label="作品集" value={displayData.projects} field="projects" isEditing={isEditing} onChange={handleFieldChange} multiline placeholder="個人專案、作品集連結..." />
+          <EditableField label="自傳" value={displayData.bio} field="bio" isEditing={isEditing} onChange={handleFieldChange} multiline placeholder="請簡述您的專業背景..." />
           <EditableField label="其他" value={displayData.other} field="other" isEditing={isEditing} onChange={handleFieldChange} multiline placeholder="其他想補充的資訊..." />
         </CardContent>
       </Card>
