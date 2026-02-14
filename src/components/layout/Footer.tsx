@@ -3,22 +3,22 @@ import { Mail, Phone, MapPin, Star } from 'lucide-react';
 
 const Footer = () => {
   const quickLinks = [
-    { to: '/', label: '首頁' },
-    { to: '/team', label: '關於我們' },
-    { to: '/faq', label: '常見問題' },
-  ];
+  { to: '/', label: '首頁' },
+  { to: '/team', label: '關於我們' },
+  { to: '/faq', label: '常見問題' }];
+
 
   const serviceLinks = [
-    { to: '/jobs/skill-search', label: '職缺分析' },
-    { to: '/resume/optimize', label: '履歷優化' },
-    { to: '/jobs/recommendations', label: '職位匹配' },
-    { to: '/interview/prep', label: '面試準備' },
-    { to: '/analysis/skills', label: '職涯地圖' },
-  ];
+  { to: '/jobs/skill-search', label: '職缺分析' },
+  { to: '/resume/optimize', label: '履歷優化' },
+  { to: '/jobs/recommendations', label: '職位匹配' },
+  { to: '/interview/prep', label: '面試準備' },
+  { to: '/analysis/skills', label: '職涯地圖' }];
+
 
   return (
     <footer className="footer-bg">
-      <div className="container py-12 md:py-16">
+      <div className="container py-12 md:py-16 bg-[#4f2d03]">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
@@ -40,13 +40,13 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4 text-white">快速連結</h4>
             <ul className="space-y-2">
-              {quickLinks.map(link => (
-                <li key={link.to}>
+              {quickLinks.map((link) =>
+              <li key={link.to}>
                   <Link to={link.to} className="text-sm text-white/70 hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
-              ))}
+              )}
             </ul>
           </div>
 
@@ -54,13 +54,13 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4 text-white">服務項目</h4>
             <ul className="space-y-2">
-              {serviceLinks.map(link => (
-                <li key={link.to}>
+              {serviceLinks.map((link) =>
+              <li key={link.to}>
                   <Link to={link.to} className="text-sm text-white/70 hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
-              ))}
+              )}
             </ul>
           </div>
 
@@ -95,8 +95,8 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>);
+
 };
 
 export default Footer;
