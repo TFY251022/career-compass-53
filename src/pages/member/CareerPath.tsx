@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Map, ChevronRight, Star, FileText, Calendar } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -88,9 +88,6 @@ const CareerPath = () => {
   const [drawerLoading, setDrawerLoading] = useState(false);
   const isMobile = useIsMobile();
 
-  const roadmapRef = useRef<HTMLDivElement>(null);
-  const historyRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1200);
     return () => clearTimeout(timer);
@@ -108,9 +105,6 @@ const CareerPath = () => {
     setTimeout(() => setIsDownloading(false), 1500);
   };
 
-  const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
-    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
 
   return (
     <LoginRequired>
@@ -124,55 +118,18 @@ const CareerPath = () => {
           <p className="text-muted-foreground text-sm md:text-base">掌握您的職涯發展藍圖與歷史分析紀錄</p>
         </div>
 
-        {/* Mobile: Top Navigation */}
-        {isMobile && (
-          <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-            <Button variant="outline" size="sm" className="gap-1.5 shrink-0 text-xs" onClick={() => scrollToSection(roadmapRef)}>
-              <Map className="h-3.5 w-3.5" />
-              職涯階梯圖
-            </Button>
-            <Button variant="outline" size="sm" className="gap-1.5 shrink-0 text-xs" onClick={() => scrollToSection(historyRef)}>
-              <FileText className="h-3.5 w-3.5" />
-              職涯分析結果
-            </Button>
-          </div>
-        )}
 
-        {/* Main Layout */}
-        <div className="flex flex-col md:flex-row gap-6 md:gap-8">
-          {/* Left Sidebar */}
-          {!isMobile && (
-            <aside className="w-1/4 min-w-[180px] shrink-0 hidden md:block">
-              <Card className="sticky top-24">
-                <CardHeader className="pb-2 md:pb-3">
-                  <CardTitle className="text-base md:text-lg flex items-center gap-2">
-                    <Star className="h-4 w-4 md:h-5 md:w-5 text-primary" />
-                    導覽
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-1.5 md:space-y-2">
-                  <Button variant="ghost" className="w-full justify-start gap-2 text-left text-sm" onClick={() => scrollToSection(roadmapRef)}>
-                    <Map className="h-4 w-4" />
-                    職涯階梯圖
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start gap-2 text-left text-sm" onClick={() => scrollToSection(historyRef)}>
-                    <FileText className="h-4 w-4" />
-                    職涯分析結果
-                  </Button>
-                </CardContent>
-              </Card>
-            </aside>
-          )}
 
-          {/* Right Main Content */}
-          <main className="flex-1 min-w-0 space-y-6 md:space-y-8 overflow-hidden">
+        {/* Main Content - Full Width */}
+        <div className="w-full">
+          <main className="space-y-6 md:space-y-8 overflow-hidden">
             {/* Career Ladder Section */}
-            <section ref={roadmapRef} className="overflow-hidden">
+            <section className="overflow-hidden">
               <CareerLadder isLoading={isLoading} />
             </section>
 
             {/* Analysis History Section */}
-            <section ref={historyRef}>
+            <section>
               <Card>
                 <CardHeader className="pb-2 md:pb-4">
                   <CardTitle className="flex items-center gap-2 text-base md:text-lg">
