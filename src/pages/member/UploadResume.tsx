@@ -29,6 +29,7 @@ interface ResumeData {
   email: string;
   addressCity: string;
   addressDistrict: string;
+  addressDetail: string;
   education: string;
   experience: string;
   skills: string;
@@ -60,6 +61,7 @@ const UploadResume = () => {
     email: '',
     addressCity: '',
     addressDistrict: '',
+    addressDetail: '',
     education: '',
     experience: '',
     skills: '',
@@ -119,6 +121,7 @@ const UploadResume = () => {
       email: 'example@email.com',
       addressCity: '台北市',
       addressDistrict: '大安區',
+      addressDetail: '忠孝東路三段1號',
       education: '國立台灣大學 資訊工程學系 碩士 (2018-2020)',
       experience: '資深前端工程師 - ABC科技公司 (2020-至今)\n前端工程師 - XYZ新創 (2018-2020)',
       skills: 'React, TypeScript, Node.js, Python, SQL, Git, Docker',
@@ -258,6 +261,7 @@ const UploadResume = () => {
       email: '',
       addressCity: '',
       addressDistrict: '',
+      addressDetail: '',
       education: '',
       experience: '',
       skills: '',
@@ -563,6 +567,14 @@ const ResumeForm = ({
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          <div className="mt-2">
+            <Label className="text-xs text-muted-foreground">詳細地址</Label>
+            <Input
+              placeholder="街道路名、門牌號碼、樓層等"
+              value={formData.addressDetail}
+              onChange={(e) => handleChange('addressDetail', e.target.value)}
+            />
           </div>
         </div>
 
@@ -976,6 +988,15 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
                       </SelectContent>
                     </Select>
                   </div>
+                  <div className="md:col-span-2">
+                    <Label className="text-xs text-muted-foreground">詳細地址</Label>
+                    <Input
+                      value={editData.addressDetail}
+                      onChange={(e) => handleFieldChange('addressDetail', e.target.value)}
+                      placeholder="街道路名、門牌號碼、樓層等"
+                      className="text-sm transition-all duration-300 focus:ring-2 focus:ring-primary/50 focus:border-primary/60"
+                    />
+                  </div>
                 </div>
               ) : (
               <div className="flex flex-col md:flex-row gap-2 md:gap-4 text-sm text-muted-foreground flex-wrap">
@@ -985,9 +1006,9 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
                   <span className="flex items-center justify-center md:justify-start gap-1">
                     <Mail className="h-4 w-4" /> {displayData.email}
                   </span>
-                  {(displayData.addressCity || displayData.addressDistrict) && (
+                  {(displayData.addressCity || displayData.addressDistrict || displayData.addressDetail) && (
                     <span className="flex items-center justify-center md:justify-start gap-1">
-                      📍 {displayData.addressCity}{displayData.addressDistrict}
+                      📍 {displayData.addressCity}{displayData.addressDistrict}{displayData.addressDetail ? ` ${displayData.addressDetail}` : ''}
                     </span>
                   )}
                 </div>
