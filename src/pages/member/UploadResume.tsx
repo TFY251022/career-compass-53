@@ -14,6 +14,7 @@ import { motion } from 'framer-motion';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import { useNavigate } from 'react-router-dom';
 import { Progress } from '@/components/ui/progress';
+import { TAIWAN_CITIES } from '@/data/taiwanAddresses';
 
 interface LanguageEntry {
   language: string;
@@ -26,7 +27,8 @@ interface ResumeData {
   bio: string;
   phone: string;
   email: string;
-  address: string;
+  addressCity: string;
+  addressDistrict: string;
   education: string;
   experience: string;
   skills: string;
@@ -56,7 +58,8 @@ const UploadResume = () => {
     bio: '',
     phone: '',
     email: '',
-    address: '',
+    addressCity: '',
+    addressDistrict: '',
     education: '',
     experience: '',
     skills: '',
@@ -114,7 +117,8 @@ const UploadResume = () => {
       bio: '擁有 5 年軟體開發經驗的全端工程師，專精於 React 與 Node.js 開發，熱愛學習新技術並解決複雜問題。',
       phone: '0912-345-678',
       email: 'example@email.com',
-      address: '台北市大安區忠孝東路三段1號',
+      addressCity: '台北市',
+      addressDistrict: '大安區',
       education: '國立台灣大學 資訊工程學系 碩士 (2018-2020)',
       experience: '資深前端工程師 - ABC科技公司 (2020-至今)\n前端工程師 - XYZ新創 (2018-2020)',
       skills: 'React, TypeScript, Node.js, Python, SQL, Git, Docker',
@@ -252,7 +256,8 @@ const UploadResume = () => {
       bio: '',
       phone: '',
       email: '',
-      address: '',
+      addressCity: '',
+      addressDistrict: '',
       education: '',
       experience: '',
       skills: '',
@@ -517,15 +522,48 @@ const ResumeForm = ({
           </div>
         </div>
 
-        {/* Address (optional) */}
+        {/* Address (optional) - Cascading Selects */}
         <div className="space-y-2">
-          <Label htmlFor="address">通訊地址（選填）</Label>
-          <Input
-            id="address"
-            placeholder="請輸入通訊地址"
-            value={formData.address}
-            onChange={(e) => handleChange('address', e.target.value)}
-          />
+          <Label>通訊地址（選填）</Label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">縣市</Label>
+              <Select
+                value={formData.addressCity}
+                onValueChange={(value) => {
+                  setFormData(prev => ({ ...prev, addressCity: value, addressDistrict: '' }));
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="請選擇縣市" />
+                </SelectTrigger>
+                <SelectContent>
+                  {TAIWAN_CITIES.map((city) => (
+                    <SelectItem key={city.name} value={city.name}>{city.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">地區</Label>
+              <Select
+                value={formData.addressDistrict}
+                onValueChange={(value) => {
+                  setFormData(prev => ({ ...prev, addressDistrict: value }));
+                }}
+                disabled={!formData.addressCity}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={formData.addressCity ? '請選擇地區' : '請先選擇縣市'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {(TAIWAN_CITIES.find(c => c.name === formData.addressCity)?.districts ?? []).map((d) => (
+                    <SelectItem key={d.name} value={d.name}>{d.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
 
         {/* Education */}
@@ -902,14 +940,41 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
                       className={`text-sm transition-all duration-300 focus:ring-2 focus:ring-primary/50 focus:border-primary/60 ${invalidFields.has('email') ? 'border-destructive' : ''}`}
                     />
                   </div>
-                  <div className="md:col-span-2">
-                    <Label className="text-xs text-muted-foreground">通訊地址（選填）</Label>
-                    <Input
-                      value={editData.address}
-                      onChange={(e) => handleFieldChange('address', e.target.value)}
-                      placeholder="通訊地址（選填）"
-                      className="text-sm transition-all duration-300 focus:ring-2 focus:ring-primary/50 focus:border-primary/60"
-                    />
+                  <div>
+                    <Label className="text-xs text-muted-foreground">縣市</Label>
+                    <Select
+                      value={editData.addressCity}
+                      onValueChange={(value) => {
+                        handleFieldChange('addressCity', value);
+                        handleFieldChange('addressDistrict', '');
+                      }}
+                    >
+                      <SelectTrigger className="text-sm">
+                        <SelectValue placeholder="請選擇縣市" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {TAIWAN_CITIES.map((city) => (
+                          <SelectItem key={city.name} value={city.name}>{city.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">地區</Label>
+                    <Select
+                      value={editData.addressDistrict}
+                      onValueChange={(value) => handleFieldChange('addressDistrict', value)}
+                      disabled={!editData.addressCity}
+                    >
+                      <SelectTrigger className="text-sm">
+                        <SelectValue placeholder={editData.addressCity ? '請選擇地區' : '請先選擇縣市'} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(TAIWAN_CITIES.find(c => c.name === editData.addressCity)?.districts ?? []).map((d) => (
+                          <SelectItem key={d.name} value={d.name}>{d.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               ) : (
@@ -920,9 +985,9 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
                   <span className="flex items-center justify-center md:justify-start gap-1">
                     <Mail className="h-4 w-4" /> {displayData.email}
                   </span>
-                  {displayData.address && (
+                  {(displayData.addressCity || displayData.addressDistrict) && (
                     <span className="flex items-center justify-center md:justify-start gap-1">
-                      📍 {displayData.address}
+                      📍 {displayData.addressCity}{displayData.addressDistrict}
                     </span>
                   )}
                 </div>
