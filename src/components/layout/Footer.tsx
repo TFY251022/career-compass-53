@@ -23,8 +23,8 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-                <Star className="h-5 w-5 text-primary-foreground" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#fcf1e9]">
+                <Star className="h-5 w-5 text-[#8c4703]" />
               </div>
               <div className="flex flex-col leading-none">
                 <span className="text-lg font-bold text-white">職星領航員</span>
