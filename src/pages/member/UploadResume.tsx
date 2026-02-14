@@ -184,6 +184,17 @@ const UploadResume = () => {
     }));
   };
 
+  const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
+
+  const clearInvalidField = (field: string) => {
+    setInvalidFields(prev => {
+      if (!prev.has(field)) return prev;
+      const next = new Set(prev);
+      next.delete(field);
+      return next;
+    });
+  };
+
   const validateForm = (): boolean => {
     const requiredFields = [
       { field: 'name', label: '姓名' },
@@ -194,18 +205,28 @@ const UploadResume = () => {
       { field: 'skills', label: '技能專長' },
     ];
 
-    for (const { field, label } of requiredFields) {
+    const newInvalid = new Set<string>();
+    for (const { field } of requiredFields) {
       if (!formData[field as keyof ResumeData] || (formData[field as keyof ResumeData] as string).trim() === '') {
-        setValidationMessage(`請填寫必填欄位：${label}`);
-        setShowValidationError(true);
-        return false;
+        newInvalid.add(field);
       }
     }
 
     // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      setValidationMessage('請輸入有效的電子郵件地址');
+    if (formData.email && formData.email.trim() !== '') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        newInvalid.add('email');
+      }
+    }
+
+    setInvalidFields(newInvalid);
+
+    if (newInvalid.size > 0) {
+      const missingLabels = requiredFields
+        .filter(({ field }) => newInvalid.has(field))
+        .map(({ label }) => label);
+      setValidationMessage(`請填寫必填欄位：${missingLabels.join('、')}`);
       setShowValidationError(true);
       return false;
     }
@@ -351,6 +372,8 @@ const UploadResume = () => {
                     removeLanguage={removeLanguage}
                     updateLanguage={updateLanguage}
                     onSubmit={handleFormSubmit}
+                    invalidFields={invalidFields}
+                    clearInvalidField={clearInvalidField}
                   />
                 </TabsContent>
               </Tabs>
@@ -391,6 +414,8 @@ interface ResumeFormProps {
   removeLanguage: (index: number) => void;
   updateLanguage: (index: number, field: 'language' | 'proficiency', value: string) => void;
   onSubmit: () => void;
+  invalidFields?: Set<string>;
+  clearInvalidField?: (field: string) => void;
 }
 
 const ResumeForm = ({
@@ -404,7 +429,19 @@ const ResumeForm = ({
   removeLanguage,
   updateLanguage,
   onSubmit,
+  invalidFields = new Set<string>(),
+  clearInvalidField,
 }: ResumeFormProps) => {
+  const getFieldClass = (field: string) =>
+    invalidFields.has(field)
+      ? 'border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.25)]'
+      : '';
+
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    clearInvalidField?.(field);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -441,17 +478,17 @@ const ResumeForm = ({
 
         {/* Basic Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">姓名 *</Label>
+          <div className={`space-y-2 p-3 rounded-lg border transition-all ${invalidFields.has('name') ? 'border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.25)]' : 'border-transparent'}`}>
+            <Label htmlFor="name"><span className="text-red-500">*</span> 姓名</Label>
             <Input
               id="name"
               placeholder="請輸入您的姓名"
               value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => handleChange('name', e.target.value)}
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="phone">聯絡電話 *</Label>
+          <div className={`space-y-2 p-3 rounded-lg border transition-all ${invalidFields.has('phone') ? 'border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.25)]' : 'border-transparent'}`}>
+            <Label htmlFor="phone"><span className="text-red-500">*</span> 聯絡電話</Label>
             <div className="relative">
               <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -459,14 +496,14 @@ const ResumeForm = ({
                 placeholder="0912-345-678"
                 className="pl-10"
                 value={formData.phone}
-                onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                onChange={(e) => handleChange('phone', e.target.value)}
               />
             </div>
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="email">聯絡信箱 *</Label>
+        <div className={`space-y-2 p-3 rounded-lg border transition-all ${invalidFields.has('email') ? 'border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.25)]' : 'border-transparent'}`}>
+          <Label htmlFor="email"><span className="text-red-500">*</span> 聯絡信箱</Label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -475,7 +512,7 @@ const ResumeForm = ({
               placeholder="your@email.com"
               className="pl-10"
               value={formData.email}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              onChange={(e) => handleChange('email', e.target.value)}
             />
           </div>
         </div>
@@ -487,47 +524,47 @@ const ResumeForm = ({
             id="address"
             placeholder="請輸入通訊地址"
             value={formData.address}
-            onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+            onChange={(e) => handleChange('address', e.target.value)}
           />
         </div>
 
         {/* Education */}
-        <div className="space-y-2">
+        <div className={`space-y-2 p-3 rounded-lg border transition-all ${invalidFields.has('education') ? 'border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.25)]' : 'border-transparent'}`}>
           <Label htmlFor="education" className="flex items-center gap-2">
             <GraduationCap className="h-4 w-4" />
-            教育背景 *
+            <span className="text-red-500">*</span> 教育背景
           </Label>
           <Textarea
             id="education"
             placeholder="學校名稱、科系、學位、畢業年份..."
             value={formData.education}
-            onChange={(e) => setFormData(prev => ({ ...prev, education: e.target.value }))}
+            onChange={(e) => handleChange('education', e.target.value)}
           />
         </div>
 
         {/* Experience */}
-        <div className="space-y-2">
+        <div className={`space-y-2 p-3 rounded-lg border transition-all ${invalidFields.has('experience') ? 'border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.25)]' : 'border-transparent'}`}>
           <Label htmlFor="experience" className="flex items-center gap-2">
             <Briefcase className="h-4 w-4" />
-            工作經歷 *
+            <span className="text-red-500">*</span> 工作經歷
           </Label>
           <Textarea
             id="experience"
             placeholder="公司名稱、職稱、任職期間、工作內容..."
             className="min-h-[100px]"
             value={formData.experience}
-            onChange={(e) => setFormData(prev => ({ ...prev, experience: e.target.value }))}
+            onChange={(e) => handleChange('experience', e.target.value)}
           />
         </div>
 
         {/* Skills */}
-        <div className="space-y-2">
-          <Label htmlFor="skills">技能專長 *</Label>
+        <div className={`space-y-2 p-3 rounded-lg border transition-all ${invalidFields.has('skills') ? 'border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.25)]' : 'border-transparent'}`}>
+          <Label htmlFor="skills"><span className="text-red-500">*</span> 技能專長</Label>
           <Textarea
             id="skills"
             placeholder="請列出您的專業技能，如：程式語言、設計軟體、語言能力等..."
             value={formData.skills}
-            onChange={(e) => setFormData(prev => ({ ...prev, skills: e.target.value }))}
+            onChange={(e) => handleChange('skills', e.target.value)}
           />
         </div>
 
