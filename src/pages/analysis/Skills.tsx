@@ -583,7 +583,7 @@ ${sideProjects.map((p) => `- ${p.name} (技術: ${p.technologies.join(', ')})`).
                           <TrendingUp className="h-5 w-5 text-primary" />
                         </div>
                         <div>
-                          <p className="font-semibold text-foreground mb-1 bg-primary-bright">整體評估結果</p>
+                          <p className="font-semibold text-foreground mb-1 bg-white/0">整體評估結果</p>
                           <p className="text-[#675143] leading-relaxed">{gapAnalysis.summary}</p>
                         </div>
                       </div>
