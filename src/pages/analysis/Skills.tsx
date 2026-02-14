@@ -579,8 +579,8 @@ ${sideProjects.map((p) => `- ${p.name} (技術: ${p.technologies.join(', ')})`).
                   <CardContent className="pt-6">
                     <div className="p-5 rounded-xl bg-sidebar" style={{ backgroundColor: '#fbf1e8' }}>
                       <div className="flex items-start gap-3">
-                        <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                          <TrendingUp className="h-5 w-5 text-primary" />
+                        <div className="h-10 w-10 rounded-full flex items-center justify-center shrink-0 bg-primary">
+                          <TrendingUp className="h-5 w-5 text-[#fbf2e9]" />
                         </div>
                         <div>
                           <p className="font-semibold text-foreground mb-1 bg-white/0">整體評估結果</p>
