@@ -14,10 +14,12 @@ const DevStateToggles = forwardRef<HTMLDivElement>((_, ref) => {
     isResumeUploaded,
     isPersonalityQuizDone,
     isJobPreferenceQuizDone,
+    isPersonalityTestDone,
     setIsLoggedIn,
     setIsResumeUploaded,
     setIsPersonalityQuizDone,
     setIsJobPreferenceQuizDone,
+    setIsPersonalityTestDone,
   } = useAppState();
 
   const unlockAll = () => {
@@ -25,6 +27,7 @@ const DevStateToggles = forwardRef<HTMLDivElement>((_, ref) => {
     setIsResumeUploaded(true);
     setIsPersonalityQuizDone(true);
     setIsJobPreferenceQuizDone(true);
+    setIsPersonalityTestDone(true);
   };
 
   const resetAll = () => {
@@ -32,6 +35,7 @@ const DevStateToggles = forwardRef<HTMLDivElement>((_, ref) => {
     setIsResumeUploaded(false);
     setIsPersonalityQuizDone(false);
     setIsJobPreferenceQuizDone(false);
+    setIsPersonalityTestDone(false);
   };
 
   const toggles = [
@@ -39,6 +43,7 @@ const DevStateToggles = forwardRef<HTMLDivElement>((_, ref) => {
     { label: 'isResumeUploaded', value: isResumeUploaded, setter: setIsResumeUploaded },
     { label: 'isPersonalityQuizDone', value: isPersonalityQuizDone, setter: setIsPersonalityQuizDone },
     { label: 'isJobPreferenceQuizDone', value: isJobPreferenceQuizDone, setter: setIsJobPreferenceQuizDone },
+    { label: 'isPersonalityTestDone', value: isPersonalityTestDone, setter: setIsPersonalityTestDone },
   ];
 
   if (!isOpen) {
