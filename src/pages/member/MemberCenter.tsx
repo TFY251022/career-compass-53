@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, FileText, Map, Edit, Star, Lock, ArrowRight } from 'lucide-react';
+import { User, FileText, Map, Edit, Star, Lock, ArrowRight, Sparkles } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +12,7 @@ import LoginRequired from '@/components/gatekeeper/LoginRequired';
 const MemberCenter = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
-  const { isResumeUploaded, isPersonalityQuizDone } = useAppState();
+  const { isResumeUploaded, isPersonalityQuizDone, isPersonalityTestDone } = useAppState();
 
   return (
     <LoginRequired>
@@ -69,7 +69,7 @@ const MemberCenter = () => {
           </div>
 
           {/* Status Cards - kept as-is */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
             <Card>
               <CardContent className="pt-4 md:pt-6">
                 <div className="flex items-center justify-between">
@@ -81,6 +81,24 @@ const MemberCenter = () => {
                 {!isResumeUploaded && (
                   <Link to="/member/upload-resume">
                     <Button variant="link" className="px-0 mt-1 md:mt-2 text-xs md:text-sm h-auto">立即上傳</Button>
+                  </Link>
+                )}
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-4 md:pt-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5 text-primary" />
+                    <span className="text-xs md:text-sm font-medium">人格特質問卷</span>
+                  </div>
+                  <Badge variant={isPersonalityTestDone ? 'default' : 'secondary'} className="text-xs">
+                    {isPersonalityTestDone ? '已完成' : '未完成'}
+                  </Badge>
+                </div>
+                {!isPersonalityTestDone && (
+                  <Link to="/member/survey/personality-test">
+                    <Button variant="link" className="px-0 mt-1 md:mt-2 text-xs md:text-sm h-auto">開始測驗</Button>
                   </Link>
                 )}
               </CardContent>

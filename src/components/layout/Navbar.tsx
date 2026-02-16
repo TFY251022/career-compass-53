@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useAppState } from '@/contexts/AppContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
-import { FileText, BarChart3, MessageSquare, User, Menu, LogOut, Settings, FileUp, Search, Target, ChevronDown, Compass, Star, Map, ClipboardList, Lock } from 'lucide-react';
+import { FileText, BarChart3, MessageSquare, User, Menu, LogOut, Settings, FileUp, Search, Target, ChevronDown, Compass, Star, Map, ClipboardList, Lock, Sparkles } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -122,6 +122,9 @@ const Navbar = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link to="/member/upload-resume" className="flex items-center gap-2"><FileUp className="h-4 w-4" />履歷上傳</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/member/survey/personality-test" className="flex items-center gap-2"><Sparkles className="h-4 w-4" />人格特質問卷</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/member/survey/personality" className="flex items-center gap-2"><ClipboardList className="h-4 w-4" />職涯問卷</Link>
