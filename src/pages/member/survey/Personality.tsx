@@ -53,9 +53,18 @@ const Personality = () => {
   const { hasSkillBase, answers, currentStep } = progress;
 
   // Determine active modules
-  const activeModules: SurveyModule[] = hasSkillBase
-    ? surveyModules
-    : surveyModules.filter((m) => m.id !== 'module_A');
+  const activeModules: SurveyModule[] = (() => {
+    if (hasSkillBase) return surveyModules;
+    // No skill base: skip module_A & module_B, prepend Q15 into module_C
+    const moduleC = surveyModules.find((m) => m.id === 'module_C')!;
+    const moduleB = surveyModules.find((m) => m.id === 'module_B')!;
+    const q15 = moduleB.questions.find((q) => q.id === 'Q15')!;
+    const moduleCWithQ15: SurveyModule = {
+      ...moduleC,
+      questions: [q15, ...moduleC.questions],
+    };
+    return [moduleCWithQ15, ...surveyModules.filter((m) => m.id === 'module_D')];
+  })();
 
   const totalSteps = activeModules.length;
   const currentModule = activeModules[currentStep] as SurveyModule | undefined;
@@ -312,11 +321,23 @@ const Personality = () => {
                 transition={{ duration: 0.3 }}
                 className="space-y-5"
               >
+                {/* Back to path selection */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleReset}
+                  className="gap-1.5 text-xs"
+                  style={{ color: '#675143' }}
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  返回選擇有無技能基礎
+                </Button>
+
                 {/* Progress bar */}
                 <div>
                   <div className="flex items-center justify-between text-xs md:text-sm text-muted-foreground mb-2">
                     <span>Step {currentStep + 1} / {totalSteps}</span>
-                    <span>{currentModule?.title}</span>
+                    <span>{currentModule?.title.replace(/^模組\s*[A-Z][\s：:]*/, '')}</span>
                   </div>
                   <Progress value={progressPercent} className="h-2" />
                 </div>
