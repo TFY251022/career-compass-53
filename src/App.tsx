@@ -25,6 +25,7 @@ import UploadResume from "./pages/member/UploadResume";
 import CareerPath from "./pages/member/CareerPath";
 import MyResumes from "./pages/member/MyResumes";
 import Personality from "./pages/member/survey/Personality";
+import PersonalityTest from "./pages/member/survey/PersonalityTest";
 
 import NotFound from "./pages/NotFound";
 
@@ -71,6 +72,7 @@ const App = () => (
               <Route path="/member/career-path" element={<CareerPath />} />
               <Route path="/member/my-resumes" element={<MyResumes />} />
               <Route path="/member/survey/personality" element={<Personality />} />
+              <Route path="/member/survey/personality-test" element={<PersonalityTest />} />
               
               
               {/* Catch-all */}

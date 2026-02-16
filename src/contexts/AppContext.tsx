@@ -5,10 +5,12 @@ interface AppState {
   isResumeUploaded: boolean;
   isPersonalityQuizDone: boolean;
   isJobPreferenceQuizDone: boolean;
+  isPersonalityTestDone: boolean;
   setIsLoggedIn: (value: boolean) => void;
   setIsResumeUploaded: (value: boolean) => void;
   setIsPersonalityQuizDone: (value: boolean) => void;
   setIsJobPreferenceQuizDone: (value: boolean) => void;
+  setIsPersonalityTestDone: (value: boolean) => void;
 }
 
 const AppContext = createContext<AppState | undefined>(undefined);
@@ -18,6 +20,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [isResumeUploaded, setIsResumeUploaded] = useState(false);
   const [isPersonalityQuizDone, setIsPersonalityQuizDone] = useState(false);
   const [isJobPreferenceQuizDone, setIsJobPreferenceQuizDone] = useState(false);
+  const [isPersonalityTestDone, setIsPersonalityTestDone] = useState(false);
 
   return (
     <AppContext.Provider
@@ -26,10 +29,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         isResumeUploaded,
         isPersonalityQuizDone,
         isJobPreferenceQuizDone,
+        isPersonalityTestDone,
         setIsLoggedIn,
         setIsResumeUploaded,
         setIsPersonalityQuizDone,
         setIsJobPreferenceQuizDone,
+        setIsPersonalityTestDone,
       }}
     >
       {children}
