@@ -1,4 +1,4 @@
-import { BarChart3, RefreshCw, Award } from 'lucide-react';
+import { BarChart3, RefreshCw, Award, Zap, Battery, Target } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
@@ -6,17 +6,31 @@ import { useNavigate } from 'react-router-dom';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
 } from 'recharts';
-import type { PersonalityResult, Dimension } from '@/data/personalityScoring';
+import type { PersonalityResult } from '@/data/personalityScoring';
 import { DIMENSIONS, DIMENSION_LABELS } from '@/data/personalityScoring';
+import { getArchetypeDetail, type ArchetypeDetail } from '@/data/archetypeDetails';
 
 interface Props {
   result: PersonalityResult;
   onReset: () => void;
 }
 
+const DIMENSION_FULL_LABELS: Record<string, string> = {
+  structure: '架構能力',
+  ambiguity: '模糊耐受度',
+  decision: '決策傾向',
+  learning: '錯誤修正與學習',
+  transfer: '敘事遷移能力',
+};
+
 const PersonalityTestResult = ({ result, onReset }: Props) => {
   const navigate = useNavigate();
   const { scaledScores, archetypes } = result;
+
+  const primaryArchetype = archetypes[0];
+  const secondaryArchetypes = archetypes.slice(1);
+  const primaryDetail = getArchetypeDetail(primaryArchetype.id);
+  const bgColor = primaryDetail.bgColor;
 
   const radarData = DIMENSIONS.map((dim) => ({
     dimension: DIMENSION_LABELS[dim],
@@ -28,36 +42,54 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-5"
+      className="space-y-6 transition-colors duration-500"
+      style={{ backgroundColor: bgColor, borderRadius: '1rem', padding: '1.5rem' }}
     >
-      {/* Archetype Card */}
+      {/* Hero Section */}
+      <div className="text-center mb-2">
+        <h1 className="text-2xl md:text-3xl font-bold mb-1" style={{ color: '#000000' }}>
+          個人天賦結構分析報告
+        </h1>
+        <p className="text-sm text-muted-foreground">探索你的低耗能高產出模式</p>
+      </div>
+
+      {/* Primary Archetype Card */}
       <Card className="rounded-2xl border-0 bg-white shadow-[0_4px_20px_rgba(150,105,73,0.08)]">
         <CardContent className="p-6 md:p-8 text-center">
           <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
             <Award className="h-8 w-8 text-primary" />
           </div>
-          <h2 className="text-xl md:text-2xl font-bold mb-3">您的人格原型</h2>
-          <div className="flex flex-wrap justify-center gap-2 mb-2">
-            {archetypes.map((a) => (
-              <span
-                key={a.id}
-                className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-primary/10 text-primary"
-              >
-                {a.name}
-              </span>
-            ))}
-          </div>
+          <p className="text-xs text-muted-foreground mb-1 tracking-widest uppercase">主要天賦原型</p>
+          <h2 className="text-xl md:text-2xl font-bold mb-1">{primaryArchetype.name}</h2>
+          <p className="text-xs text-muted-foreground mb-3">{primaryDetail.englishName}</p>
+
+          {secondaryArchetypes.length > 0 && (
+            <div className="pt-3 border-t border-border/40">
+              <p className="text-xs text-muted-foreground mb-2">次要天賦原型</p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {secondaryArchetypes.map((a) => (
+                  <span
+                    key={a.id}
+                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary"
+                  >
+                    {a.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      {/* Radar Chart Card */}
+      {/* Radar Chart */}
       <Card className="rounded-2xl border-0 bg-white shadow-[0_4px_20px_rgba(150,105,73,0.08)]">
         <CardContent className="p-6 md:p-8">
-          <h3 className="text-base font-semibold text-center mb-4">五大維度分析</h3>
+          <h3 className="text-base font-semibold text-center mb-1">五大認知指標</h3>
+          <p className="text-xs text-muted-foreground text-center mb-4">各維度標準化分數（0-100）</p>
           <div className="w-full h-[280px] md:h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
-                <PolarGrid stroke="hsl(27, 30%, 85%)" />
+                <PolarGrid stroke="#dabea8" />
                 <PolarAngleAxis
                   dataKey="dimension"
                   tick={{ fill: 'hsl(23, 21%, 33%)', fontSize: 13, fontWeight: 500 }}
@@ -74,17 +106,20 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
               </RadarChart>
             </ResponsiveContainer>
           </div>
+          <p className="text-xs text-muted-foreground text-center mt-3 italic">
+            「分數高低不代表能力優劣，而代表你在該類情境下的<strong>心理耗能與穩定度差異</strong>。」
+          </p>
         </CardContent>
       </Card>
 
-      {/* Score Bars Card */}
+      {/* Score Bars */}
       <Card className="rounded-2xl border-0 bg-white shadow-[0_4px_20px_rgba(150,105,73,0.08)]">
         <CardContent className="p-6 md:p-8 space-y-4">
           <h3 className="text-base font-semibold text-center mb-2">各維度標準化分數</h3>
           {DIMENSIONS.map((dim) => (
             <div key={dim} className="space-y-1">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground font-medium">{DIMENSION_LABELS[dim]}</span>
+                <span className="text-muted-foreground font-medium">{DIMENSION_FULL_LABELS[dim]}</span>
                 <span className="font-semibold">{scaledScores[dim]}</span>
               </div>
               <div className="h-2.5 rounded-full bg-muted overflow-hidden">
@@ -98,6 +133,67 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
               </div>
             </div>
           ))}
+        </CardContent>
+      </Card>
+
+      {/* Archetype Cat Card */}
+      <Card className="rounded-2xl border-0 bg-white shadow-[0_4px_20px_rgba(150,105,73,0.08)] overflow-hidden">
+        <CardContent className="p-0">
+          <div className="p-6 md:p-8 text-center border-b border-border/30">
+            <h3 className="text-base font-semibold mb-1">你的主要工作適配模式</h3>
+            <p className="text-xs text-muted-foreground">
+              以下說明你在不同工作情境中的自然反應模式，並非行為規範。
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center p-6 md:p-8">
+            <motion.img
+              src={primaryDetail.image}
+              alt={primaryDetail.name}
+              className="w-36 h-36 md:w-44 md:h-44 object-contain mb-5"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            />
+            <h4 className="text-lg font-bold mb-1">{primaryDetail.name}</h4>
+            <p className="text-xs text-muted-foreground mb-5">{primaryDetail.englishName}</p>
+
+            <div className="w-full space-y-4 text-left">
+              {/* Strength */}
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-primary/5">
+                <Zap className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold mb-1">核心優勢</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{primaryDetail.strength}</p>
+                </div>
+              </div>
+
+              {/* Energy Cost */}
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-primary/5">
+                <Battery className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold mb-1">耗能特徵</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{primaryDetail.energyCost}</p>
+                </div>
+              </div>
+
+              {/* Scenarios */}
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-primary/5">
+                <Target className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold mb-1">適配情境</p>
+                  <ul className="space-y-1">
+                    {primaryDetail.scenarios.map((s, i) => (
+                      <li key={i} className="text-sm text-muted-foreground flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
