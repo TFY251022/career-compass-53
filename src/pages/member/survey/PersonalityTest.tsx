@@ -197,57 +197,58 @@ const PersonalityTest = () => {
                 {/* Progress bar */}
                 <div>
                   <div className="flex items-center justify-between text-xs md:text-sm text-muted-foreground mb-2">
-                    <span>Step {currentStep + 1} / {totalSteps}</span>
-                    <span>{currentModule?.module_name}</span>
+                    <span>第 {currentStep + 1} / {totalSteps} 頁</span>
+                    <span>{Math.round(progressPercent)}%</span>
                   </div>
                   <Progress value={progressPercent} className="h-2" />
                 </div>
 
-                {/* Module theory hint */}
-                <p className="text-xs text-muted-foreground">{currentModule?.theory}</p>
-
                 {/* Questions */}
-                <div className="space-y-4">
-                  {currentModule?.questions.map((q) => (
-                    <Card
-                      key={q.id}
-                      className={`transition-all ${
-                        invalidIds.has(q.id)
-                          ? 'border-destructive shadow-[0_0_8px_hsl(var(--destructive)/0.25)]'
-                          : ''
-                      }`}
-                    >
-                      <CardContent className="p-5 md:p-6">
-                        <div className="space-y-3">
-                          <p className="font-medium text-sm md:text-base">
-                            <span className="text-destructive mr-1">*</span>
-                            {q.question}
-                            <span className="text-xs text-muted-foreground ml-1.5">(單選)</span>
-                          </p>
-                          <RadioGroup
-                            value={answers[q.id] || ''}
-                            onValueChange={(v) => setAnswer(q.id, v)}
-                          >
-                            {q.options.map((opt) => (
-                              <div
-                                key={opt.key}
-                                className={`flex items-start space-x-3 p-3 rounded-lg border transition-all cursor-pointer hover:bg-muted/50 ${
-                                  answers[q.id] === opt.key
-                                    ? 'border-primary/60 bg-primary/5 shadow-[0_0_8px_hsl(var(--primary)/0.15)]'
-                                    : 'border-border'
-                                }`}
-                              >
-                                <RadioGroupItem value={opt.key} id={`${q.id}-${opt.key}`} className="mt-0.5" />
-                                <Label htmlFor={`${q.id}-${opt.key}`} className="flex-1 cursor-pointer text-sm md:text-base leading-relaxed">
-                                  {opt.key}. {opt.text}
-                                </Label>
-                              </div>
-                            ))}
-                          </RadioGroup>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                <div className="space-y-5">
+                  {currentModule?.questions.map((q, idx) => {
+                    const globalIndex = currentStep * 2 + idx + 1;
+                    return (
+                      <Card
+                        key={q.id}
+                        className={`rounded-2xl border-0 bg-white shadow-[0_4px_20px_rgba(150,105,73,0.08)] transition-all ${
+                          invalidIds.has(q.id)
+                            ? 'ring-2 ring-destructive/50 shadow-[0_4px_20px_rgba(150,105,73,0.08),0_0_8px_hsl(var(--destructive)/0.25)]'
+                            : ''
+                        }`}
+                      >
+                        <CardContent className="p-6 md:p-8">
+                          <div className="space-y-4">
+                            <p className="font-semibold text-sm md:text-base text-foreground">
+                              <span className="text-destructive mr-1">*</span>
+                              {globalIndex}. {q.question}
+                              <span className="text-xs text-muted-foreground ml-1.5 font-normal">(單選)</span>
+                            </p>
+                            <RadioGroup
+                              value={answers[q.id] || ''}
+                              onValueChange={(v) => setAnswer(q.id, v)}
+                              className="space-y-2.5"
+                            >
+                              {q.options.map((opt) => (
+                                <div
+                                  key={opt.key}
+                                  className={`flex items-start space-x-3 p-3.5 rounded-xl border transition-all cursor-pointer hover:bg-muted/40 ${
+                                    answers[q.id] === opt.key
+                                      ? 'border-primary/60 bg-primary/5 shadow-[0_0_8px_hsl(var(--primary)/0.15)]'
+                                      : 'border-border/60'
+                                  }`}
+                                >
+                                  <RadioGroupItem value={opt.key} id={`${q.id}-${opt.key}`} className="mt-0.5" />
+                                  <Label htmlFor={`${q.id}-${opt.key}`} className="flex-1 cursor-pointer text-sm md:text-base leading-relaxed">
+                                    {opt.key}. {opt.text}
+                                  </Label>
+                                </div>
+                              ))}
+                            </RadioGroup>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
 
                 {/* Navigation */}
