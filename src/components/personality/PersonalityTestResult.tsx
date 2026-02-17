@@ -86,13 +86,13 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
         <CardContent className="p-6 md:p-8">
           <h3 className="text-base font-semibold text-center mb-1">五大認知指標</h3>
           <p className="text-xs text-muted-foreground text-center mb-4">各維度標準化分數（0-100）</p>
-          <div className="w-full h-[280px] md:h-[320px]">
+          <div className="w-full h-[260px] md:h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
+              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
                 <PolarGrid stroke="#dabea8" />
                 <PolarAngleAxis
                   dataKey="dimension"
-                  tick={{ fill: 'hsl(23, 21%, 33%)', fontSize: 13, fontWeight: 500 }}
+                  tick={{ fill: 'hsl(23, 21%, 33%)', fontSize: 11, fontWeight: 500 }}
                 />
                 <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
                 <Radar
