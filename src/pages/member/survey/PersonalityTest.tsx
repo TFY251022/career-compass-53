@@ -12,6 +12,8 @@ import AlertModal from '@/components/modals/AlertModal';
 import { motion } from 'framer-motion';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import { personalityTestModules, type PTModule } from '@/data/personalityTestQuestions';
+import { computePersonalityResult, type PersonalityResult } from '@/data/personalityScoring';
+import PersonalityTestResult from '@/components/personality/PersonalityTestResult';
 
 const STORAGE_KEY = 'personality-test-progress';
 
@@ -45,6 +47,7 @@ const PersonalityTest = () => {
   const [showIncompleteAlert, setShowIncompleteAlert] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [invalidIds, setInvalidIds] = useState<Set<string>>(new Set());
+  const [result, setResult] = useState<PersonalityResult | null>(null);
 
   const { answers, currentStep } = progress;
   const modules = personalityTestModules;
@@ -114,6 +117,8 @@ const PersonalityTest = () => {
     }
     setIsAnalyzing(true);
     await new Promise((resolve) => setTimeout(resolve, 1500));
+    const computed = computePersonalityResult(answers);
+    setResult(computed);
     setIsAnalyzing(false);
     setShowResult(true);
     setIsPersonalityTestDone(true);
@@ -124,6 +129,7 @@ const PersonalityTest = () => {
     clearProgress();
     setProgress({ answers: {}, currentStep: 0 });
     setShowResult(false);
+    setResult(null);
     setIsPersonalityTestDone(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -150,41 +156,13 @@ const PersonalityTest = () => {
             skeleton={<AILoadingSpinner message="正在分析您的人格特質..." />}
           >
             {/* Result View */}
-            {showResult ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-5"
-              >
-                <Card className="border-primary/20 bg-primary/5">
-                  <CardContent className="p-6 md:p-8 text-center">
-                    <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
-                      <BarChart3 className="h-8 w-8 text-primary" />
-                    </div>
-                    <h2 className="text-xl md:text-2xl font-bold mb-2">問卷已完成！</h2>
-                    <p className="text-muted-foreground text-sm md:text-base">
-                      您的人格特質分析報告已生成，可前往職能圖譜查看完整結果
-                    </p>
-                  </CardContent>
-                </Card>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <Button
-                    onClick={() => navigate('/analysis/skills')}
-                    className="gradient-primary h-12"
-                  >
-                    <BarChart3 className="h-4 w-4 mr-2" />
-                    查看職能圖譜
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={handleReset}
-                    className="h-12 border-primary/40 text-primary hover:bg-primary/5"
-                  >
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    重新填寫問卷
-                  </Button>
-                </div>
-              </motion.div>
+            {showResult && result ? (
+              <PersonalityTestResult result={result} onReset={handleReset} />
+            ) : showResult ? (
+              <PersonalityTestResult
+                result={{ rawScores: { structure: 0, ambiguity: 0, decision: 0, learning: 0, transfer: 0 }, scaledScores: { structure: 0, ambiguity: 0, decision: 0, learning: 0, transfer: 0 }, archetypes: [{ id: 'GENERALIST', name: '綜合型' }] }}
+                onReset={handleReset}
+              />
             ) : (
               /* Module Step */
               <motion.div
