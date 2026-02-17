@@ -1,19 +1,30 @@
-import { BarChart3, RefreshCw, Award, Zap, Battery, Target } from 'lucide-react';
+import { useState } from 'react';
+import { BarChart3, RefreshCw, Award, Zap, Battery, Target, Eye } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
 } from 'recharts';
 import type { PersonalityResult } from '@/data/personalityScoring';
 import { DIMENSIONS, DIMENSION_LABELS } from '@/data/personalityScoring';
-import { getArchetypeDetail, type ArchetypeDetail } from '@/data/archetypeDetails';
+import { getArchetypeDetail } from '@/data/archetypeDetails';
+import { MOCK_RESULTS } from '@/data/mockPersonalityResults';
 
 interface Props {
   result: PersonalityResult;
   onReset: () => void;
 }
+
+const SWITCHER_OPTIONS = [
+  { id: 'STRUCTURE_ARCHITECT', label: '結構' },
+  { id: 'AMBIGUITY_NAVIGATOR', label: '模糊' },
+  { id: 'RAPID_DECISION_MAKER', label: '快速' },
+  { id: 'PRAGMATIC_REFINER', label: '深度' },
+  { id: 'LEARNING_ACCELERATOR', label: '成長' },
+  { id: 'CROSS_DOMAIN_INTEGRATOR', label: '跨域' },
+];
 
 const DIMENSION_FULL_LABELS: Record<string, string> = {
   structure: '架構能力',
@@ -25,7 +36,10 @@ const DIMENSION_FULL_LABELS: Record<string, string> = {
 
 const PersonalityTestResult = ({ result, onReset }: Props) => {
   const navigate = useNavigate();
-  const { scaledScores, archetypes } = result;
+  const [previewId, setPreviewId] = useState<string | null>(null);
+
+  const activeResult = previewId ? MOCK_RESULTS[previewId] : result;
+  const { scaledScores, archetypes } = activeResult;
 
   const primaryArchetype = archetypes[0];
   const secondaryArchetypes = archetypes.slice(1);
@@ -45,6 +59,37 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
       className="space-y-6 transition-colors duration-500"
       style={{ backgroundColor: bgColor, borderRadius: '1rem', padding: '1.5rem' }}
     >
+      {/* Dev Preview Switcher */}
+      <div className="rounded-xl border-2 border-dashed border-primary/30 bg-white/80 p-3">
+        <div className="flex items-center gap-2 mb-2">
+          <Eye className="h-4 w-4 text-primary" />
+          <span className="text-xs font-semibold text-primary">DEV 結果預覽切換器</span>
+          {previewId && (
+            <button
+              onClick={() => setPreviewId(null)}
+              className="ml-auto text-xs text-muted-foreground hover:text-primary underline"
+            >
+              還原實際結果
+            </button>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {SWITCHER_OPTIONS.map((opt) => (
+            <button
+              key={opt.id}
+              onClick={() => setPreviewId(opt.id)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                (previewId || primaryArchetype.id) === opt.id
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'bg-muted/60 text-muted-foreground hover:bg-primary/10 hover:text-primary'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Hero Section */}
       <div className="text-center mb-2">
         <h1 className="text-2xl md:text-3xl font-bold mb-1" style={{ color: '#000000' }}>
