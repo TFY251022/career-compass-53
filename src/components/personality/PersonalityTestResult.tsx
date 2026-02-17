@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BarChart3, RefreshCw, Award, Zap, Battery, Target, Eye } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
@@ -43,14 +43,16 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
 
   const primaryArchetype = archetypes[0];
   const secondaryArchetypes = archetypes.slice(1);
-  const primaryDetail = getArchetypeDetail(primaryArchetype.id);
-  const bgColor = primaryDetail.bgColor;
+  const detail = getArchetypeDetail(primaryArchetype.id);
+  const { bgColor, accentColor, accentColorLight, cardShadow } = detail;
 
   const radarData = DIMENSIONS.map((dim) => ({
     dimension: DIMENSION_LABELS[dim],
     score: scaledScores[dim],
     fullMark: 100,
   }));
+
+  const cardClass = "rounded-2xl border-0 bg-white transition-shadow duration-500";
 
   return (
     <motion.div
@@ -60,14 +62,14 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
       style={{ backgroundColor: bgColor, borderRadius: '1rem', padding: '1.5rem' }}
     >
       {/* Dev Preview Switcher */}
-      <div className="rounded-xl border-2 border-dashed border-primary/30 bg-white/80 p-3">
+      <div className="rounded-xl border-2 border-dashed bg-white/80 p-3 transition-colors duration-500" style={{ borderColor: `${accentColor}40` }}>
         <div className="flex items-center gap-2 mb-2">
-          <Eye className="h-4 w-4 text-primary" />
-          <span className="text-xs font-semibold text-primary">DEV 結果預覽切換器</span>
+          <Eye className="h-4 w-4" style={{ color: accentColor }} />
+          <span className="text-xs font-semibold" style={{ color: accentColor }}>DEV 結果預覽切換器</span>
           {previewId && (
             <button
               onClick={() => setPreviewId(null)}
-              className="ml-auto text-xs text-muted-foreground hover:text-primary underline"
+              className="ml-auto text-xs text-muted-foreground underline hover:opacity-80"
             >
               還原實際結果
             </button>
@@ -78,11 +80,11 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
             <button
               key={opt.id}
               onClick={() => setPreviewId(opt.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                (previewId || primaryArchetype.id) === opt.id
-                  ? 'bg-primary text-white shadow-sm'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-primary/10 hover:text-primary'
-              }`}
+              className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+              style={{
+                backgroundColor: (previewId || primaryArchetype.id) === opt.id ? accentColor : undefined,
+                color: (previewId || primaryArchetype.id) === opt.id ? '#ffffff' : undefined,
+              }}
             >
               {opt.label}
             </button>
@@ -99,27 +101,34 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
       </div>
 
       {/* Primary Archetype Card */}
-      <Card className="rounded-2xl border-0 bg-white shadow-[0_4px_20px_rgba(150,105,73,0.08)]">
+      <Card className={cardClass} style={{ boxShadow: cardShadow }}>
         <CardContent className="p-6 md:p-8 text-center">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
-            <Award className="h-8 w-8 text-primary" />
+          <div
+            className="inline-flex items-center justify-center h-16 w-16 rounded-full mb-4 transition-colors duration-500"
+            style={{ backgroundColor: accentColorLight }}
+          >
+            <Award className="h-8 w-8 transition-colors duration-500" style={{ color: accentColor }} />
           </div>
           <p className="text-xs text-muted-foreground mb-1 tracking-widest uppercase">主要天賦原型</p>
           <h2 className="text-xl md:text-2xl font-bold mb-1">{primaryArchetype.name}</h2>
-          <p className="text-xs text-muted-foreground mb-3">{primaryDetail.englishName}</p>
+          <p className="text-xs text-muted-foreground mb-3">{detail.englishName}</p>
 
           {secondaryArchetypes.length > 0 && (
             <div className="pt-3 border-t border-border/40">
               <p className="text-xs text-muted-foreground mb-2">次要天賦原型</p>
               <div className="flex flex-wrap justify-center gap-2">
-                {secondaryArchetypes.map((a) => (
-                  <span
-                    key={a.id}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary"
-                  >
-                    {a.name}
-                  </span>
-                ))}
+                {secondaryArchetypes.map((a) => {
+                  const secDetail = getArchetypeDetail(a.id);
+                  return (
+                    <span
+                      key={a.id}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-colors duration-500"
+                      style={{ backgroundColor: secDetail.accentColorLight, color: secDetail.accentColor }}
+                    >
+                      {a.name}
+                    </span>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -127,7 +136,7 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
       </Card>
 
       {/* Radar Chart */}
-      <Card className="rounded-2xl border-0 bg-white shadow-[0_4px_20px_rgba(150,105,73,0.08)]">
+      <Card className={cardClass} style={{ boxShadow: cardShadow }}>
         <CardContent className="p-6 md:p-8">
           <h3 className="text-base font-semibold text-center mb-1">五大認知指標</h3>
           <p className="text-xs text-muted-foreground text-center mb-4">各維度標準化分數（0-100）</p>
@@ -143,8 +152,8 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
                 <Radar
                   name="分數"
                   dataKey="score"
-                  stroke="#8d4903"
-                  fill="#8d4903"
+                  stroke={accentColor}
+                  fill={accentColor}
                   fillOpacity={0.2}
                   strokeWidth={2}
                 />
@@ -158,7 +167,7 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
       </Card>
 
       {/* Score Bars */}
-      <Card className="rounded-2xl border-0 bg-white shadow-[0_4px_20px_rgba(150,105,73,0.08)]">
+      <Card className={cardClass} style={{ boxShadow: cardShadow }}>
         <CardContent className="p-6 md:p-8 space-y-4">
           <h3 className="text-base font-semibold text-center mb-2">各維度標準化分數</h3>
           {DIMENSIONS.map((dim) => (
@@ -169,8 +178,8 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
               </div>
               <div className="h-2.5 rounded-full bg-muted overflow-hidden">
                 <motion.div
-                  className="h-full rounded-full"
-                  style={{ backgroundColor: '#8d4903' }}
+                  className="h-full rounded-full transition-colors duration-500"
+                  style={{ backgroundColor: accentColor }}
                   initial={{ width: 0 }}
                   animate={{ width: `${scaledScores[dim]}%` }}
                   transition={{ duration: 0.8, delay: 0.1 }}
@@ -182,7 +191,7 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
       </Card>
 
       {/* Archetype Cat Card */}
-      <Card className="rounded-2xl border-0 bg-white shadow-[0_4px_20px_rgba(150,105,73,0.08)] overflow-hidden">
+      <Card className={`${cardClass} overflow-hidden`} style={{ boxShadow: cardShadow }}>
         <CardContent className="p-0">
           <div className="p-6 md:p-8 text-center border-b border-border/30">
             <h3 className="text-base font-semibold mb-1">你的主要工作適配模式</h3>
@@ -193,44 +202,57 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
 
           <div className="flex flex-col items-center p-6 md:p-8">
             <motion.img
-              src={primaryDetail.image}
-              alt={primaryDetail.name}
+              key={detail.image}
+              src={detail.image}
+              alt={detail.name}
               className="w-36 h-36 md:w-44 md:h-44 object-contain mb-5"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             />
-            <h4 className="text-lg font-bold mb-1">{primaryDetail.name}</h4>
-            <p className="text-xs text-muted-foreground mb-5">{primaryDetail.englishName}</p>
+            <h4 className="text-lg font-bold mb-1">{detail.name}</h4>
+            <p className="text-xs text-muted-foreground mb-5">{detail.englishName}</p>
 
             <div className="w-full space-y-4 text-left">
               {/* Strength */}
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-primary/5">
-                <Zap className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+              <div
+                className="flex items-start gap-3 p-4 rounded-xl transition-colors duration-500"
+                style={{ backgroundColor: accentColorLight }}
+              >
+                <Zap className="h-5 w-5 mt-0.5 shrink-0 transition-colors duration-500" style={{ color: accentColor }} />
                 <div>
                   <p className="text-sm font-semibold mb-1">核心優勢</p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{primaryDetail.strength}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{detail.strength}</p>
                 </div>
               </div>
 
               {/* Energy Cost */}
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-primary/5">
-                <Battery className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+              <div
+                className="flex items-start gap-3 p-4 rounded-xl transition-colors duration-500"
+                style={{ backgroundColor: accentColorLight }}
+              >
+                <Battery className="h-5 w-5 mt-0.5 shrink-0 transition-colors duration-500" style={{ color: accentColor }} />
                 <div>
                   <p className="text-sm font-semibold mb-1">耗能特徵</p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{primaryDetail.energyCost}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{detail.energyCost}</p>
                 </div>
               </div>
 
               {/* Scenarios */}
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-primary/5">
-                <Target className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+              <div
+                className="flex items-start gap-3 p-4 rounded-xl transition-colors duration-500"
+                style={{ backgroundColor: accentColorLight }}
+              >
+                <Target className="h-5 w-5 mt-0.5 shrink-0 transition-colors duration-500" style={{ color: accentColor }} />
                 <div>
                   <p className="text-sm font-semibold mb-1">適配情境</p>
                   <ul className="space-y-1">
-                    {primaryDetail.scenarios.map((s, i) => (
+                    {detail.scenarios.map((s, i) => (
                       <li key={i} className="text-sm text-muted-foreground flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                        <span
+                          className="w-1.5 h-1.5 rounded-full shrink-0 transition-colors duration-500"
+                          style={{ backgroundColor: accentColor }}
+                        />
                         {s}
                       </li>
                     ))}
@@ -244,14 +266,19 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
 
       {/* Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Button onClick={() => navigate('/analysis/skills')} className="gradient-primary h-12">
+        <Button
+          onClick={() => navigate('/analysis/skills')}
+          className="h-12 text-white transition-colors duration-500"
+          style={{ backgroundColor: accentColor }}
+        >
           <BarChart3 className="h-4 w-4 mr-2" />
           查看職能圖譜
         </Button>
         <Button
           variant="outline"
           onClick={onReset}
-          className="h-12 border-primary/40 text-primary hover:bg-primary/5"
+          className="h-12 transition-colors duration-500"
+          style={{ borderColor: `${accentColor}66`, color: accentColor }}
         >
           <RefreshCw className="h-4 w-4 mr-2" />
           重新填寫問卷
