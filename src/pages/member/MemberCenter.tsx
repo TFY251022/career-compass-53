@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { User, FileText, Map, Edit, Lock, ArrowRight, Sparkles, MapPin, Briefcase, GraduationCap, Github, Camera, Mail } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,6 +32,21 @@ const fallback = (value: string | undefined) =>
 const MemberCenter = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) return;
+    const url = URL.createObjectURL(file);
+    setAvatarPreview(url);
+    e.target.value = '';
+  };
   const { isResumeUploaded, isPersonalityQuizDone, isPersonalityTestDone } = useAppState();
 
   const name = displayName(mockProfile.fullName, mockUserId);
@@ -58,15 +73,22 @@ const MemberCenter = () => {
               {/* Top section: Avatar + Primary Info */}
               <div className="flex flex-col sm:flex-row gap-5 items-center sm:items-start">
                 {/* Avatar with upload hint */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
                 <button
                   type="button"
                   className="group relative shrink-0"
-                  onClick={() => setEditModalOpen(true)}
+                  onClick={handleAvatarClick}
                   aria-label="上傳大頭貼"
                 >
                   <Avatar className="h-20 w-20 md:h-24 md:w-24 border-2 border-border">
-                    {mockProfile.avatarUrl && (
-                      <AvatarImage src={mockProfile.avatarUrl} alt={name} />
+                    {(avatarPreview || mockProfile.avatarUrl) && (
+                      <AvatarImage src={avatarPreview || mockProfile.avatarUrl} alt={name} />
                     )}
                     <AvatarFallback className="bg-secondary text-muted-foreground text-2xl md:text-3xl font-semibold">
                       {name.charAt(0)}
