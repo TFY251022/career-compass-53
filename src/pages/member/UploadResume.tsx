@@ -15,6 +15,17 @@ import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import { useNavigate } from 'react-router-dom';
 import { Progress } from '@/components/ui/progress';
 import { TAIWAN_CITIES } from '@/data/taiwanAddresses';
+import SyncRadio from '@/components/survey/SyncRadio';
+
+/* ── Mock profile data (mirrors MemberCenter) ── */
+const mockUserId = '5F82A';
+const mockProfileData = {
+  fullName: '',
+  email: 'user@example.com',
+  location: '',        // city only
+  title: '',
+  education: '',
+};
 
 interface LanguageEntry {
   language: string;
@@ -441,6 +452,46 @@ const ResumeForm = ({
   invalidFields = new Set<string>(),
   clearInvalidField,
 }: ResumeFormProps) => {
+  /* ── Sync mode state per field ── */
+  type SyncMode = 'sync' | 'manual';
+  const [syncModes, setSyncModes] = useState<Record<string, SyncMode>>({
+    name: 'manual',
+    email: 'manual',
+    addressCity: 'manual',
+    education: 'manual',
+  });
+
+  /* Determine which profile fields have data */
+  const profileHasName = !!(mockProfileData.fullName?.trim()) || !!mockUserId; // name exception: fallback to 用戶_id
+  const profileNameValue = mockProfileData.fullName?.trim() || `用戶_${mockUserId}`;
+  const profileHasEmail = !!(mockProfileData.email?.trim());
+  const profileHasLocation = !!(mockProfileData.location?.trim());
+  const profileHasEducation = !!(mockProfileData.education?.trim());
+
+  const handleSyncChange = (field: string, mode: SyncMode) => {
+    setSyncModes(prev => ({ ...prev, [field]: mode }));
+    if (mode === 'sync') {
+      // Auto-fill from profile
+      switch (field) {
+        case 'name':
+          setFormData(prev => ({ ...prev, name: profileNameValue }));
+          clearInvalidField?.('name');
+          break;
+        case 'email':
+          setFormData(prev => ({ ...prev, email: mockProfileData.email }));
+          clearInvalidField?.('email');
+          break;
+        case 'addressCity':
+          setFormData(prev => ({ ...prev, addressCity: mockProfileData.location, addressDistrict: '' }));
+          break;
+        case 'education':
+          setFormData(prev => ({ ...prev, education: mockProfileData.education }));
+          clearInvalidField?.('education');
+          break;
+      }
+    }
+  };
+
   const getFieldClass = (field: string) =>
     invalidFields.has(field)
       ? 'border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.25)]'
@@ -489,11 +540,17 @@ const ResumeForm = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className={`space-y-2 p-3 rounded-lg border transition-all ${invalidFields.has('name') ? 'border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.25)]' : 'border-transparent'}`}>
             <Label htmlFor="name"><span className="text-red-500">*</span> 姓名</Label>
+            <SyncRadio
+              value={syncModes.name}
+              onChange={(mode) => handleSyncChange('name', mode)}
+              syncDisabled={!profileHasName}
+            />
             <Input
               id="name"
               placeholder="請輸入您的姓名"
               value={formData.name}
               onChange={(e) => handleChange('name', e.target.value)}
+              disabled={syncModes.name === 'sync'}
             />
           </div>
           <div className={`space-y-2 p-3 rounded-lg border transition-all ${invalidFields.has('phone') ? 'border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.25)]' : 'border-transparent'}`}>
@@ -513,6 +570,11 @@ const ResumeForm = ({
 
         <div className={`space-y-2 p-3 rounded-lg border transition-all ${invalidFields.has('email') ? 'border-red-500 shadow-[0_0_8px_rgba(239,68,68,0.25)]' : 'border-transparent'}`}>
           <Label htmlFor="email"><span className="text-red-500">*</span> 聯絡信箱</Label>
+          <SyncRadio
+            value={syncModes.email}
+            onChange={(mode) => handleSyncChange('email', mode)}
+            syncDisabled={!profileHasEmail}
+          />
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -522,13 +584,19 @@ const ResumeForm = ({
               className="pl-10"
               value={formData.email}
               onChange={(e) => handleChange('email', e.target.value)}
+              disabled={syncModes.email === 'sync'}
             />
           </div>
         </div>
 
-        {/* Address (optional) - Cascading Selects */}
         <div className="space-y-2">
           <Label>通訊地址（選填）</Label>
+          <SyncRadio
+            value={syncModes.addressCity}
+            onChange={(mode) => handleSyncChange('addressCity', mode)}
+            syncDisabled={!profileHasLocation}
+            disabledTooltip="會員中心尚未填寫所在地，無法同步"
+          />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">縣市</Label>
@@ -584,11 +652,18 @@ const ResumeForm = ({
             <GraduationCap className="h-4 w-4" />
             <span className="text-red-500">*</span> 教育背景
           </Label>
+          <SyncRadio
+            value={syncModes.education}
+            onChange={(mode) => handleSyncChange('education', mode)}
+            syncDisabled={!profileHasEducation}
+            disabledTooltip="會員中心尚未填寫教育背景，無法同步"
+          />
           <Textarea
             id="education"
             placeholder="學校名稱、科系、學位、畢業年份..."
             value={formData.education}
             onChange={(e) => handleChange('education', e.target.value)}
+            disabled={syncModes.education === 'sync'}
           />
         </div>
 
