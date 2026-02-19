@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Download, Edit3, Save, RotateCcw, Palette, ChevronRight, Briefcase, GraduationCap, Mail, Phone, Globe, Award, Languages, User, Star, Sparkles, Check, ChevronLeft, BookOpen, ArrowLeft, Loader2 } from 'lucide-react';
+import { FileText, Download, Edit3, Save, RotateCcw, Palette, ChevronRight, Briefcase, GraduationCap, Mail, Phone, Globe, Award, Languages, User, Star, Sparkles, Check, ChevronLeft, BookOpen, ArrowLeft, Loader2, Linkedin, FolderOpen, Code } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AILoadingSpinner, AnalysisSkeleton } from '@/components/loading/LoadingStates';
 import { useAppState } from '@/contexts/AppContext';
+import { useResumes } from '@/contexts/ResumeContext';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import AlertModal from '@/components/modals/AlertModal';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,16 +23,14 @@ interface ResumeData {
   name: string;
   email: string;
   phone: string;
-  avatar: string;
+  linkedin: string;
+  github: string;
+  professional_summary: string;
+  professional_experience: string;
+  core_skills: string;
+  projects: string;
   education: string;
-  experience: string;
-  skills: string;
-  languages: string;
-  certifications: string;
-  portfolio: string;
   autobiography: string;
-  other: string;
-  summary?: string;
 }
 
 interface Suggestion {
@@ -97,50 +97,63 @@ const mockResumeData: ResumeData = {
   name: '王小明',
   email: 'xiaoming.wang@email.com',
   phone: '0912-345-678',
-  avatar: '',
-  education: '國立台灣大學 資訊工程學系 碩士 (2018-2020)\n國立成功大學 資訊工程學系 學士 (2014-2018)',
-  experience: '前端工程師 - ABC科技公司 (2020-至今)\n• 負責公司官網與產品頁面開發\n• 導入 React 框架提升開發效率\n\n實習工程師 - XYZ新創 (2019-2020)\n• 協助後台系統維護',
-  skills: 'React, TypeScript, Node.js, Python, Git, SQL',
-  languages: '中文 (精通), 英文 (中等), 台語 (入門)',
-  certifications: 'AWS Certified Developer, Google Analytics 認證',
-  portfolio: 'https://portfolio.example.com',
-  autobiography: '我是一名前端工程師，具備 5 年軟體開發經驗。熱愛學習新技術，善於團隊合作。',
-  other: '可配合加班、可接受外派',
-  summary: '',
+  linkedin: 'https://linkedin.com/in/xiaoming',
+  github: 'https://github.com/xiaoming',
+  professional_summary: '具備 5 年經驗的全端工程師，專注於打造高效能、可擴展的現代 Web 應用。精通 React 生態系統與 Node.js 後端開發，曾帶領 3 人團隊完成多項關鍵專案，優化頁面載入速度達 40%。',
+  professional_experience: `ABC科技公司 | 前端工程師 | 2020 - 至今
+• 情境 (S)：公司官網載入速度緩慢，使用者跳出率高達 60%
+• 任務 (T)：負責重構前端架構，提升整體效能
+• 行動 (A)：導入 React 框架，實作程式碼分割與懶載入策略
+• 結果 (R)：頁面載入速度提升 40%，使用者留存率提高 25%
+
+XYZ新創 | 實習工程師 | 2019 - 2020
+• 情境 (S)：後台管理系統功能不足，無法滿足業務需求
+• 任務 (T)：協助開發新功能模組
+• 行動 (A)：使用 Vue.js 開發 3 個管理模組，撰寫單元測試
+• 結果 (R)：系統功能覆蓋率提升 30%，Bug 數量減少 50%`,
+  core_skills: 'React, TypeScript, Node.js, Python, Git, SQL',
+  projects: `企業級電商平台 | React + Node.js + PostgreSQL
+• 獨立開發完整電商系統，支援 1000+ 日活用戶
+• 實作 CI/CD 流程，部署時間縮短 70%
+
+AI 客服機器人 | Python + FastAPI + OpenAI
+• 整合 GPT API 實現智慧客服，回覆準確率達 92%
+• 日均處理 500+ 筆客戶諮詢`,
+  education: '國立台灣大學 | 資訊工程學系 | 碩士 | 2020 畢業\n國立成功大學 | 資訊工程學系 | 學士 | 2018 畢業',
+  autobiography: '我是一名前端工程師，具備 5 年軟體開發經驗。從大學時期便開始接觸程式設計，碩士期間專注於 Web 前端效能優化研究。進入職場後，我持續精進技術能力，從初階工程師成長為能獨立帶領小型團隊的技術骨幹。我熱愛學習新技術，善於團隊合作，期望未來能在技術領導的道路上持續成長。',
 };
 
 const mockSuggestions: Suggestion[] = [
-  { 
-    section: '工作經歷', 
-    original: '負責公司官網與產品頁面開發', 
-    optimized: '主導 5+ 個企業級 Web 應用開發專案，優化頁面載入速度達 40%，提升使用者留存率 25%' 
+  {
+    section: '工作經歷',
+    original: '負責公司官網與產品頁面開發',
+    optimized: '主導 5+ 個企業級 Web 應用開發專案，優化頁面載入速度達 40%，提升使用者留存率 25%',
   },
-  { 
-    section: '技能描述', 
-    original: 'React, TypeScript, Node.js', 
-    optimized: '精通 React 生態系統 (Redux, React Query, Next.js)，具備 3 年 TypeScript 實戰經驗，熟悉 Node.js 後端開發' 
+  {
+    section: '技能描述',
+    original: 'React, TypeScript, Node.js',
+    optimized: '精通 React 生態系統 (Redux, React Query, Next.js)，具備 3 年 TypeScript 實戰經驗，熟悉 Node.js 後端開發',
   },
-  { 
-    section: '自我介紹', 
-    original: '我是一名前端工程師', 
-    optimized: '具備 5 年經驗的全端工程師，專注於打造高效能、可擴展的現代 Web 應用，曾帶領 3 人團隊完成多項關鍵專案' 
+  {
+    section: '專業摘要',
+    original: '我是一名前端工程師',
+    optimized: '具備 5 年經驗的全端工程師，專注於打造高效能、可擴展的現代 Web 應用，曾帶領 3 人團隊完成多項關鍵專案',
   },
 ];
 
-// All 12 editable fields configuration
+// All editable fields configuration - new schema
 const resumeFields = [
   { key: 'name', label: '姓名', icon: User, multiline: false, placeholder: '請輸入您的姓名' },
   { key: 'email', label: '電子郵件', icon: Mail, multiline: false, placeholder: '請輸入您的電子郵件' },
   { key: 'phone', label: '聯絡電話', icon: Phone, multiline: false, placeholder: '請輸入您的聯絡電話' },
-  { key: 'education', label: '教育背景', icon: GraduationCap, multiline: true, placeholder: '請輸入您的教育背景，如：學校名稱、科系、學位、畢業年份' },
-  { key: 'experience', label: '工作經歷', icon: Briefcase, multiline: true, placeholder: '請輸入您的工作經歷，包含公司名稱、職位、工作內容與成就' },
-  { key: 'skills', label: '技能專長', icon: Star, multiline: false, placeholder: '請輸入您的技能，以逗號分隔' },
-  { key: 'languages', label: '語言能力', icon: Languages, multiline: false, placeholder: '請輸入您的語言能力，如：中文 (精通), 英文 (中等)' },
-  { key: 'certifications', label: '證照成就', icon: Award, multiline: true, placeholder: '請輸入您的證照與成就 (選填)' },
-  { key: 'portfolio', label: '作品集連結', icon: Globe, multiline: false, placeholder: '請輸入您的作品集網址 (選填)' },
-  { key: 'autobiography', label: '自傳簡介', icon: FileText, multiline: true, placeholder: '請輸入您的自我介紹與職涯目標' },
-  { key: 'summary', label: '專業摘要', icon: Sparkles, multiline: true, placeholder: '請輸入一段專業摘要，突顯您的核心優勢 (選填)' },
-  { key: 'other', label: '其他資訊', icon: FileText, multiline: true, placeholder: '其他補充資訊，如可配合事項等 (選填)' },
+  { key: 'linkedin', label: 'LinkedIn', icon: Linkedin, multiline: false, placeholder: '請輸入 LinkedIn 連結' },
+  { key: 'github', label: 'GitHub', icon: Code, multiline: false, placeholder: '請輸入 GitHub 連結' },
+  { key: 'education', label: '學歷', icon: GraduationCap, multiline: true, placeholder: '學校、系所、學位、畢業時間' },
+  { key: 'professional_summary', label: '專業摘要', icon: Sparkles, multiline: true, placeholder: '精簡的專業總結，包含核心價值與職缺關鍵字' },
+  { key: 'professional_experience', label: '工作經驗', icon: Briefcase, multiline: true, placeholder: '公司、職稱、期間，描述以 STAR 原則撰寫' },
+  { key: 'core_skills', label: '技能專長', icon: Star, multiline: false, placeholder: '6 個與推薦職缺相關的技術或軟實力關鍵字，以逗號分隔' },
+  { key: 'projects', label: '專案作品集', icon: FolderOpen, multiline: true, placeholder: '專案名稱、技術棧與量化成果' },
+  { key: 'autobiography', label: '自傳', icon: FileText, multiline: true, placeholder: '保留原本敘事順序與用詞習慣的優化內容' },
 ] as const;
 
 const templates = [
@@ -173,6 +186,7 @@ const templates = [
 const Optimize = () => {
   const navigate = useNavigate();
   const { isLoggedIn, isResumeUploaded, isPersonalityQuizDone } = useAppState();
+  const { resumes, selectedResumeId, setSelectedResumeId } = useResumes();
   const [phase, setPhase] = useState<Phase>('initial');
   const [resumeData, setResumeData] = useState<ResumeData>(mockResumeData);
   const [editedData, setEditedData] = useState<ResumeData>(mockResumeData);
@@ -222,7 +236,7 @@ const Optimize = () => {
   };
 
   const handleDownloadSuggestions = () => {
-    const content = suggestions.map(s => 
+    const content = suggestions.map(s =>
       `【${s.section}】\n原始：${s.original}\n優化：${s.optimized}\n`
     ).join('\n');
     downloadTextFile(content, '履歷優化建議.txt');
@@ -230,21 +244,14 @@ const Optimize = () => {
 
   const handleDownloadResume = async () => {
     if (!resumeRef.current) return;
-    
+
     setIsDownloading(true);
-    
+
     try {
       const element = resumeRef.current;
       const colorScheme = colorSchemes.find(c => c.id === selectedColorScheme) || colorSchemes[0];
-      
-      // Create a clone for PDF generation
-      const clone = element.cloneNode(true) as HTMLElement;
-      clone.style.width = '210mm';
-      clone.style.padding = '15mm';
-      clone.style.backgroundColor = '#ffffff';
-      
-      // Apply page break styles
-      const sections = clone.querySelectorAll('[data-pdf-section]');
+
+      const sections = element.querySelectorAll('[data-pdf-section]');
       sections.forEach((section) => {
         (section as HTMLElement).style.pageBreakInside = 'avoid';
         (section as HTMLElement).style.breakInside = 'avoid';
@@ -254,18 +261,18 @@ const Optimize = () => {
         margin: [10, 10, 10, 10] as [number, number, number, number],
         filename: `優化履歷_${selectedTemplate}_${colorScheme.name}.pdf`,
         image: { type: 'jpeg' as const, quality: 0.98 },
-        html2canvas: { 
+        html2canvas: {
           scale: 2,
           useCORS: true,
           letterRendering: true,
           logging: false,
         },
-        jsPDF: { 
-          unit: 'mm' as const, 
-          format: 'a4' as const, 
+        jsPDF: {
+          unit: 'mm' as const,
+          format: 'a4' as const,
           orientation: 'portrait' as const,
         },
-        pagebreak: { 
+        pagebreak: {
           mode: ['avoid-all', 'css', 'legacy'],
           before: '.page-break-before',
           after: '.page-break-after',
@@ -301,19 +308,16 @@ const Optimize = () => {
     setShowSaveConfirm(false);
   };
 
-  // Handle entering edit mode from suggestions phase
   const handleEnterEditMode = () => {
     setEditedData(resumeData);
     setEditPhase('edit');
   };
 
-  // Handle exiting edit mode
   const handleExitEditMode = () => {
     setEditPhase('view');
     setShowSuggestionsDrawer(false);
   };
 
-  // Handle smart back navigation
   const handleSmartBack = () => {
     if (editPhase === 'edit') {
       handleExitEditMode();
@@ -343,8 +347,11 @@ const Optimize = () => {
     setSelectedTemplate('');
   };
 
-  // Access guard check
   const hasAccess = isResumeUploaded && isPersonalityQuizDone;
+
+  const formatDate = (dateStr: string) => {
+    return dateStr.replace(/-/g, '');
+  };
 
   return (
     <LoginRequired>
@@ -401,15 +408,17 @@ const Optimize = () => {
         ) : (
           <div className="max-w-4xl mx-auto">
             <AnimatePresence mode="wait">
-              {/* Phase: Initial - Show Original Resume */}
               {phase === 'initial' && (
                 <InitialPhase
                   resumeData={resumeData}
                   onStartOptimize={handleStartOptimize}
+                  resumes={resumes}
+                  selectedResumeId={selectedResumeId}
+                  onResumeChange={setSelectedResumeId}
+                  formatDate={formatDate}
                 />
               )}
 
-              {/* Phase: Analyzing */}
               {phase === 'analyzing' && (
                 <motion.div
                   key="analyzing"
@@ -422,7 +431,6 @@ const Optimize = () => {
                 </motion.div>
               )}
 
-              {/* Phase: Suggestions */}
               {phase === 'suggestions' && (
                 <>
                   {editPhase === 'view' ? (
@@ -450,7 +458,6 @@ const Optimize = () => {
                 </>
               )}
 
-              {/* Phase: Template Selection */}
               {phase === 'templates' && (
                 <TemplateSelectionPhase
                   onSelect={handleSelectTemplate}
@@ -458,7 +465,6 @@ const Optimize = () => {
                 />
               )}
 
-              {/* Phase: Generating */}
               {phase === 'generating' && (
                 <motion.div
                   key="generating"
@@ -471,7 +477,6 @@ const Optimize = () => {
                 </motion.div>
               )}
 
-              {/* Phase: Result */}
               {phase === 'result' && (
                 <ResultPhase
                   resumeData={isEditing ? editedData : resumeData}
@@ -539,13 +544,21 @@ const ColorSchemeSelector = ({
   </div>
 );
 
-// Initial Phase Component
-const InitialPhase = ({ 
-  resumeData, 
-  onStartOptimize 
-}: { 
-  resumeData: ResumeData; 
+// Initial Phase Component with Resume Selector
+const InitialPhase = ({
+  resumeData,
+  onStartOptimize,
+  resumes,
+  selectedResumeId,
+  onResumeChange,
+  formatDate,
+}: {
+  resumeData: ResumeData;
   onStartOptimize: () => void;
+  resumes: { id: number; name: string; updatedAt: string; content: string }[];
+  selectedResumeId: number | null;
+  onResumeChange: (id: number | null) => void;
+  formatDate: (d: string) => string;
 }) => (
   <motion.div
     key="initial"
@@ -554,6 +567,41 @@ const InitialPhase = ({
     exit={{ opacity: 0, y: -20 }}
     className="space-y-6"
   >
+    {/* Resume Version Selector */}
+    <Card className="border-primary/30 shadow-[0_0_12px_rgba(34,197,94,0.1)]">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base flex items-center gap-2">
+          <FileText className="h-5 w-5 text-primary" />
+          選擇履歷版本
+        </CardTitle>
+        <CardDescription className="text-xs">
+          請選擇要優化的履歷版本，系統將根據該版本進行 AI 分析
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Select
+          value={selectedResumeId?.toString() ?? ''}
+          onValueChange={(val) => onResumeChange(parseInt(val, 10))}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="請選擇履歷" />
+          </SelectTrigger>
+          <SelectContent>
+            {resumes.map((r) => (
+              <SelectItem key={r.id} value={r.id.toString()}>
+                <span className="flex items-center gap-2">
+                  <FileText className="h-3.5 w-3.5 text-primary shrink-0" />
+                  <span className="truncate">{r.name}</span>
+                  <span className="text-muted-foreground text-xs shrink-0">_{formatDate(r.updatedAt)}</span>
+                </span>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </CardContent>
+    </Card>
+
+    {/* Original Resume Data Display */}
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
@@ -563,45 +611,36 @@ const InitialPhase = ({
         <CardDescription>以下是您目前的履歷內容，點擊開始優化進行 AI 分析</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Avatar & Basic Info */}
+        {/* Basic Info */}
         <div className="flex items-start gap-6">
-          <div className="h-24 w-24 rounded-full bg-muted flex items-center justify-center">
-            {resumeData.avatar ? (
-              <img src={resumeData.avatar} alt="Avatar" className="h-full w-full rounded-full object-cover" />
-            ) : (
-              <User className="h-12 w-12 text-muted-foreground" />
-            )}
+          <div className="h-24 w-24 rounded-full bg-muted flex items-center justify-center shrink-0">
+            <User className="h-12 w-12 text-muted-foreground" />
           </div>
           <div className="flex-1 space-y-2">
             <h3 className="text-2xl font-bold">{resumeData.name}</h3>
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <Mail className="h-4 w-4" />
-                {resumeData.email}
-              </span>
-              <span className="flex items-center gap-1">
-                <Phone className="h-4 w-4" />
-                {resumeData.phone}
-              </span>
+              <span className="flex items-center gap-1"><Mail className="h-4 w-4" />{resumeData.email}</span>
+              <span className="flex items-center gap-1"><Phone className="h-4 w-4" />{resumeData.phone}</span>
+              {resumeData.linkedin && <span className="flex items-center gap-1"><Linkedin className="h-4 w-4" />{resumeData.linkedin}</span>}
+              {resumeData.github && <span className="flex items-center gap-1"><Code className="h-4 w-4" />{resumeData.github}</span>}
             </div>
           </div>
         </div>
 
         {/* Resume Fields */}
         <div className="grid gap-4">
-          <ResumeField icon={GraduationCap} label="教育背景" value={resumeData.education} />
-          <ResumeField icon={Briefcase} label="工作經歷" value={resumeData.experience} />
-          <ResumeField icon={Star} label="技能專長" value={resumeData.skills} />
-          <ResumeField icon={Languages} label="語言能力" value={resumeData.languages} />
-          <ResumeField icon={Award} label="證照成就" value={resumeData.certifications} />
-          <ResumeField icon={Globe} label="作品集" value={resumeData.portfolio} />
+          <ResumeField icon={GraduationCap} label="學歷" value={resumeData.education} />
+          <ResumeField icon={Sparkles} label="專業摘要" value={resumeData.professional_summary} />
+          <ResumeField icon={Briefcase} label="工作經驗" value={resumeData.professional_experience} />
+          <ResumeField icon={Star} label="技能專長" value={resumeData.core_skills} />
+          <ResumeField icon={FolderOpen} label="專案作品集" value={resumeData.projects} />
           <ResumeField icon={FileText} label="自傳" value={resumeData.autobiography} />
         </div>
       </CardContent>
     </Card>
 
     <div className="flex justify-center">
-      <Button size="lg" className="gradient-primary gap-2" onClick={onStartOptimize}>
+      <Button size="lg" className="gradient-primary gap-2" onClick={onStartOptimize} disabled={!selectedResumeId}>
         <Sparkles className="h-5 w-5" />
         開始優化
       </Button>
@@ -610,13 +649,13 @@ const InitialPhase = ({
 );
 
 // Resume Field Display Component
-const ResumeField = ({ 
-  icon: Icon, 
-  label, 
-  value 
-}: { 
-  icon: React.ComponentType<{ className?: string }>; 
-  label: string; 
+const ResumeField = ({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
   value: string;
 }) => (
   <div className="p-4 bg-muted/30 rounded-lg">
@@ -624,20 +663,20 @@ const ResumeField = ({
       <Icon className="h-4 w-4 text-primary" />
       <span className="font-medium text-sm">{label}</span>
     </div>
-    <p className="text-sm whitespace-pre-line">{value}</p>
+    <p className="text-sm whitespace-pre-line">{value || <span className="text-muted-foreground italic">尚未填寫</span>}</p>
   </div>
 );
 
 // Suggestions Phase Component
-const SuggestionsPhase = ({ 
-  suggestions, 
-  onDownload, 
+const SuggestionsPhase = ({
+  suggestions,
+  onDownload,
   onGenerate,
   onEdit,
   onBack,
-}: { 
-  suggestions: Suggestion[]; 
-  onDownload: () => void; 
+}: {
+  suggestions: Suggestion[];
+  onDownload: () => void;
   onGenerate: () => void;
   onEdit: () => void;
   onBack: () => void;
@@ -649,7 +688,6 @@ const SuggestionsPhase = ({
     exit={{ opacity: 0, y: -20 }}
     className="space-y-6"
   >
-    {/* Back Button */}
     <Button variant="ghost" className="gap-2 -ml-2" onClick={onBack}>
       <ChevronLeft className="h-4 w-4" />
       返回上一步
@@ -710,7 +748,7 @@ const SuggestionsPhase = ({
   </motion.div>
 );
 
-// Resume Edit Mode Component with Side-by-Side Reference Panel
+// Resume Edit Mode Component
 const ResumeEditMode = ({
   resumeData,
   suggestions,
@@ -746,7 +784,6 @@ const ResumeEditMode = ({
       exit={{ opacity: 0, y: -20 }}
       className="space-y-6"
     >
-      {/* Top Navigation Bar */}
       <div className="flex items-center justify-between">
         <Button variant="ghost" className="gap-2 -ml-2" onClick={onBack}>
           <ChevronLeft className="h-4 w-4" />
@@ -762,7 +799,6 @@ const ResumeEditMode = ({
         </Button>
       </div>
 
-      {/* Edit Form Card */}
       <Card className="ring-2 ring-primary/30 shadow-[0_0_20px_rgba(34,197,94,0.15)]">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -777,7 +813,7 @@ const ResumeEditMode = ({
           {resumeFields.map((field) => {
             const Icon = field.icon;
             const value = resumeData[field.key as keyof ResumeData] || '';
-            
+
             return (
               <div key={field.key} className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium">
@@ -806,15 +842,11 @@ const ResumeEditMode = ({
         </CardContent>
       </Card>
 
-      {/* Fixed Footer Actions */}
       <div className="sticky bottom-4 bg-background/95 backdrop-blur-sm border rounded-lg p-4 shadow-lg flex gap-4">
         <Button variant="outline" className="flex-1" onClick={onCancel}>
           取消編輯
         </Button>
-        <Button
-          className="flex-1 gradient-primary gap-2"
-          onClick={onSave}
-        >
+        <Button className="flex-1 gradient-primary gap-2" onClick={onSave}>
           <Save className="h-4 w-4" />
           儲存變更
         </Button>
@@ -825,20 +857,13 @@ const ResumeEditMode = ({
           disabled={isDownloading}
         >
           {isDownloading ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              生成中...
-            </>
+            <><Loader2 className="h-4 w-4 animate-spin" />生成中...</>
           ) : (
-            <>
-              <Download className="h-4 w-4" />
-              下載履歷
-            </>
+            <><Download className="h-4 w-4" />下載履歷</>
           )}
         </Button>
       </div>
 
-      {/* Suggestions Reference Drawer */}
       <RightDrawer
         open={showSuggestionsDrawer}
         onClose={() => setShowSuggestionsDrawer(false)}
@@ -873,11 +898,11 @@ const ResumeEditMode = ({
 };
 
 // Template Selection Phase Component with Color Scheme
-const TemplateSelectionPhase = ({ 
-  onSelect, 
-  onBack 
-}: { 
-  onSelect: (id: string, colorScheme: string) => void; 
+const TemplateSelectionPhase = ({
+  onSelect,
+  onBack,
+}: {
+  onSelect: (id: string, colorScheme: string) => void;
   onBack: () => void;
 }) => {
   const [selectedColors, setSelectedColors] = useState<Record<string, string>>({
@@ -902,7 +927,7 @@ const TemplateSelectionPhase = ({
       <div className="grid md:grid-cols-3 gap-6">
         {templates.map((template, i) => {
           const selectedScheme = colorSchemes.find(c => c.id === selectedColors[template.id]) || colorSchemes[0];
-          
+
           return (
             <motion.div
               key={template.id}
@@ -911,7 +936,7 @@ const TemplateSelectionPhase = ({
               transition={{ delay: i * 0.1 }}
             >
               <Card className="overflow-hidden group">
-                <div 
+                <div
                   className="h-32 flex items-center justify-center transition-all duration-300"
                   style={{ background: selectedScheme.gradient }}
                 >
@@ -931,8 +956,7 @@ const TemplateSelectionPhase = ({
                       </li>
                     ))}
                   </ul>
-                  
-                  {/* Color Scheme Selector */}
+
                   <div className="pt-2 border-t border-border">
                     <p className="text-xs text-muted-foreground mb-2">選擇配色</p>
                     <ColorSchemeSelector
@@ -941,10 +965,10 @@ const TemplateSelectionPhase = ({
                       compact
                     />
                   </div>
-                  
-                  <Button 
+
+                  <Button
                     className="w-full gap-2"
-                    style={{ 
+                    style={{
                       background: selectedScheme.gradient,
                       color: 'white',
                     }}
@@ -960,9 +984,10 @@ const TemplateSelectionPhase = ({
         })}
       </div>
 
-      <div className="flex justify-center">
-        <Button variant="outline" onClick={onBack}>
-          返回建議頁面
+      <div className="flex justify-center pt-4">
+        <Button variant="ghost" className="gap-2" onClick={onBack}>
+          <ChevronLeft className="h-4 w-4" />
+          返回上一步
         </Button>
       </div>
     </motion.div>
@@ -1003,7 +1028,7 @@ const ResultPhase = ({
 }) => {
   const template = templates.find(t => t.id === selectedTemplate);
   const colorScheme = colorSchemes.find(c => c.id === selectedColorScheme) || colorSchemes[0];
-  
+
   const handleFieldChange = (field: keyof ResumeData, value: string) => {
     onDataChange({ ...resumeData, [field]: value });
   };
@@ -1016,10 +1041,9 @@ const ResultPhase = ({
       exit={{ opacity: 0, y: -20 }}
       className="space-y-6"
     >
-      {/* Template Badge & Color Selector */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-3">
-          <div 
+          <div
             className="h-10 w-10 rounded-lg flex items-center justify-center"
             style={{ background: colorScheme.gradient }}
           >
@@ -1030,9 +1054,8 @@ const ResultPhase = ({
             <p className="text-xs text-muted-foreground">{template?.subtitle}</p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-4">
-          {/* Color scheme selector in result view */}
           <div className="flex items-center gap-2">
             <span className="text-xs text-muted-foreground">配色：</span>
             <ColorSchemeSelector
@@ -1041,7 +1064,7 @@ const ResultPhase = ({
               compact
             />
           </div>
-          
+
           {!isEditing && (
             <Button variant="outline" size="sm" className="gap-2" onClick={onEdit}>
               <Edit3 className="h-4 w-4" />
@@ -1051,30 +1074,29 @@ const ResultPhase = ({
         </div>
       </div>
 
-      {/* Resume Preview with PDF ref */}
       <Card className={isEditing ? 'ring-2 ring-primary/50 shadow-[0_0_20px_rgba(34,197,94,0.15)]' : ''}>
         <CardContent className="p-6">
           <div ref={resumeRef} className="pdf-container bg-white text-foreground">
             {selectedTemplate === 'corporate' && (
-              <CorporateTemplate 
-                data={resumeData} 
-                isEditing={isEditing} 
+              <CorporateTemplate
+                data={resumeData}
+                isEditing={isEditing}
                 onChange={handleFieldChange}
                 colorScheme={colorScheme}
               />
             )}
             {selectedTemplate === 'modern' && (
-              <ModernTemplate 
-                data={resumeData} 
-                isEditing={isEditing} 
+              <ModernTemplate
+                data={resumeData}
+                isEditing={isEditing}
                 onChange={handleFieldChange}
                 colorScheme={colorScheme}
               />
             )}
             {selectedTemplate === 'creative' && (
-              <CreativeTemplate 
-                data={resumeData} 
-                isEditing={isEditing} 
+              <CreativeTemplate
+                data={resumeData}
+                isEditing={isEditing}
                 onChange={handleFieldChange}
                 colorScheme={colorScheme}
               />
@@ -1083,29 +1105,23 @@ const ResultPhase = ({
         </CardContent>
       </Card>
 
-      {/* Action Buttons */}
       {isEditing ? (
         <div className="flex gap-4">
-          <Button variant="outline" className="flex-1" onClick={onCancelEdit}>
-            取消
-          </Button>
+          <Button variant="outline" className="flex-1" onClick={onCancelEdit}>取消</Button>
           <Button className="flex-1 gradient-primary gap-2" onClick={onSave}>
-            <Save className="h-4 w-4" />
-            儲存
+            <Save className="h-4 w-4" />儲存
           </Button>
         </div>
       ) : (
         <div className="flex flex-wrap gap-4">
           <Button variant="outline" className="gap-2" onClick={onBackToTemplates}>
-            <Palette className="h-4 w-4" />
-            重新選擇樣板
+            <Palette className="h-4 w-4" />重新選擇樣板
           </Button>
           <Button variant="outline" className="gap-2" onClick={onReset}>
-            <RotateCcw className="h-4 w-4" />
-            重新填寫
+            <RotateCcw className="h-4 w-4" />重新填寫
           </Button>
-          <Button 
-            className="flex-1 gap-2" 
+          <Button
+            className="flex-1 gap-2"
             style={{ background: colorScheme.gradient, color: 'white' }}
             onClick={onDownload}
             disabled={isDownloading}
@@ -1159,7 +1175,7 @@ const EditableField = ({
   );
 };
 
-// Corporate Template with Dynamic Colors
+// Corporate Template with Dynamic Colors - Updated Schema
 const CorporateTemplate = ({
   data,
   isEditing,
@@ -1173,55 +1189,68 @@ const CorporateTemplate = ({
 }) => (
   <div className="font-serif space-y-6" style={{ color: colorScheme.text }}>
     {/* Header */}
-    <div 
-      className="text-center pb-4 avoid-break" 
+    <div
+      className="text-center pb-4 avoid-break"
       data-pdf-section
       style={{ borderBottom: `2px solid ${colorScheme.primary}` }}
     >
       <h1 className="text-3xl font-bold tracking-wide" style={{ color: colorScheme.primary }}>
         <EditableField value={data.name} onChange={(v) => onChange('name', v)} isEditing={isEditing} />
       </h1>
-      <div className="flex justify-center gap-6 mt-2 text-sm" style={{ color: colorScheme.secondary }}>
+      <div className="flex justify-center flex-wrap gap-4 mt-2 text-sm" style={{ color: colorScheme.secondary }}>
         <EditableField value={data.email} onChange={(v) => onChange('email', v)} isEditing={isEditing} />
         <span>|</span>
         <EditableField value={data.phone} onChange={(v) => onChange('phone', v)} isEditing={isEditing} />
+        {data.linkedin && <><span>|</span><EditableField value={data.linkedin} onChange={(v) => onChange('linkedin', v)} isEditing={isEditing} /></>}
+        {data.github && <><span>|</span><EditableField value={data.github} onChange={(v) => onChange('github', v)} isEditing={isEditing} /></>}
       </div>
     </div>
 
-    {/* Sections with page break control */}
+    {data.professional_summary && (
+      <div data-pdf-section className="avoid-break">
+        <TemplateSectionWithColor title="專業摘要" colorScheme={colorScheme}>
+          <EditableField value={data.professional_summary} onChange={(v) => onChange('professional_summary', v)} isEditing={isEditing} multiline />
+        </TemplateSectionWithColor>
+      </div>
+    )}
+
     <div data-pdf-section className="avoid-break">
-      <TemplateSectionWithColor title="教育背景" colorScheme={colorScheme}>
+      <TemplateSectionWithColor title="學歷" colorScheme={colorScheme}>
         <EditableField value={data.education} onChange={(v) => onChange('education', v)} isEditing={isEditing} multiline />
       </TemplateSectionWithColor>
     </div>
 
     <div data-pdf-section className="avoid-break">
-      <TemplateSectionWithColor title="工作經歷" colorScheme={colorScheme}>
-        <EditableField value={data.experience} onChange={(v) => onChange('experience', v)} isEditing={isEditing} multiline />
+      <TemplateSectionWithColor title="工作經驗" colorScheme={colorScheme}>
+        <EditableField value={data.professional_experience} onChange={(v) => onChange('professional_experience', v)} isEditing={isEditing} multiline />
       </TemplateSectionWithColor>
     </div>
 
     <div data-pdf-section className="avoid-break">
       <TemplateSectionWithColor title="技能專長" colorScheme={colorScheme}>
-        <EditableField value={data.skills} onChange={(v) => onChange('skills', v)} isEditing={isEditing} />
+        <EditableField value={data.core_skills} onChange={(v) => onChange('core_skills', v)} isEditing={isEditing} />
       </TemplateSectionWithColor>
     </div>
 
-    <div data-pdf-section className="avoid-break">
-      <TemplateSectionWithColor title="語言能力" colorScheme={colorScheme}>
-        <EditableField value={data.languages} onChange={(v) => onChange('languages', v)} isEditing={isEditing} />
-      </TemplateSectionWithColor>
-    </div>
+    {data.projects && (
+      <div data-pdf-section className="avoid-break">
+        <TemplateSectionWithColor title="專案作品集" colorScheme={colorScheme}>
+          <EditableField value={data.projects} onChange={(v) => onChange('projects', v)} isEditing={isEditing} multiline />
+        </TemplateSectionWithColor>
+      </div>
+    )}
 
-    <div data-pdf-section className="avoid-break">
-      <TemplateSectionWithColor title="證照與成就" colorScheme={colorScheme}>
-        <EditableField value={data.certifications} onChange={(v) => onChange('certifications', v)} isEditing={isEditing} />
-      </TemplateSectionWithColor>
-    </div>
+    {data.autobiography && (
+      <div data-pdf-section className="avoid-break">
+        <TemplateSectionWithColor title="自傳" colorScheme={colorScheme}>
+          <EditableField value={data.autobiography} onChange={(v) => onChange('autobiography', v)} isEditing={isEditing} multiline />
+        </TemplateSectionWithColor>
+      </div>
+    )}
   </div>
 );
 
-// Modern Template with Dynamic Colors
+// Modern Template with Dynamic Colors - Updated Schema
 const ModernTemplate = ({
   data,
   isEditing,
@@ -1233,25 +1262,23 @@ const ModernTemplate = ({
   onChange: (field: keyof ResumeData, value: string) => void;
   colorScheme: ColorScheme;
 }) => {
-  const skills = data.skills.split(',').map(s => s.trim());
-  
+  const skills = data.core_skills.split(',').map(s => s.trim());
+
   return (
     <div className="grid md:grid-cols-[1fr_2.5fr] gap-6">
       {/* Left Sidebar */}
-      <div 
-        className="space-y-6 p-4 rounded-lg avoid-break" 
+      <div
+        className="space-y-6 p-4 rounded-lg avoid-break"
         data-pdf-section
         style={{ backgroundColor: colorScheme.background }}
       >
-        {/* Avatar */}
-        <div 
+        <div
           className="h-32 w-32 mx-auto rounded-full flex items-center justify-center"
           style={{ background: colorScheme.gradient }}
         >
           <span className="text-4xl font-bold text-white">{data.name.charAt(0)}</span>
         </div>
 
-        {/* Contact */}
         <div className="space-y-2 text-sm">
           <div className="flex items-center gap-2">
             <Mail className="h-4 w-4" style={{ color: colorScheme.primary }} />
@@ -1261,31 +1288,43 @@ const ModernTemplate = ({
             <Phone className="h-4 w-4" style={{ color: colorScheme.primary }} />
             <EditableField value={data.phone} onChange={(v) => onChange('phone', v)} isEditing={isEditing} className="text-xs" />
           </div>
+          {data.linkedin && (
+            <div className="flex items-center gap-2">
+              <Linkedin className="h-4 w-4" style={{ color: colorScheme.primary }} />
+              <EditableField value={data.linkedin} onChange={(v) => onChange('linkedin', v)} isEditing={isEditing} className="text-xs" />
+            </div>
+          )}
+          {data.github && (
+            <div className="flex items-center gap-2">
+              <Code className="h-4 w-4" style={{ color: colorScheme.primary }} />
+              <EditableField value={data.github} onChange={(v) => onChange('github', v)} isEditing={isEditing} className="text-xs" />
+            </div>
+          )}
         </div>
 
         {/* Skills with Progress Bars */}
         <div className="space-y-3">
-          <h3 
+          <h3
             className="font-semibold text-sm pb-1"
             style={{ borderBottom: `1px solid ${colorScheme.primary}30` }}
           >
             技能專長
           </h3>
           {isEditing ? (
-            <EditableField value={data.skills} onChange={(v) => onChange('skills', v)} isEditing={isEditing} multiline />
+            <EditableField value={data.core_skills} onChange={(v) => onChange('core_skills', v)} isEditing={isEditing} multiline />
           ) : (
             <div className="space-y-2">
-              {skills.slice(0, 5).map((skill, i) => (
+              {skills.slice(0, 6).map((skill, i) => (
                 <div key={i}>
                   <div className="flex justify-between text-xs mb-1">
                     <span>{skill}</span>
-                    <span>{90 - i * 10}%</span>
+                    <span>{95 - i * 8}%</span>
                   </div>
                   <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className="h-full rounded-full transition-all"
-                      style={{ 
-                        width: `${90 - i * 10}%`,
+                      style={{
+                        width: `${95 - i * 8}%`,
                         background: colorScheme.gradient,
                       }}
                     />
@@ -1295,17 +1334,6 @@ const ModernTemplate = ({
             </div>
           )}
         </div>
-
-        {/* Languages */}
-        <div className="space-y-2">
-          <h3 
-            className="font-semibold text-sm pb-1"
-            style={{ borderBottom: `1px solid ${colorScheme.primary}30` }}
-          >
-            語言能力
-          </h3>
-          <EditableField value={data.languages} onChange={(v) => onChange('languages', v)} isEditing={isEditing} className="text-xs" />
-        </div>
       </div>
 
       {/* Right Content */}
@@ -1314,49 +1342,66 @@ const ModernTemplate = ({
           <h1 className="text-3xl font-bold" style={{ color: colorScheme.primary }}>
             <EditableField value={data.name} onChange={(v) => onChange('name', v)} isEditing={isEditing} />
           </h1>
-          <p className="text-muted-foreground mt-1">
-            <EditableField value={data.autobiography} onChange={(v) => onChange('autobiography', v)} isEditing={isEditing} multiline />
-          </p>
+          {data.professional_summary && (
+            <p className="text-muted-foreground mt-1">
+              <EditableField value={data.professional_summary} onChange={(v) => onChange('professional_summary', v)} isEditing={isEditing} multiline />
+            </p>
+          )}
         </div>
 
         <div className="space-y-4" data-pdf-section>
-          <h3 
+          <h3
             className="font-semibold text-lg pb-1 flex items-center gap-2 avoid-break"
             style={{ borderBottom: `1px solid ${colorScheme.primary}30` }}
           >
             <Briefcase className="h-4 w-4" style={{ color: colorScheme.primary }} />
-            工作經歷
+            工作經驗
           </h3>
-          <EditableField value={data.experience} onChange={(v) => onChange('experience', v)} isEditing={isEditing} multiline className="text-sm" />
+          <EditableField value={data.professional_experience} onChange={(v) => onChange('professional_experience', v)} isEditing={isEditing} multiline className="text-sm" />
         </div>
 
         <div className="space-y-4" data-pdf-section>
-          <h3 
+          <h3
             className="font-semibold text-lg pb-1 flex items-center gap-2 avoid-break"
             style={{ borderBottom: `1px solid ${colorScheme.primary}30` }}
           >
             <GraduationCap className="h-4 w-4" style={{ color: colorScheme.primary }} />
-            教育背景
+            學歷
           </h3>
           <EditableField value={data.education} onChange={(v) => onChange('education', v)} isEditing={isEditing} multiline className="text-sm" />
         </div>
 
-        <div className="space-y-4" data-pdf-section>
-          <h3 
-            className="font-semibold text-lg pb-1 flex items-center gap-2 avoid-break"
-            style={{ borderBottom: `1px solid ${colorScheme.primary}30` }}
-          >
-            <Award className="h-4 w-4" style={{ color: colorScheme.primary }} />
-            證照與成就
-          </h3>
-          <EditableField value={data.certifications} onChange={(v) => onChange('certifications', v)} isEditing={isEditing} className="text-sm" />
-        </div>
+        {data.projects && (
+          <div className="space-y-4" data-pdf-section>
+            <h3
+              className="font-semibold text-lg pb-1 flex items-center gap-2 avoid-break"
+              style={{ borderBottom: `1px solid ${colorScheme.primary}30` }}
+            >
+              <FolderOpen className="h-4 w-4" style={{ color: colorScheme.primary }} />
+              專案作品集
+            </h3>
+            <EditableField value={data.projects} onChange={(v) => onChange('projects', v)} isEditing={isEditing} multiline className="text-sm" />
+          </div>
+        )}
+
+        {data.autobiography && (
+          <div className="space-y-4" data-pdf-section>
+            <h3
+              className="font-semibold text-lg pb-1 flex items-center gap-2 avoid-break"
+              style={{ borderBottom: `1px solid ${colorScheme.primary}30` }}
+            >
+              <FileText className="h-4 w-4" style={{ color: colorScheme.primary }} />
+              自傳
+            </h3>
+            <EditableField value={data.autobiography} onChange={(v) => onChange('autobiography', v)} isEditing={isEditing} multiline className="text-sm" />
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-// Creative Template with Dynamic Colors
+// Creative Template with Dynamic Colors - Updated Schema
 const CreativeTemplate = ({
   data,
   isEditing,
@@ -1369,25 +1414,23 @@ const CreativeTemplate = ({
   colorScheme: ColorScheme;
 }) => (
   <div className="relative">
-    {/* Decorative Background */}
-    <div 
-      className="absolute inset-0 rounded-lg opacity-20" 
+    <div
+      className="absolute inset-0 rounded-lg opacity-20"
       style={{ background: colorScheme.gradient }}
     />
-    
+
     <div className="relative p-6 space-y-6">
-      {/* Header with asymmetric design */}
+      {/* Header */}
       <div className="flex flex-col md:flex-row items-center gap-6 avoid-break" data-pdf-section>
-        {/* Avatar with decorative frame */}
         <div className="relative">
-          <div 
+          <div
             className="h-36 w-36 rounded-full p-1"
             style={{ background: colorScheme.gradient }}
           >
             <div className="h-full w-full rounded-full bg-white flex items-center justify-center">
-              <span 
+              <span
                 className="text-5xl font-bold"
-                style={{ 
+                style={{
                   background: colorScheme.gradient,
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
@@ -1398,7 +1441,7 @@ const CreativeTemplate = ({
               </span>
             </div>
           </div>
-          <div 
+          <div
             className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full flex items-center justify-center"
             style={{ background: colorScheme.gradient }}
           >
@@ -1407,9 +1450,9 @@ const CreativeTemplate = ({
         </div>
 
         <div className="text-center md:text-left flex-1">
-          <h1 
+          <h1
             className="text-4xl font-bold"
-            style={{ 
+            style={{
               background: colorScheme.gradient,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
@@ -1418,9 +1461,11 @@ const CreativeTemplate = ({
           >
             <EditableField value={data.name} onChange={(v) => onChange('name', v)} isEditing={isEditing} />
           </h1>
-          <p className="mt-2 text-muted-foreground">
-            <EditableField value={data.autobiography} onChange={(v) => onChange('autobiography', v)} isEditing={isEditing} multiline />
-          </p>
+          {data.professional_summary && (
+            <p className="mt-2 text-muted-foreground">
+              <EditableField value={data.professional_summary} onChange={(v) => onChange('professional_summary', v)} isEditing={isEditing} multiline />
+            </p>
+          )}
           <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-3 text-sm">
             <span className="flex items-center gap-1" style={{ color: colorScheme.primary }}>
               <Mail className="h-4 w-4" />
@@ -1430,6 +1475,12 @@ const CreativeTemplate = ({
               <Phone className="h-4 w-4" />
               <EditableField value={data.phone} onChange={(v) => onChange('phone', v)} isEditing={isEditing} />
             </span>
+            {data.linkedin && (
+              <span className="flex items-center gap-1" style={{ color: colorScheme.primary }}>
+                <Linkedin className="h-4 w-4" />
+                <EditableField value={data.linkedin} onChange={(v) => onChange('linkedin', v)} isEditing={isEditing} />
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -1437,13 +1488,13 @@ const CreativeTemplate = ({
       {/* Content Grid */}
       <div className="grid md:grid-cols-2 gap-6">
         <div data-pdf-section className="avoid-break">
-          <CreativeSectionWithColor title="工作經歷" colorScheme={colorScheme}>
-            <EditableField value={data.experience} onChange={(v) => onChange('experience', v)} isEditing={isEditing} multiline />
+          <CreativeSectionWithColor title="工作經驗" colorScheme={colorScheme}>
+            <EditableField value={data.professional_experience} onChange={(v) => onChange('professional_experience', v)} isEditing={isEditing} multiline />
           </CreativeSectionWithColor>
         </div>
 
         <div data-pdf-section className="avoid-break">
-          <CreativeSectionWithColor title="教育背景" colorScheme={colorScheme} useSecondary>
+          <CreativeSectionWithColor title="學歷" colorScheme={colorScheme} useSecondary>
             <EditableField value={data.education} onChange={(v) => onChange('education', v)} isEditing={isEditing} multiline />
           </CreativeSectionWithColor>
         </div>
@@ -1453,14 +1504,14 @@ const CreativeTemplate = ({
       <div data-pdf-section className="avoid-break">
         <CreativeSectionWithColor title="技能專長" colorScheme={colorScheme} fullWidth>
           {isEditing ? (
-            <EditableField value={data.skills} onChange={(v) => onChange('skills', v)} isEditing={isEditing} />
+            <EditableField value={data.core_skills} onChange={(v) => onChange('core_skills', v)} isEditing={isEditing} />
           ) : (
             <div className="flex flex-wrap gap-2">
-              {data.skills.split(',').map((skill, i) => (
-                <span 
-                  key={i} 
+              {data.core_skills.split(',').map((skill, i) => (
+                <span
+                  key={i}
                   className="px-3 py-1 rounded-full text-sm"
-                  style={{ 
+                  style={{
                     backgroundColor: `${colorScheme.primary}15`,
                     color: colorScheme.primary,
                   }}
@@ -1473,47 +1524,41 @@ const CreativeTemplate = ({
         </CreativeSectionWithColor>
       </div>
 
-      {/* Portfolio as Cards */}
-      <div data-pdf-section className="avoid-break">
-        <CreativeSectionWithColor title="作品集" colorScheme={colorScheme} fullWidth useSecondary>
-          {isEditing ? (
-            <EditableField value={data.portfolio} onChange={(v) => onChange('portfolio', v)} isEditing={isEditing} />
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
-                  <div 
-                    className="h-24"
-                    style={{ background: colorScheme.gradient }}
-                  />
-                  <CardContent className="p-3">
-                    <p className="text-sm font-medium">專案作品 {i}</p>
-                    <p className="text-xs text-muted-foreground">掃描 QR Code 查看</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </CreativeSectionWithColor>
-      </div>
+      {/* Projects */}
+      {data.projects && (
+        <div data-pdf-section className="avoid-break">
+          <CreativeSectionWithColor title="專案作品集" colorScheme={colorScheme} fullWidth useSecondary>
+            <EditableField value={data.projects} onChange={(v) => onChange('projects', v)} isEditing={isEditing} multiline />
+          </CreativeSectionWithColor>
+        </div>
+      )}
+
+      {/* Autobiography */}
+      {data.autobiography && (
+        <div data-pdf-section className="avoid-break">
+          <CreativeSectionWithColor title="自傳" colorScheme={colorScheme} fullWidth>
+            <EditableField value={data.autobiography} onChange={(v) => onChange('autobiography', v)} isEditing={isEditing} multiline />
+          </CreativeSectionWithColor>
+        </div>
+      )}
     </div>
   </div>
 );
 
 // Template Section Helper with Color
-const TemplateSectionWithColor = ({ 
-  title, 
+const TemplateSectionWithColor = ({
+  title,
   children,
   colorScheme,
-}: { 
-  title: string; 
+}: {
+  title: string;
   children: React.ReactNode;
   colorScheme: ColorScheme;
 }) => (
   <div>
-    <h2 
+    <h2
       className="text-lg font-bold pb-1 mb-3"
-      style={{ 
+      style={{
         color: colorScheme.primary,
         borderBottom: `1px solid ${colorScheme.primary}40`,
       }}
@@ -1525,24 +1570,24 @@ const TemplateSectionWithColor = ({
 );
 
 // Creative Section Helper with Color
-const CreativeSectionWithColor = ({ 
-  title, 
-  children, 
+const CreativeSectionWithColor = ({
+  title,
+  children,
   colorScheme,
   useSecondary = false,
   fullWidth = false,
-}: { 
-  title: string; 
-  children: React.ReactNode; 
+}: {
+  title: string;
+  children: React.ReactNode;
   colorScheme: ColorScheme;
   useSecondary?: boolean;
   fullWidth?: boolean;
 }) => (
-  <div 
+  <div
     className={`p-4 rounded-lg bg-white/50 dark:bg-white/5 ${fullWidth ? 'col-span-full' : ''}`}
     style={{ borderLeft: `4px solid ${useSecondary ? colorScheme.secondary : colorScheme.primary}` }}
   >
-    <h3 
+    <h3
       className="font-semibold mb-3"
       style={{ color: useSecondary ? colorScheme.secondary : colorScheme.primary }}
     >
