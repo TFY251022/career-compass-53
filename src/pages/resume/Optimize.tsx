@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Download, Edit3, Save, RotateCcw, Palette, ChevronRight, Briefcase, GraduationCap, Mail, Phone, Globe, Award, Languages, User, Star, Sparkles, Check, ChevronLeft, BookOpen, ArrowLeft, Loader2, Linkedin, FolderOpen, Code } from 'lucide-react';
+import { FileText, Download, Edit3, Save, RotateCcw, Palette, ChevronRight, Briefcase, GraduationCap, Mail, Phone, Globe, Award, Languages, User, Star, Sparkles, Check, ChevronLeft, BookOpen, ArrowLeft, Loader2, Linkedin, FolderOpen, Code, MapPin, ShieldCheck, ExternalLink, MoreHorizontal } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,23 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 type Phase = 'initial' | 'analyzing' | 'suggestions' | 'templates' | 'generating' | 'result';
 
+// === Original Resume Data (for initial preview & suggestions phase) ===
+interface OriginalResumeData {
+  name: string;
+  phone: string;
+  email: string;
+  address: string;       // 通訊地址 (選填)
+  education: string;
+  experience: string;    // 工作經歷
+  languages: string;     // 語言能力
+  skills: string;        // 技能專長
+  certifications: string; // 證照與專案成就 (選填)
+  portfolio: string;     // 作品集 (選填)
+  autobiography: string; // 自傳 (選填)
+  other: string;         // 其他 (選填)
+}
+
+// === Optimized Resume Data (for final generated output) ===
 interface ResumeData {
   name: string;
   email: string;
@@ -93,6 +110,23 @@ const colorSchemes: ColorScheme[] = [
   },
 ];
 
+// Mock original resume data (initial phase)
+const mockOriginalResumeData: OriginalResumeData = {
+  name: '王小明',
+  phone: '0912-345-678',
+  email: 'xiaoming.wang@email.com',
+  address: '台北市大安區',
+  education: '國立台灣大學 | 資訊工程學系 | 碩士 | 2020 畢業\n國立成功大學 | 資訊工程學系 | 學士 | 2018 畢業',
+  experience: `ABC科技公司 | 前端工程師 | 2020 - 至今\n• 負責公司官網與產品頁面開發\n• 使用 React + TypeScript 建構現代化 UI\n• 優化效能，提升載入速度 40%\n\nXYZ新創 | 實習工程師 | 2019 - 2020\n• 參與多個客戶專案開發\n• 使用 Vue.js 開發管理模組`,
+  languages: '中文 (母語)、英文 (TOEIC 850)、日文 (N2)',
+  skills: 'React, TypeScript, JavaScript, Node.js, Python, Git, SQL, Docker',
+  certifications: 'AWS Certified Developer - Associate\nGoogle Cloud Professional Data Engineer',
+  portfolio: '個人技術部落格: https://xiaoming.dev\nGitHub: https://github.com/xiaoming',
+  autobiography: '我是一名前端工程師，具備 5 年軟體開發經驗。從大學時期便開始接觸程式設計，碩士期間專注於 Web 前端效能優化研究。進入職場後，我持續精進技術能力，從初階工程師成長為能獨立帶領小型團隊的技術骨幹。我熱愛學習新技術，善於團隊合作，期望未來能在技術領導的道路上持續成長。',
+  other: '',
+};
+
+// Mock optimized resume data (final output phase)
 const mockResumeData: ResumeData = {
   name: '王小明',
   email: 'xiaoming.wang@email.com',
@@ -100,25 +134,9 @@ const mockResumeData: ResumeData = {
   linkedin: 'https://linkedin.com/in/xiaoming',
   github: 'https://github.com/xiaoming',
   professional_summary: '具備 5 年經驗的全端工程師，專注於打造高效能、可擴展的現代 Web 應用。精通 React 生態系統與 Node.js 後端開發，曾帶領 3 人團隊完成多項關鍵專案，優化頁面載入速度達 40%。',
-  professional_experience: `ABC科技公司 | 前端工程師 | 2020 - 至今
-• 情境 (S)：公司官網載入速度緩慢，使用者跳出率高達 60%
-• 任務 (T)：負責重構前端架構，提升整體效能
-• 行動 (A)：導入 React 框架，實作程式碼分割與懶載入策略
-• 結果 (R)：頁面載入速度提升 40%，使用者留存率提高 25%
-
-XYZ新創 | 實習工程師 | 2019 - 2020
-• 情境 (S)：後台管理系統功能不足，無法滿足業務需求
-• 任務 (T)：協助開發新功能模組
-• 行動 (A)：使用 Vue.js 開發 3 個管理模組，撰寫單元測試
-• 結果 (R)：系統功能覆蓋率提升 30%，Bug 數量減少 50%`,
+  professional_experience: `ABC科技公司 | 前端工程師 | 2020 - 至今\n• 情境 (S)：公司官網載入速度緩慢，使用者跳出率高達 60%\n• 任務 (T)：負責重構前端架構，提升整體效能\n• 行動 (A)：導入 React 框架，實作程式碼分割與懶載入策略\n• 結果 (R)：頁面載入速度提升 40%，使用者留存率提高 25%\n\nXYZ新創 | 實習工程師 | 2019 - 2020\n• 情境 (S)：後台管理系統功能不足，無法滿足業務需求\n• 任務 (T)：協助開發新功能模組\n• 行動 (A)：使用 Vue.js 開發 3 個管理模組，撰寫單元測試\n• 結果 (R)：系統功能覆蓋率提升 30%，Bug 數量減少 50%`,
   core_skills: 'React, TypeScript, Node.js, Python, Git, SQL',
-  projects: `企業級電商平台 | React + Node.js + PostgreSQL
-• 獨立開發完整電商系統，支援 1000+ 日活用戶
-• 實作 CI/CD 流程，部署時間縮短 70%
-
-AI 客服機器人 | Python + FastAPI + OpenAI
-• 整合 GPT API 實現智慧客服，回覆準確率達 92%
-• 日均處理 500+ 筆客戶諮詢`,
+  projects: `企業級電商平台 | React + Node.js + PostgreSQL\n• 獨立開發完整電商系統，支援 1000+ 日活用戶\n• 實作 CI/CD 流程，部署時間縮短 70%\n\nAI 客服機器人 | Python + FastAPI + OpenAI\n• 整合 GPT API 實現智慧客服，回覆準確率達 92%\n• 日均處理 500+ 筆客戶諮詢`,
   education: '國立台灣大學 | 資訊工程學系 | 碩士 | 2020 畢業\n國立成功大學 | 資訊工程學系 | 學士 | 2018 畢業',
   autobiography: '我是一名前端工程師，具備 5 年軟體開發經驗。從大學時期便開始接觸程式設計，碩士期間專注於 Web 前端效能優化研究。進入職場後，我持續精進技術能力，從初階工程師成長為能獨立帶領小型團隊的技術骨幹。我熱愛學習新技術，善於團隊合作，期望未來能在技術領導的道路上持續成長。',
 };
@@ -141,18 +159,34 @@ const mockSuggestions: Suggestion[] = [
   },
 ];
 
-// All editable fields configuration - new schema
+// Original resume fields config (for initial preview & suggestions edit)
+const originalResumeFields = [
+  { key: 'name', label: '姓名', icon: User, multiline: false, optional: false },
+  { key: 'phone', label: '聯絡電話', icon: Phone, multiline: false, optional: false },
+  { key: 'email', label: '聯絡信箱', icon: Mail, multiline: false, optional: false },
+  { key: 'address', label: '通訊地址', icon: MapPin, multiline: false, optional: true },
+  { key: 'education', label: '教育背景', icon: GraduationCap, multiline: true, optional: false },
+  { key: 'experience', label: '工作經歷', icon: Briefcase, multiline: true, optional: false },
+  { key: 'languages', label: '語言能力', icon: Languages, multiline: false, optional: false },
+  { key: 'skills', label: '技能專長', icon: Star, multiline: false, optional: false },
+  { key: 'certifications', label: '證照與專案成就', icon: ShieldCheck, multiline: true, optional: true },
+  { key: 'portfolio', label: '作品集', icon: ExternalLink, multiline: true, optional: true },
+  { key: 'autobiography', label: '自傳', icon: FileText, multiline: true, optional: true },
+  { key: 'other', label: '其他', icon: MoreHorizontal, multiline: true, optional: true },
+] as const;
+
+// Optimized resume fields config (for final generated output & result edit)
 const resumeFields = [
   { key: 'name', label: '姓名', icon: User, multiline: false, placeholder: '請輸入您的姓名' },
   { key: 'email', label: '電子郵件', icon: Mail, multiline: false, placeholder: '請輸入您的電子郵件' },
   { key: 'phone', label: '聯絡電話', icon: Phone, multiline: false, placeholder: '請輸入您的聯絡電話' },
   { key: 'linkedin', label: 'LinkedIn', icon: Linkedin, multiline: false, placeholder: '請輸入 LinkedIn 連結' },
   { key: 'github', label: 'GitHub', icon: Code, multiline: false, placeholder: '請輸入 GitHub 連結' },
-  { key: 'education', label: '學歷', icon: GraduationCap, multiline: true, placeholder: '學校、系所、學位、畢業時間' },
   { key: 'professional_summary', label: '專業摘要', icon: Sparkles, multiline: true, placeholder: '精簡的專業總結，包含核心價值與職缺關鍵字' },
   { key: 'professional_experience', label: '工作經驗', icon: Briefcase, multiline: true, placeholder: '公司、職稱、期間，描述以 STAR 原則撰寫' },
   { key: 'core_skills', label: '技能專長', icon: Star, multiline: false, placeholder: '6 個與推薦職缺相關的技術或軟實力關鍵字，以逗號分隔' },
   { key: 'projects', label: '專案作品集', icon: FolderOpen, multiline: true, placeholder: '專案名稱、技術棧與量化成果' },
+  { key: 'education', label: '學歷', icon: GraduationCap, multiline: true, placeholder: '學校、系所、學位、畢業時間' },
   { key: 'autobiography', label: '自傳', icon: FileText, multiline: true, placeholder: '保留原本敘事順序與用詞習慣的優化內容' },
 ] as const;
 
@@ -188,6 +222,8 @@ const Optimize = () => {
   const { isLoggedIn, isResumeUploaded, isPersonalityQuizDone } = useAppState();
   const { resumes, selectedResumeId, setSelectedResumeId } = useResumes();
   const [phase, setPhase] = useState<Phase>('initial');
+  const [originalData, setOriginalData] = useState<OriginalResumeData>(mockOriginalResumeData);
+  const [editedOriginalData, setEditedOriginalData] = useState<OriginalResumeData>(mockOriginalResumeData);
   const [resumeData, setResumeData] = useState<ResumeData>(mockResumeData);
   const [editedData, setEditedData] = useState<ResumeData>(mockResumeData);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -303,13 +339,13 @@ const Optimize = () => {
   };
 
   const confirmSave = () => {
-    setResumeData(editedData);
-    setIsEditing(false);
+    setOriginalData(editedOriginalData);
+    setEditPhase('view');
     setShowSaveConfirm(false);
   };
 
   const handleEnterEditMode = () => {
-    setEditedData(resumeData);
+    setEditedOriginalData(originalData);
     setEditPhase('edit');
   };
 
@@ -337,6 +373,7 @@ const Optimize = () => {
     setSelectedTemplate('');
     setSelectedColorScheme('brand-green');
     setIsEditing(false);
+    setEditedOriginalData(mockOriginalResumeData);
     setEditedData(mockResumeData);
     setEditPhase('view');
     setShowSuggestionsDrawer(false);
@@ -410,7 +447,7 @@ const Optimize = () => {
             <AnimatePresence mode="wait">
               {phase === 'initial' && (
                 <InitialPhase
-                  resumeData={resumeData}
+                  originalData={originalData}
                   onStartOptimize={handleStartOptimize}
                   resumes={resumes}
                   selectedResumeId={selectedResumeId}
@@ -443,13 +480,11 @@ const Optimize = () => {
                     />
                   ) : (
                     <ResumeEditMode
-                      resumeData={editedData}
+                      originalData={editedOriginalData}
                       suggestions={suggestions}
-                      onChange={setEditedData}
+                      onChange={setEditedOriginalData}
                       onSave={() => setShowSaveConfirm(true)}
                       onCancel={handleExitEditMode}
-                      onDownload={handleDownloadResume}
-                      isDownloading={isDownloading}
                       showSuggestionsDrawer={showSuggestionsDrawer}
                       setShowSuggestionsDrawer={setShowSuggestionsDrawer}
                       onBack={handleSmartBack}
@@ -544,16 +579,16 @@ const ColorSchemeSelector = ({
   </div>
 );
 
-// Initial Phase Component with Resume Selector
+// Initial Phase Component with Resume Selector - uses ORIGINAL fields
 const InitialPhase = ({
-  resumeData,
+  originalData,
   onStartOptimize,
   resumes,
   selectedResumeId,
   onResumeChange,
   formatDate,
 }: {
-  resumeData: ResumeData;
+  originalData: OriginalResumeData;
   onStartOptimize: () => void;
   resumes: { id: number; name: string; updatedAt: string; content: string }[];
   selectedResumeId: number | null;
@@ -611,30 +646,30 @@ const InitialPhase = ({
         <CardDescription>以下是您目前的履歷內容，點擊開始優化進行 AI 分析</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Basic Info */}
+        {/* Basic Info Header */}
         <div className="flex items-start gap-6">
           <div className="h-24 w-24 rounded-full bg-muted flex items-center justify-center shrink-0">
             <User className="h-12 w-12 text-muted-foreground" />
           </div>
           <div className="flex-1 space-y-2">
-            <h3 className="text-2xl font-bold">{resumeData.name}</h3>
+            <h3 className="text-2xl font-bold">{originalData.name}</h3>
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1"><Mail className="h-4 w-4" />{resumeData.email}</span>
-              <span className="flex items-center gap-1"><Phone className="h-4 w-4" />{resumeData.phone}</span>
-              {resumeData.linkedin && <span className="flex items-center gap-1"><Linkedin className="h-4 w-4" />{resumeData.linkedin}</span>}
-              {resumeData.github && <span className="flex items-center gap-1"><Code className="h-4 w-4" />{resumeData.github}</span>}
+              <span className="flex items-center gap-1"><Mail className="h-4 w-4" />{originalData.email}</span>
+              <span className="flex items-center gap-1"><Phone className="h-4 w-4" />{originalData.phone}</span>
+              {originalData.address && <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{originalData.address}</span>}
             </div>
           </div>
         </div>
 
-        {/* Resume Fields */}
+        {/* Original Resume Fields */}
         <div className="grid gap-4">
-          <ResumeField icon={GraduationCap} label="學歷" value={resumeData.education} />
-          <ResumeField icon={Sparkles} label="專業摘要" value={resumeData.professional_summary} />
-          <ResumeField icon={Briefcase} label="工作經驗" value={resumeData.professional_experience} />
-          <ResumeField icon={Star} label="技能專長" value={resumeData.core_skills} />
-          <ResumeField icon={FolderOpen} label="專案作品集" value={resumeData.projects} />
-          <ResumeField icon={FileText} label="自傳" value={resumeData.autobiography} />
+          {originalResumeFields
+            .filter((f) => f.key !== 'name' && f.key !== 'phone' && f.key !== 'email' && f.key !== 'address')
+            .map((field) => {
+              const val = originalData[field.key as keyof OriginalResumeData];
+              if (field.optional && !val) return null;
+              return <ResumeField key={field.key} icon={field.icon} label={field.label} value={val} optional={field.optional} />;
+            })}
         </div>
       </CardContent>
     </Card>
@@ -653,15 +688,18 @@ const ResumeField = ({
   icon: Icon,
   label,
   value,
+  optional = false,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: string;
+  optional?: boolean;
 }) => (
   <div className="p-4 bg-muted/30 rounded-lg">
     <div className="flex items-center gap-2 mb-2">
       <Icon className="h-4 w-4 text-primary" />
       <span className="font-medium text-sm">{label}</span>
+      {optional && <span className="text-xs text-muted-foreground">(選填)</span>}
     </div>
     <p className="text-sm whitespace-pre-line">{value || <span className="text-muted-foreground italic">尚未填寫</span>}</p>
   </div>
@@ -748,32 +786,28 @@ const SuggestionsPhase = ({
   </motion.div>
 );
 
-// Resume Edit Mode Component
+// Resume Edit Mode Component - uses ORIGINAL fields
 const ResumeEditMode = ({
-  resumeData,
+  originalData,
   suggestions,
   onChange,
   onSave,
   onCancel,
-  onDownload,
-  isDownloading,
   showSuggestionsDrawer,
   setShowSuggestionsDrawer,
   onBack,
 }: {
-  resumeData: ResumeData;
+  originalData: OriginalResumeData;
   suggestions: Suggestion[];
-  onChange: (data: ResumeData) => void;
+  onChange: (data: OriginalResumeData) => void;
   onSave: () => void;
   onCancel: () => void;
-  onDownload: () => void;
-  isDownloading: boolean;
   showSuggestionsDrawer: boolean;
   setShowSuggestionsDrawer: (open: boolean) => void;
   onBack: () => void;
 }) => {
-  const handleFieldChange = (field: keyof ResumeData, value: string) => {
-    onChange({ ...resumeData, [field]: value });
+  const handleFieldChange = (field: keyof OriginalResumeData, value: string) => {
+    onChange({ ...originalData, [field]: value });
   };
 
   return (
@@ -810,29 +844,30 @@ const ResumeEditMode = ({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {resumeFields.map((field) => {
+          {originalResumeFields.map((field) => {
             const Icon = field.icon;
-            const value = resumeData[field.key as keyof ResumeData] || '';
+            const value = originalData[field.key as keyof OriginalResumeData] || '';
 
             return (
               <div key={field.key} className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium">
                   <Icon className="h-4 w-4 text-primary" />
                   {field.label}
+                  {field.optional && <span className="text-xs text-muted-foreground font-normal">(選填)</span>}
                 </label>
                 {field.multiline ? (
                   <Textarea
                     value={value}
-                    onChange={(e) => handleFieldChange(field.key as keyof ResumeData, e.target.value)}
-                    placeholder={field.placeholder}
+                    onChange={(e) => handleFieldChange(field.key as keyof OriginalResumeData, e.target.value)}
+                    placeholder={`請輸入${field.label}`}
                     className="ring-1 ring-primary/20 focus:ring-primary/50 shadow-[0_0_8px_rgba(34,197,94,0.1)] focus:shadow-[0_0_12px_rgba(34,197,94,0.2)] transition-all"
                     rows={4}
                   />
                 ) : (
                   <Input
                     value={value}
-                    onChange={(e) => handleFieldChange(field.key as keyof ResumeData, e.target.value)}
-                    placeholder={field.placeholder}
+                    onChange={(e) => handleFieldChange(field.key as keyof OriginalResumeData, e.target.value)}
+                    placeholder={`請輸入${field.label}`}
                     className="ring-1 ring-primary/20 focus:ring-primary/50 shadow-[0_0_8px_rgba(34,197,94,0.1)] focus:shadow-[0_0_12px_rgba(34,197,94,0.2)] transition-all"
                   />
                 )}
@@ -849,18 +884,6 @@ const ResumeEditMode = ({
         <Button className="flex-1 gradient-primary gap-2" onClick={onSave}>
           <Save className="h-4 w-4" />
           儲存變更
-        </Button>
-        <Button
-          variant="outline"
-          className="flex-1 gap-2 border-primary text-primary hover:bg-primary/10"
-          onClick={onDownload}
-          disabled={isDownloading}
-        >
-          {isDownloading ? (
-            <><Loader2 className="h-4 w-4 animate-spin" />生成中...</>
-          ) : (
-            <><Download className="h-4 w-4" />下載履歷</>
-          )}
         </Button>
       </div>
 
