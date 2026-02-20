@@ -9,43 +9,8 @@ import CareerLadder from '@/components/career-path/CareerLadder';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
-
-// Analysis history mock data
-const analysisHistory = [
-  {
-    id: 1,
-    date: '2024-01-15',
-    title: '職能分析報告',
-    summary: '根據您的履歷與職涯問卷，系統為您進行了全面的職能評估。',
-    content: {
-      strengths: ['前端開發能力優秀', 'React 框架熟練度高', '具備良好溝通能力'],
-      improvements: ['可加強後端技術學習', '建議考取雲端相關證照'],
-      recommendations: ['建議朝資深工程師發展', '可考慮擴展技術棧至 Node.js'],
-    },
-  },
-  {
-    id: 2,
-    date: '2024-01-10',
-    title: '履歷優化建議',
-    summary: '針對您上傳的履歷進行深度分析，提供具體優化方向。',
-    content: {
-      strengths: ['工作經驗描述完整', '技能展示清晰'],
-      improvements: ['建議增加量化成果', '可補充專案影響力說明'],
-      recommendations: ['調整履歷格式以突出重點', '增加關鍵字密度'],
-    },
-  },
-  {
-    id: 3,
-    date: '2024-01-05',
-    title: '職涯發展評估',
-    summary: '綜合分析您的職涯現況，規劃未來發展方向。',
-    content: {
-      strengths: ['目標明確', '持續學習態度佳'],
-      improvements: ['需建立更廣泛的人脈網絡', '建議參與開源專案'],
-      recommendations: ['3年內晉升資深工程師', '開始培養團隊管理能力'],
-    },
-  },
-];
+import type { AnalysisHistoryItem } from '@/types/analysis';
+import { analysisHistory } from '@/mocks/analysis';
 
 const AnalysisListSkeleton = () => (
   <div className="space-y-3 md:space-y-4">

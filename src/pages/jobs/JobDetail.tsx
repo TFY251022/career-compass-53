@@ -24,42 +24,8 @@ import { useAppState } from '@/contexts/AppContext';
 import AuthModal from '@/components/auth/AuthModal';
 import { toast } from 'sonner';
 import icon104 from '@/assets/104-icon.png';
-
-// Mock job data based on ID
-const getMockJobDetail = (id: string) => ({
-  id: parseInt(id) || 1,
-  title: '資深前端工程師',
-  company: '科技創新股份有限公司',
-  industry: '資訊科技業',
-  city: '台北市信義區',
-  address: '台北市信義區信義路五段7號',
-  salary: '60K - 100K',
-  description: `我們正在尋找一位熱愛前端開發的資深工程師，加入我們的產品團隊。您將負責開發高品質的使用者介面，與後端工程師及設計師密切合作，打造優秀的使用者體驗。
-
-作為團隊核心成員，您將有機會：
-• 主導關鍵產品功能的前端架構設計
-• 參與技術選型與最佳實踐的制定
-• 指導初級工程師成長
-• 與產品經理緊密合作，將產品願景轉化為實際功能`,
-  requirements: [
-    '5 年以上前端開發經驗，具備大型專案經驗者優先',
-    '精通 React/Vue 等現代前端框架，熟悉 TypeScript',
-    '熟悉 CSS-in-JS、Tailwind CSS 等樣式解決方案',
-    '了解前端效能優化、SEO、無障礙設計',
-    '具備良好的溝通能力與團隊合作精神',
-    '持續學習新技術的熱情，關注前端生態發展',
-  ],
-  benefits: [
-    '具競爭力的薪資與年終獎金',
-    '彈性工時與遠端工作選項',
-    '完善的教育訓練與進修補助',
-    '健康檢查與團體保險',
-    '舒適的辦公環境與免費零食',
-    '定期團隊建設活動與員工旅遊',
-  ],
-  skills: ['React', 'TypeScript', 'Tailwind CSS', 'Git', 'RESTful API', 'GraphQL'],
-  externalUrl: 'https://www.104.com.tw',
-});
+import type { JobDetailData } from '@/types/job';
+import { getMockJobDetail, mockCoverLetter } from '@/mocks/jobs';
 
 // Skeleton for job detail
 const JobDetailSkeleton = () => (
@@ -117,7 +83,7 @@ const JobDetail = () => {
   
   // Page states
   const [isLoading, setIsLoading] = useState(true);
-  const [job, setJob] = useState<ReturnType<typeof getMockJobDetail> | null>(null);
+  const [job, setJob] = useState<JobDetailData | null>(null);
   
   // Auth modal
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -132,7 +98,7 @@ const JobDetail = () => {
   // Load job details
   useEffect(() => {
     setIsLoading(true);
-    // Simulate API call
+    // TODO: Replace with API call
     const timer = setTimeout(() => {
       if (id) {
         setJob(getMockJobDetail(id));
@@ -155,37 +121,10 @@ const JobDetail = () => {
     setLetterContent(null);
     setIsCopied(false);
     
-    // Simulate AI generation
+    // TODO: Replace with API call
     await new Promise(resolve => setTimeout(resolve, 3000));
     
-    setLetterContent({
-      subject: `應徵 ${job?.title} 職位 - [您的姓名]`,
-      body: `親愛的招聘經理：
-
-您好！我是一位熱愛技術、追求卓越的軟體工程師，對貴公司「${job?.company}」的「${job?.title}」職位深感興趣。透過深入了解貴公司的企業文化與發展願景，我相信我的技術背景與專業經驗能為團隊帶來價值。
-
-【為什麼選擇我】
-
-在過去的工作經歷中，我累積了豐富的專案經驗：
-• 主導開發並維護多個大型企業級應用程式
-• 成功優化系統效能，將頁面載入速度提升 40%
-• 帶領小型技術團隊完成關鍵專案，如期交付
-
-【我能為貴公司帶來的價值】
-
-• 紮實的技術基礎與持續學習的熱情
-• 良好的跨部門溝通與團隊協作能力
-• 注重程式碼品質與最佳實踐的工程師文化
-
-我期待有機會與您進一步討論，展示我如何能為「${job?.company}」做出貢獻。感謝您撥冗審閱，靜候佳音。
-
-此致
-敬禮
-
-[您的姓名]
-[您的聯絡電話]
-[您的電子郵件]`,
-    });
+    setLetterContent(mockCoverLetter(job?.title, job?.company));
     
     setIsGenerating(false);
   };
