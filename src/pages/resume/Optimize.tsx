@@ -920,7 +920,14 @@ const ResumeEditMode = ({
   );
 };
 
-// Template Selection Phase Component with Color Scheme
+// Static color swatches per template (main colors from each scheme)
+const templateSwatches: Record<string, string[]> = {
+  corporate: ['#1F3A5F', '#2E2E2E', '#6A1B2E', '#1B4332'],
+  modern: ['#2563EB', '#374151', '#111111', '#334155'],
+  creative: ['#E07A5F', '#6D28D9', '#F97316', '#0F172A'],
+};
+
+// Template Selection Phase Component with Thumbnail & Static Swatches
 const TemplateSelectionPhase = ({
   onSelect,
   onBack,
@@ -928,12 +935,6 @@ const TemplateSelectionPhase = ({
   onSelect: (id: string, colorScheme: string) => void;
   onBack: () => void;
 }) => {
-  const [selectedColors, setSelectedColors] = useState<Record<string, string>>({
-    corporate: 'brand-green',
-    modern: 'brand-green',
-    creative: 'brand-green',
-  });
-
   return (
     <motion.div
       key="templates"
@@ -949,7 +950,7 @@ const TemplateSelectionPhase = ({
 
       <div className="grid md:grid-cols-3 gap-6">
         {templates.map((template, i) => {
-          const selectedScheme = colorSchemes.find(c => c.id === selectedColors[template.id]) || colorSchemes[0];
+          const swatches = templateSwatches[template.id] || [];
 
           return (
             <motion.div
@@ -958,13 +959,13 @@ const TemplateSelectionPhase = ({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
             >
-              <Card className="overflow-hidden group">
-                <div
-                  className="h-32 flex items-center justify-center transition-all duration-300"
-                  style={{ background: selectedScheme.gradient }}
-                >
-                  <template.icon className="h-16 w-16 text-white/80 group-hover:scale-110 transition-transform" />
+              <Card className="overflow-hidden group border-border/60 hover:border-primary/40 hover:shadow-warm transition-all duration-300">
+                {/* Thumbnail Placeholder */}
+                <div className="w-full aspect-[4/3] bg-muted/50 rounded-t-lg flex flex-col items-center justify-center gap-2 border-b border-border/40">
+                  <template.icon className="h-12 w-12 text-muted-foreground/40 group-hover:text-primary/50 transition-colors" />
+                  <span className="text-xs text-muted-foreground/50">模板預覽</span>
                 </div>
+
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg">{template.name}</CardTitle>
                   <CardDescription className="text-xs">{template.subtitle}</CardDescription>
@@ -973,29 +974,31 @@ const TemplateSelectionPhase = ({
                   <p className="text-sm text-muted-foreground">{template.description}</p>
                   <ul className="space-y-1">
                     {template.features.map((feature, j) => (
-                      <li key={j} className="text-xs flex items-center gap-2">
-                        <Check className="h-3 w-3" style={{ color: selectedScheme.primary }} />
+                      <li key={j} className="text-xs flex items-center gap-2 text-muted-foreground">
+                        <Check className="h-3 w-3 text-primary" />
                         {feature}
                       </li>
                     ))}
                   </ul>
 
-                  <div className="pt-2 border-t border-border">
-                    <p className="text-xs text-muted-foreground mb-2">選擇配色</p>
-                    <ColorSchemeSelector
-                      selectedScheme={selectedColors[template.id]}
-                      onChange={(schemeId) => setSelectedColors(prev => ({ ...prev, [template.id]: schemeId }))}
-                      compact
-                    />
+                  {/* Static Color Swatches (read-only) */}
+                  <div className="pt-2 border-t border-border/40">
+                    <p className="text-xs text-muted-foreground mb-2">配色方案</p>
+                    <div className="flex gap-2.5">
+                      {swatches.map((color, j) => (
+                        <div
+                          key={j}
+                          className="h-7 w-7 rounded-full border border-border/60 shadow-sm"
+                          style={{ backgroundColor: color }}
+                          title={color}
+                        />
+                      ))}
+                    </div>
                   </div>
 
                   <Button
-                    className="w-full gap-2"
-                    style={{
-                      background: selectedScheme.gradient,
-                      color: 'white',
-                    }}
-                    onClick={() => onSelect(template.id, selectedColors[template.id])}
+                    className="w-full gap-2 gradient-primary text-primary-foreground"
+                    onClick={() => onSelect(template.id, 'brand-green')}
                   >
                     選擇此樣板
                     <ChevronRight className="h-4 w-4" />
