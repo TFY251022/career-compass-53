@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import RightDrawer from '@/components/panels/RightDrawer';
 import { AILoadingSpinner } from '@/components/loading/LoadingStates';
 import { motion, AnimatePresence } from 'framer-motion';
+import { mockTopics, mockThankYouLetter } from '@/mocks/interview';
 
 const Prep = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -12,37 +13,15 @@ const Prep = () => {
   const [letterContent, setLetterContent] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const topics = [
-    { title: '自我介紹', description: '如何有效地展現自己' },
-    { title: '技術面試', description: '常見技術問題與解答技巧' },
-    { title: '行為面試', description: 'STAR 法則與實例演練' },
-    { title: '薪資談判', description: '如何談出理想薪資' },
-  ];
-
   const handleGenerateThankYou = async () => {
     setDrawerOpen(true);
     setIsGenerating(true);
     setLetterContent(null);
     
-    // Simulate AI generation
+    // TODO: Replace with API call
     await new Promise(resolve => setTimeout(resolve, 2500));
     
-    setLetterContent(`親愛的 [面試官姓名]：
-
-非常感謝您今天撥冗與我進行面試，讓我有機會更深入地了解貴公司及這個職位。
-
-在面試過程中，我對於 [討論的專案/技術/團隊文化] 印象深刻。這更加堅定了我希望加入貴公司的意願。
-
-我相信我在 [相關技能/經驗] 方面的專業能力，能夠為團隊帶來價值。
-
-如有任何問題或需要補充資料，請隨時與我聯繫。
-
-再次感謝您的時間與考慮。
-
-祝好
-
-[您的姓名]
-[聯絡方式]`);
+    setLetterContent(mockThankYouLetter);
     
     setIsGenerating(false);
   };
@@ -94,7 +73,8 @@ const Prep = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        {topics.map((topic, index) => (
+        {/* TODO: Replace with API call */}
+        {mockTopics.map((topic, index) => (
           <motion.div
             key={topic.title}
             initial={{ opacity: 0, y: 20 }}

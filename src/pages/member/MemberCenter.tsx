@@ -9,19 +9,7 @@ import { useAppState } from '@/contexts/AppContext';
 import EditProfileModal from '@/components/member/EditProfileModal';
 import PasswordModal from '@/components/member/PasswordModal';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
-
-/* ---------- mock profile (will be replaced by real data later) ---------- */
-const mockUserId = '5F82A';
-const mockProfile = {
-  fullName: '',            // empty → triggers fallback
-  email: 'user@example.com',
-  avatarUrl: '',
-  title: '',               // empty → 「無」
-  location: '',            // empty → 「無」
-  experience: '',          // empty → 「無」
-  education: '',           // empty → 「無」
-  github: '',              // empty → 「無」
-};
+import { mockUserId, mockProfile } from '@/mocks/member';
 
 const displayName = (name: string, userId: string) =>
   name?.trim() ? name : `用戶_${userId}`;

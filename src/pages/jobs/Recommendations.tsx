@@ -12,36 +12,8 @@ import EmbeddedPreferenceSurvey from '@/components/survey/EmbeddedPreferenceSurv
 import ResumeSelector from '@/components/survey/ResumeSelector';
 import AlertModal from '@/components/modals/AlertModal';
 import icon104 from '@/assets/104-icon.png';
-
-// Mock job data generator
-const generateMockJobs = (page: number) => {
-  const industries = ['科技業', '金融業', '製造業', '服務業', '零售業', '醫療業', '教育業', '電商業'];
-  const cities = ['台北市', '新北市', '桃園市', '台中市', '高雄市', '新竹市', '台南市'];
-  const positions = [
-    { title: '資深前端工程師', desc: '負責開發與維護企業級 Web 應用程式，追求卓越使用者體驗' },
-    { title: '產品經理', desc: '主導產品策略規劃，協調跨部門資源達成商業目標' },
-    { title: 'UI/UX 設計師', desc: '打造直覺且美觀的數位產品介面，提升品牌價值' },
-    { title: '數據分析師', desc: '運用大數據技術挖掘商業洞察，驅動決策優化' },
-    { title: '後端工程師', desc: '設計與開發高效能的伺服器端架構與 API 服務' },
-    { title: '專案經理', desc: '統籌專案時程與資源，確保如期交付高品質成果' },
-    { title: '行銷企劃', desc: '策劃創新行銷活動，擴大品牌影響力與市場覆蓋' },
-    { title: '人資專員', desc: '負責人才招募與培訓發展，打造優質企業文化' },
-    { title: 'DevOps 工程師', desc: '建構與維護 CI/CD 流程，確保系統穩定與高可用性' },
-    { title: '業務主管', desc: '帶領業務團隊開拓市場，達成營收成長目標' },
-  ];
-  const companies = ['科技新創', '金融集團', '跨國企業', '本土龍頭', '上市公司', '獨角獸', '百年老店', '新興品牌'];
-
-  return positions.map((pos, idx) => ({
-    id: (page - 1) * 10 + idx + 1,
-    title: pos.title,
-    description: pos.desc,
-    company: `${companies[idx % companies.length]}股份有限公司`,
-    city: cities[idx % cities.length],
-    salary: `${40 + idx * 5}K - ${60 + idx * 8}K`,
-    industry: industries[idx % industries.length],
-    externalUrl: 'https://www.104.com.tw',
-  }));
-};
+import type { JobData } from '@/types/job';
+import { generateMockJobs } from '@/mocks/jobs';
 
 // Job Card Skeleton
 const JobCardSkeleton = () => (
@@ -69,17 +41,6 @@ const JobCardSkeleton = () => (
     </CardContent>
   </Card>
 );
-
-interface JobData {
-  id: number;
-  title: string;
-  description: string;
-  company: string;
-  city: string;
-  salary: string;
-  industry: string;
-  externalUrl: string;
-}
 
 const JobCard = ({ job }: { job: JobData }) => (
   <Card className="overflow-hidden hover:shadow-medium hover:-translate-y-1 transition-all duration-300 group border-border hover:border-primary/30 hover:shadow-[0_8px_30px_rgba(34,197,94,0.12)]">
