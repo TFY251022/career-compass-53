@@ -13,15 +13,7 @@ import { useResumes } from '@/contexts/ResumeContext';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import AlertModal from '@/components/modals/AlertModal';
 import { motion, AnimatePresence } from 'framer-motion';
-import templateCorporateImg from '@/assets/template-corporate.png';
-import templateModernImg from '@/assets/template-modern.png';
-import templateCreativeImg from '@/assets/template-creative.png';
-
-const templateThumbnails: Record<string, string> = {
-  corporate: templateCorporateImg,
-  modern: templateModernImg,
-  creative: templateCreativeImg,
-};
+import { templateThumbnailComponents } from '@/components/resume/TemplateThumbnails';
 import html2pdf from 'html2pdf.js';
 import RightDrawer from '@/components/panels/RightDrawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -938,14 +930,13 @@ const TemplateSelectionPhase = ({
               transition={{ delay: i * 0.1 }}
             >
               <Card className="overflow-hidden group border-border/60 hover:border-primary/40 hover:shadow-warm transition-all duration-300">
-                {/* Template Thumbnail */}
+                {/* Template Thumbnail - SVG Wireframe */}
                 <div className="w-full aspect-[4/3] bg-[#f5efe8] rounded-t-lg overflow-hidden border-b border-border/40 flex items-center justify-center p-4">
-                  <div className="w-[75%] h-auto shadow-md border border-border/30 rounded-sm overflow-hidden bg-white group-hover:scale-105 transition-transform duration-300">
-                    <img
-                      src={templateThumbnails[template.id]}
-                      alt={`${template.name} 預覽`}
-                      className="w-full h-auto object-contain"
-                    />
+                  <div className="w-[70%] shadow-[inset_0_1px_3px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.06)] border border-gray-200/60 rounded-sm overflow-hidden bg-white group-hover:scale-105 transition-transform duration-300">
+                    {(() => {
+                      const ThumbnailComponent = templateThumbnailComponents[template.id];
+                      return ThumbnailComponent ? <ThumbnailComponent /> : null;
+                    })()}
                   </div>
                 </div>
 
