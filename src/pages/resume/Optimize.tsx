@@ -56,59 +56,34 @@ interface Suggestion {
   optimized: string;
 }
 
-interface ColorScheme {
-  id: string;
+interface ThemeColors {
   name: string;
-  primary: string;
+  main: string;
   secondary: string;
   accent: string;
   text: string;
-  background: string;
-  gradient: string;
 }
 
-const colorSchemes: ColorScheme[] = [
-  {
-    id: 'brand-green',
-    name: '品牌綠',
-    primary: 'hsl(152 69% 45%)',
-    secondary: 'hsl(165 60% 42%)',
-    accent: 'hsl(152 76% 52%)',
-    text: 'hsl(150 10% 15%)',
-    background: 'hsl(152 50% 95%)',
-    gradient: 'linear-gradient(135deg, hsl(152 69% 45%) 0%, hsl(165 60% 42%) 100%)',
-  },
-  {
-    id: 'deep-blue',
-    name: '深邃藍',
-    primary: 'hsl(220 75% 45%)',
-    secondary: 'hsl(210 70% 50%)',
-    accent: 'hsl(220 85% 55%)',
-    text: 'hsl(220 20% 15%)',
-    background: 'hsl(220 50% 96%)',
-    gradient: 'linear-gradient(135deg, hsl(220 75% 45%) 0%, hsl(210 70% 50%) 100%)',
-  },
-  {
-    id: 'refined-gray',
-    name: '洗鍊灰',
-    primary: 'hsl(220 10% 40%)',
-    secondary: 'hsl(220 8% 50%)',
-    accent: 'hsl(220 15% 55%)',
-    text: 'hsl(220 10% 15%)',
-    background: 'hsl(220 10% 96%)',
-    gradient: 'linear-gradient(135deg, hsl(220 10% 40%) 0%, hsl(220 8% 50%) 100%)',
-  },
-  {
-    id: 'modern-teal',
-    name: '現代青',
-    primary: 'hsl(180 60% 40%)',
-    secondary: 'hsl(175 55% 45%)',
-    accent: 'hsl(180 70% 50%)',
-    text: 'hsl(180 15% 15%)',
-    background: 'hsl(180 40% 96%)',
-    gradient: 'linear-gradient(135deg, hsl(180 60% 40%) 0%, hsl(175 55% 45%) 100%)',
-  },
-];
+const TEMPLATE_THEMES: Record<string, ThemeColors[]> = {
+  corporate: [
+    { name: '深海藍經典', main: '#1F3A5F', secondary: '#4A6FA5', accent: '#C8A951', text: '#2B2B2B' },
+    { name: '石墨灰商務', main: '#2E2E2E', secondary: '#5A5A5A', accent: '#2E7D73', text: '#1A1A1A' },
+    { name: '酒紅權威', main: '#6A1B2E', secondary: '#A63D40', accent: '#E9C46A', text: '#333333' },
+    { name: '深綠金融系', main: '#1B4332', secondary: '#2D6A4F', accent: '#D8F3DC', text: '#2B2B2B' },
+  ],
+  modern: [
+    { name: '科技藍', main: '#2563EB', secondary: '#1E3A8A', accent: '#60A5FA', text: '#111827' },
+    { name: '冷灰＋電光綠', main: '#374151', secondary: '#6B7280', accent: '#10B981', text: '#111111' },
+    { name: '黑白極簡', main: '#111111', secondary: '#E5E7EB', accent: '#6366F1', text: '#000000' },
+    { name: '靜謐藍灰', main: '#334155', secondary: '#94A3B8', accent: '#22D3EE', text: '#1E293B' },
+  ],
+  creative: [
+    { name: '莫蘭迪粉橘', main: '#E07A5F', secondary: '#F2CC8F', accent: '#3D405B', text: '#2B2B2B' },
+    { name: '紫藍創意系', main: '#6D28D9', secondary: '#A78BFA', accent: '#F472B6', text: '#1F1F1F' },
+    { name: '活力橘藍對比', main: '#F97316', secondary: '#2563EB', accent: '#FACC15', text: '#222222' },
+    { name: '黑底霓虹', main: '#0F172A', secondary: '#1E293B', accent: '#F43F5E', text: '#F8FAFC' },
+  ],
+};
 
 // Mock original resume data (initial phase)
 const mockOriginalResumeData: OriginalResumeData = {
@@ -228,7 +203,7 @@ const Optimize = () => {
   const [editedData, setEditedData] = useState<ResumeData>(mockResumeData);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
-  const [selectedColorScheme, setSelectedColorScheme] = useState<string>('brand-green');
+  const [selectedThemeIndex, setSelectedThemeIndex] = useState<number>(0);
   const [isEditing, setIsEditing] = useState(false);
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
   const [showAccessAlert, setShowAccessAlert] = useState(false);
@@ -263,9 +238,9 @@ const Optimize = () => {
     setPhase('suggestions');
   };
 
-  const handleSelectTemplate = async (templateId: string, colorScheme: string) => {
+  const handleSelectTemplate = async (templateId: string) => {
     setSelectedTemplate(templateId);
-    setSelectedColorScheme(colorScheme);
+    setSelectedThemeIndex(0);
     setPhase('generating');
     await new Promise(resolve => setTimeout(resolve, 2500));
     setPhase('result');
@@ -285,7 +260,8 @@ const Optimize = () => {
 
     try {
       const element = resumeRef.current;
-      const colorScheme = colorSchemes.find(c => c.id === selectedColorScheme) || colorSchemes[0];
+      const themes = TEMPLATE_THEMES[selectedTemplate] || TEMPLATE_THEMES.corporate;
+      const theme = themes[selectedThemeIndex] || themes[0];
 
       const sections = element.querySelectorAll('[data-pdf-section]');
       sections.forEach((section) => {
@@ -295,7 +271,7 @@ const Optimize = () => {
 
       const opt = {
         margin: [10, 10, 10, 10] as [number, number, number, number],
-        filename: `優化履歷_${selectedTemplate}_${colorScheme.name}.pdf`,
+        filename: `優化履歷_${selectedTemplate}_${theme.name}.pdf`,
         image: { type: 'jpeg' as const, quality: 0.98 },
         html2canvas: {
           scale: 2,
@@ -371,7 +347,7 @@ const Optimize = () => {
   const handleReset = () => {
     setPhase('initial');
     setSelectedTemplate('');
-    setSelectedColorScheme('brand-green');
+    setSelectedThemeIndex(0);
     setIsEditing(false);
     setEditedOriginalData(mockOriginalResumeData);
     setEditedData(mockResumeData);
@@ -516,7 +492,7 @@ const Optimize = () => {
                 <ResultPhase
                   resumeData={isEditing ? editedData : resumeData}
                   selectedTemplate={selectedTemplate}
-                  selectedColorScheme={selectedColorScheme}
+                  selectedThemeIndex={selectedThemeIndex}
                   isEditing={isEditing}
                   isDownloading={isDownloading}
                   resumeRef={resumeRef}
@@ -530,7 +506,7 @@ const Optimize = () => {
                   onDownload={handleDownloadResume}
                   onBackToTemplates={handleBackToTemplates}
                   onReset={handleReset}
-                  onColorChange={setSelectedColorScheme}
+                  onThemeChange={setSelectedThemeIndex}
                 />
               )}
             </AnimatePresence>
@@ -541,38 +517,31 @@ const Optimize = () => {
   );
 };
 
-// Color Scheme Selector Component
-const ColorSchemeSelector = ({
-  selectedScheme,
+// Theme Swatch Selector for Result Phase
+const ThemeSwatchSelector = ({
+  themes,
+  selectedIndex,
   onChange,
-  compact = false,
 }: {
-  selectedScheme: string;
-  onChange: (schemeId: string) => void;
-  compact?: boolean;
+  themes: ThemeColors[];
+  selectedIndex: number;
+  onChange: (index: number) => void;
 }) => (
-  <div className={`flex ${compact ? 'gap-2' : 'gap-3'}`}>
-    {colorSchemes.map((scheme) => (
+  <div className="flex gap-2">
+    {themes.map((theme, i) => (
       <button
-        key={scheme.id}
-        onClick={() => onChange(scheme.id)}
-        className={`group relative transition-all duration-200 ${
-          compact ? 'h-6 w-6' : 'h-8 w-8'
-        } rounded-full border-2 ${
-          selectedScheme === scheme.id
+        key={i}
+        onClick={() => onChange(i)}
+        className={`group relative h-7 w-7 rounded-full border-2 transition-all duration-200 ${
+          selectedIndex === i
             ? 'border-foreground scale-110 shadow-md'
-            : 'border-transparent hover:scale-105'
+            : 'border-border/60 hover:scale-105'
         }`}
-        style={{ background: scheme.gradient }}
-        title={scheme.name}
+        style={{ backgroundColor: theme.main }}
+        title={theme.name}
       >
-        {selectedScheme === scheme.id && (
-          <Check className={`absolute inset-0 m-auto ${compact ? 'h-3 w-3' : 'h-4 w-4'} text-white drop-shadow-md`} />
-        )}
-        {!compact && (
-          <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-            {scheme.name}
-          </span>
+        {selectedIndex === i && (
+          <Check className="absolute inset-0 m-auto h-3.5 w-3.5 text-white drop-shadow-md" />
         )}
       </button>
     ))}
@@ -932,7 +901,7 @@ const TemplateSelectionPhase = ({
   onSelect,
   onBack,
 }: {
-  onSelect: (id: string, colorScheme: string) => void;
+  onSelect: (id: string) => void;
   onBack: () => void;
 }) => {
   return (
@@ -998,7 +967,7 @@ const TemplateSelectionPhase = ({
 
                   <Button
                     className="w-full gap-2 gradient-primary text-primary-foreground"
-                    onClick={() => onSelect(template.id, 'brand-green')}
+                    onClick={() => onSelect(template.id)}
                   >
                     選擇此樣板
                     <ChevronRight className="h-4 w-4" />
@@ -1024,7 +993,7 @@ const TemplateSelectionPhase = ({
 const ResultPhase = ({
   resumeData,
   selectedTemplate,
-  selectedColorScheme,
+  selectedThemeIndex,
   isEditing,
   isDownloading,
   resumeRef,
@@ -1035,11 +1004,11 @@ const ResultPhase = ({
   onDownload,
   onBackToTemplates,
   onReset,
-  onColorChange,
+  onThemeChange,
 }: {
   resumeData: ResumeData;
   selectedTemplate: string;
-  selectedColorScheme: string;
+  selectedThemeIndex: number;
   isEditing: boolean;
   isDownloading: boolean;
   resumeRef: React.RefObject<HTMLDivElement>;
@@ -1050,10 +1019,11 @@ const ResultPhase = ({
   onDownload: () => void;
   onBackToTemplates: () => void;
   onReset: () => void;
-  onColorChange: (schemeId: string) => void;
+  onThemeChange: (index: number) => void;
 }) => {
   const template = templates.find(t => t.id === selectedTemplate);
-  const colorScheme = colorSchemes.find(c => c.id === selectedColorScheme) || colorSchemes[0];
+  const themes = TEMPLATE_THEMES[selectedTemplate] || TEMPLATE_THEMES.corporate;
+  const theme = themes[selectedThemeIndex] || themes[0];
 
   const handleFieldChange = (field: keyof ResumeData, value: string) => {
     onDataChange({ ...resumeData, [field]: value });
@@ -1071,7 +1041,7 @@ const ResultPhase = ({
         <div className="flex items-center gap-3">
           <div
             className="h-10 w-10 rounded-lg flex items-center justify-center"
-            style={{ background: colorScheme.gradient }}
+            style={{ backgroundColor: theme.main }}
           >
             {template && <template.icon className="h-5 w-5 text-white" />}
           </div>
@@ -1084,10 +1054,10 @@ const ResultPhase = ({
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="text-xs text-muted-foreground">配色：</span>
-            <ColorSchemeSelector
-              selectedScheme={selectedColorScheme}
-              onChange={onColorChange}
-              compact
+            <ThemeSwatchSelector
+              themes={themes}
+              selectedIndex={selectedThemeIndex}
+              onChange={onThemeChange}
             />
           </div>
 
@@ -1108,7 +1078,7 @@ const ResultPhase = ({
                 data={resumeData}
                 isEditing={isEditing}
                 onChange={handleFieldChange}
-                colorScheme={colorScheme}
+                theme={theme}
               />
             )}
             {selectedTemplate === 'modern' && (
@@ -1116,7 +1086,7 @@ const ResultPhase = ({
                 data={resumeData}
                 isEditing={isEditing}
                 onChange={handleFieldChange}
-                colorScheme={colorScheme}
+                theme={theme}
               />
             )}
             {selectedTemplate === 'creative' && (
@@ -1124,7 +1094,7 @@ const ResultPhase = ({
                 data={resumeData}
                 isEditing={isEditing}
                 onChange={handleFieldChange}
-                colorScheme={colorScheme}
+                theme={theme}
               />
             )}
           </div>
@@ -1147,8 +1117,8 @@ const ResultPhase = ({
             <RotateCcw className="h-4 w-4" />重新填寫
           </Button>
           <Button
-            className="flex-1 gap-2"
-            style={{ background: colorScheme.gradient, color: 'white' }}
+            className="flex-1 gap-2 text-white"
+            style={{ backgroundColor: theme.main }}
             onClick={onDownload}
             disabled={isDownloading}
           >
@@ -1206,24 +1176,24 @@ const CorporateTemplate = ({
   data,
   isEditing,
   onChange,
-  colorScheme,
+  theme,
 }: {
   data: ResumeData;
   isEditing: boolean;
   onChange: (field: keyof ResumeData, value: string) => void;
-  colorScheme: ColorScheme;
+  theme: ThemeColors;
 }) => (
-  <div className="font-serif space-y-6" style={{ color: colorScheme.text }}>
+  <div className="font-serif space-y-6" style={{ color: theme.text }}>
     {/* Header */}
     <div
       className="text-center pb-4 avoid-break"
       data-pdf-section
-      style={{ borderBottom: `2px solid ${colorScheme.primary}` }}
+      style={{ borderBottom: `2px solid ${theme.main}` }}
     >
-      <h1 className="text-3xl font-bold tracking-wide" style={{ color: colorScheme.primary }}>
+      <h1 className="text-3xl font-bold tracking-wide" style={{ color: theme.main }}>
         <EditableField value={data.name} onChange={(v) => onChange('name', v)} isEditing={isEditing} />
       </h1>
-      <div className="flex justify-center flex-wrap gap-4 mt-2 text-sm" style={{ color: colorScheme.secondary }}>
+      <div className="flex justify-center flex-wrap gap-4 mt-2 text-sm" style={{ color: theme.secondary }}>
         <EditableField value={data.email} onChange={(v) => onChange('email', v)} isEditing={isEditing} />
         <span>|</span>
         <EditableField value={data.phone} onChange={(v) => onChange('phone', v)} isEditing={isEditing} />
@@ -1234,33 +1204,33 @@ const CorporateTemplate = ({
 
     {data.professional_summary && (
       <div data-pdf-section className="avoid-break">
-        <TemplateSectionWithColor title="專業摘要" colorScheme={colorScheme}>
+        <TemplateSectionWithColor title="專業摘要" theme={theme}>
           <EditableField value={data.professional_summary} onChange={(v) => onChange('professional_summary', v)} isEditing={isEditing} multiline />
         </TemplateSectionWithColor>
       </div>
     )}
 
     <div data-pdf-section className="avoid-break">
-      <TemplateSectionWithColor title="學歷" colorScheme={colorScheme}>
+      <TemplateSectionWithColor title="學歷" theme={theme}>
         <EditableField value={data.education} onChange={(v) => onChange('education', v)} isEditing={isEditing} multiline />
       </TemplateSectionWithColor>
     </div>
 
     <div data-pdf-section className="avoid-break">
-      <TemplateSectionWithColor title="工作經驗" colorScheme={colorScheme}>
+      <TemplateSectionWithColor title="工作經驗" theme={theme}>
         <EditableField value={data.professional_experience} onChange={(v) => onChange('professional_experience', v)} isEditing={isEditing} multiline />
       </TemplateSectionWithColor>
     </div>
 
     <div data-pdf-section className="avoid-break">
-      <TemplateSectionWithColor title="技能專長" colorScheme={colorScheme}>
+      <TemplateSectionWithColor title="技能專長" theme={theme}>
         <EditableField value={data.core_skills} onChange={(v) => onChange('core_skills', v)} isEditing={isEditing} />
       </TemplateSectionWithColor>
     </div>
 
     {data.projects && (
       <div data-pdf-section className="avoid-break">
-        <TemplateSectionWithColor title="專案作品集" colorScheme={colorScheme}>
+        <TemplateSectionWithColor title="專案作品集" theme={theme}>
           <EditableField value={data.projects} onChange={(v) => onChange('projects', v)} isEditing={isEditing} multiline />
         </TemplateSectionWithColor>
       </div>
@@ -1268,7 +1238,7 @@ const CorporateTemplate = ({
 
     {data.autobiography && (
       <div data-pdf-section className="avoid-break">
-        <TemplateSectionWithColor title="自傳" colorScheme={colorScheme}>
+        <TemplateSectionWithColor title="自傳" theme={theme}>
           <EditableField value={data.autobiography} onChange={(v) => onChange('autobiography', v)} isEditing={isEditing} multiline />
         </TemplateSectionWithColor>
       </div>
@@ -1281,12 +1251,12 @@ const ModernTemplate = ({
   data,
   isEditing,
   onChange,
-  colorScheme,
+  theme,
 }: {
   data: ResumeData;
   isEditing: boolean;
   onChange: (field: keyof ResumeData, value: string) => void;
-  colorScheme: ColorScheme;
+  theme: ThemeColors;
 }) => {
   const skills = data.core_skills.split(',').map(s => s.trim());
 
@@ -1296,33 +1266,33 @@ const ModernTemplate = ({
       <div
         className="space-y-6 p-4 rounded-lg avoid-break"
         data-pdf-section
-        style={{ backgroundColor: colorScheme.background }}
+        style={{ backgroundColor: `${theme.main}10` }}
       >
         <div
           className="h-32 w-32 mx-auto rounded-full flex items-center justify-center"
-          style={{ background: colorScheme.gradient }}
+          style={{ backgroundColor: theme.main }}
         >
           <span className="text-4xl font-bold text-white">{data.name.charAt(0)}</span>
         </div>
 
         <div className="space-y-2 text-sm">
           <div className="flex items-center gap-2">
-            <Mail className="h-4 w-4" style={{ color: colorScheme.primary }} />
+            <Mail className="h-4 w-4" style={{ color: theme.main }} />
             <EditableField value={data.email} onChange={(v) => onChange('email', v)} isEditing={isEditing} className="text-xs" />
           </div>
           <div className="flex items-center gap-2">
-            <Phone className="h-4 w-4" style={{ color: colorScheme.primary }} />
+            <Phone className="h-4 w-4" style={{ color: theme.main }} />
             <EditableField value={data.phone} onChange={(v) => onChange('phone', v)} isEditing={isEditing} className="text-xs" />
           </div>
           {data.linkedin && (
             <div className="flex items-center gap-2">
-              <Linkedin className="h-4 w-4" style={{ color: colorScheme.primary }} />
+              <Linkedin className="h-4 w-4" style={{ color: theme.main }} />
               <EditableField value={data.linkedin} onChange={(v) => onChange('linkedin', v)} isEditing={isEditing} className="text-xs" />
             </div>
           )}
           {data.github && (
             <div className="flex items-center gap-2">
-              <Code className="h-4 w-4" style={{ color: colorScheme.primary }} />
+              <Code className="h-4 w-4" style={{ color: theme.main }} />
               <EditableField value={data.github} onChange={(v) => onChange('github', v)} isEditing={isEditing} className="text-xs" />
             </div>
           )}
@@ -1332,7 +1302,7 @@ const ModernTemplate = ({
         <div className="space-y-3">
           <h3
             className="font-semibold text-sm pb-1"
-            style={{ borderBottom: `1px solid ${colorScheme.primary}30` }}
+            style={{ borderBottom: `1px solid ${theme.main}30` }}
           >
             技能專長
           </h3>
@@ -1346,12 +1316,12 @@ const ModernTemplate = ({
                     <span>{skill}</span>
                     <span>{95 - i * 8}%</span>
                   </div>
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: `${theme.secondary}30` }}>
                     <div
                       className="h-full rounded-full transition-all"
                       style={{
                         width: `${95 - i * 8}%`,
-                        background: colorScheme.gradient,
+                        backgroundColor: theme.main,
                       }}
                     />
                   </div>
@@ -1365,11 +1335,11 @@ const ModernTemplate = ({
       {/* Right Content */}
       <div className="space-y-6">
         <div data-pdf-section className="avoid-break">
-          <h1 className="text-3xl font-bold" style={{ color: colorScheme.primary }}>
+          <h1 className="text-3xl font-bold" style={{ color: theme.main }}>
             <EditableField value={data.name} onChange={(v) => onChange('name', v)} isEditing={isEditing} />
           </h1>
           {data.professional_summary && (
-            <p className="text-muted-foreground mt-1">
+            <p className="mt-1" style={{ color: theme.text }}>
               <EditableField value={data.professional_summary} onChange={(v) => onChange('professional_summary', v)} isEditing={isEditing} multiline />
             </p>
           )}
@@ -1378,9 +1348,9 @@ const ModernTemplate = ({
         <div className="space-y-4" data-pdf-section>
           <h3
             className="font-semibold text-lg pb-1 flex items-center gap-2 avoid-break"
-            style={{ borderBottom: `1px solid ${colorScheme.primary}30` }}
+            style={{ borderBottom: `1px solid ${theme.main}30` }}
           >
-            <Briefcase className="h-4 w-4" style={{ color: colorScheme.primary }} />
+            <Briefcase className="h-4 w-4" style={{ color: theme.main }} />
             工作經驗
           </h3>
           <EditableField value={data.professional_experience} onChange={(v) => onChange('professional_experience', v)} isEditing={isEditing} multiline className="text-sm" />
@@ -1389,9 +1359,9 @@ const ModernTemplate = ({
         <div className="space-y-4" data-pdf-section>
           <h3
             className="font-semibold text-lg pb-1 flex items-center gap-2 avoid-break"
-            style={{ borderBottom: `1px solid ${colorScheme.primary}30` }}
+            style={{ borderBottom: `1px solid ${theme.main}30` }}
           >
-            <GraduationCap className="h-4 w-4" style={{ color: colorScheme.primary }} />
+            <GraduationCap className="h-4 w-4" style={{ color: theme.main }} />
             學歷
           </h3>
           <EditableField value={data.education} onChange={(v) => onChange('education', v)} isEditing={isEditing} multiline className="text-sm" />
@@ -1401,9 +1371,9 @@ const ModernTemplate = ({
           <div className="space-y-4" data-pdf-section>
             <h3
               className="font-semibold text-lg pb-1 flex items-center gap-2 avoid-break"
-              style={{ borderBottom: `1px solid ${colorScheme.primary}30` }}
+              style={{ borderBottom: `1px solid ${theme.main}30` }}
             >
-              <FolderOpen className="h-4 w-4" style={{ color: colorScheme.primary }} />
+              <FolderOpen className="h-4 w-4" style={{ color: theme.main }} />
               專案作品集
             </h3>
             <EditableField value={data.projects} onChange={(v) => onChange('projects', v)} isEditing={isEditing} multiline className="text-sm" />
@@ -1414,9 +1384,9 @@ const ModernTemplate = ({
           <div className="space-y-4" data-pdf-section>
             <h3
               className="font-semibold text-lg pb-1 flex items-center gap-2 avoid-break"
-              style={{ borderBottom: `1px solid ${colorScheme.primary}30` }}
+              style={{ borderBottom: `1px solid ${theme.main}30` }}
             >
-              <FileText className="h-4 w-4" style={{ color: colorScheme.primary }} />
+              <FileText className="h-4 w-4" style={{ color: theme.main }} />
               自傳
             </h3>
             <EditableField value={data.autobiography} onChange={(v) => onChange('autobiography', v)} isEditing={isEditing} multiline className="text-sm" />
@@ -1432,17 +1402,17 @@ const CreativeTemplate = ({
   data,
   isEditing,
   onChange,
-  colorScheme,
+  theme,
 }: {
   data: ResumeData;
   isEditing: boolean;
   onChange: (field: keyof ResumeData, value: string) => void;
-  colorScheme: ColorScheme;
+  theme: ThemeColors;
 }) => (
   <div className="relative">
     <div
-      className="absolute inset-0 rounded-lg opacity-20"
-      style={{ background: colorScheme.gradient }}
+      className="absolute inset-0 rounded-lg opacity-10"
+      style={{ backgroundColor: theme.main }}
     />
 
     <div className="relative p-6 space-y-6">
@@ -1451,17 +1421,12 @@ const CreativeTemplate = ({
         <div className="relative">
           <div
             className="h-36 w-36 rounded-full p-1"
-            style={{ background: colorScheme.gradient }}
+            style={{ backgroundColor: theme.main }}
           >
             <div className="h-full w-full rounded-full bg-white flex items-center justify-center">
               <span
                 className="text-5xl font-bold"
-                style={{
-                  background: colorScheme.gradient,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
+                style={{ color: theme.main }}
               >
                 {data.name.charAt(0)}
               </span>
@@ -1469,7 +1434,7 @@ const CreativeTemplate = ({
           </div>
           <div
             className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full flex items-center justify-center"
-            style={{ background: colorScheme.gradient }}
+            style={{ backgroundColor: theme.accent }}
           >
             <Sparkles className="h-4 w-4 text-white" />
           </div>
@@ -1478,31 +1443,26 @@ const CreativeTemplate = ({
         <div className="text-center md:text-left flex-1">
           <h1
             className="text-4xl font-bold"
-            style={{
-              background: colorScheme.gradient,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
+            style={{ color: theme.main }}
           >
             <EditableField value={data.name} onChange={(v) => onChange('name', v)} isEditing={isEditing} />
           </h1>
           {data.professional_summary && (
-            <p className="mt-2 text-muted-foreground">
+            <p className="mt-2" style={{ color: theme.text }}>
               <EditableField value={data.professional_summary} onChange={(v) => onChange('professional_summary', v)} isEditing={isEditing} multiline />
             </p>
           )}
           <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-3 text-sm">
-            <span className="flex items-center gap-1" style={{ color: colorScheme.primary }}>
+            <span className="flex items-center gap-1" style={{ color: theme.main }}>
               <Mail className="h-4 w-4" />
               <EditableField value={data.email} onChange={(v) => onChange('email', v)} isEditing={isEditing} />
             </span>
-            <span className="flex items-center gap-1" style={{ color: colorScheme.secondary }}>
+            <span className="flex items-center gap-1" style={{ color: theme.secondary }}>
               <Phone className="h-4 w-4" />
               <EditableField value={data.phone} onChange={(v) => onChange('phone', v)} isEditing={isEditing} />
             </span>
             {data.linkedin && (
-              <span className="flex items-center gap-1" style={{ color: colorScheme.primary }}>
+              <span className="flex items-center gap-1" style={{ color: theme.main }}>
                 <Linkedin className="h-4 w-4" />
                 <EditableField value={data.linkedin} onChange={(v) => onChange('linkedin', v)} isEditing={isEditing} />
               </span>
@@ -1514,13 +1474,13 @@ const CreativeTemplate = ({
       {/* Content Grid */}
       <div className="grid md:grid-cols-2 gap-6">
         <div data-pdf-section className="avoid-break">
-          <CreativeSectionWithColor title="工作經驗" colorScheme={colorScheme}>
+          <CreativeSectionWithColor title="工作經驗" theme={theme}>
             <EditableField value={data.professional_experience} onChange={(v) => onChange('professional_experience', v)} isEditing={isEditing} multiline />
           </CreativeSectionWithColor>
         </div>
 
         <div data-pdf-section className="avoid-break">
-          <CreativeSectionWithColor title="學歷" colorScheme={colorScheme} useSecondary>
+          <CreativeSectionWithColor title="學歷" theme={theme} useSecondary>
             <EditableField value={data.education} onChange={(v) => onChange('education', v)} isEditing={isEditing} multiline />
           </CreativeSectionWithColor>
         </div>
@@ -1528,7 +1488,7 @@ const CreativeTemplate = ({
 
       {/* Skills as Pills */}
       <div data-pdf-section className="avoid-break">
-        <CreativeSectionWithColor title="技能專長" colorScheme={colorScheme} fullWidth>
+        <CreativeSectionWithColor title="技能專長" theme={theme} fullWidth>
           {isEditing ? (
             <EditableField value={data.core_skills} onChange={(v) => onChange('core_skills', v)} isEditing={isEditing} />
           ) : (
@@ -1538,8 +1498,8 @@ const CreativeTemplate = ({
                   key={i}
                   className="px-3 py-1 rounded-full text-sm"
                   style={{
-                    backgroundColor: `${colorScheme.primary}15`,
-                    color: colorScheme.primary,
+                    backgroundColor: `${theme.accent}20`,
+                    color: theme.main,
                   }}
                 >
                   {skill.trim()}
@@ -1553,7 +1513,7 @@ const CreativeTemplate = ({
       {/* Projects */}
       {data.projects && (
         <div data-pdf-section className="avoid-break">
-          <CreativeSectionWithColor title="專案作品集" colorScheme={colorScheme} fullWidth useSecondary>
+          <CreativeSectionWithColor title="專案作品集" theme={theme} fullWidth useSecondary>
             <EditableField value={data.projects} onChange={(v) => onChange('projects', v)} isEditing={isEditing} multiline />
           </CreativeSectionWithColor>
         </div>
@@ -1562,7 +1522,7 @@ const CreativeTemplate = ({
       {/* Autobiography */}
       {data.autobiography && (
         <div data-pdf-section className="avoid-break">
-          <CreativeSectionWithColor title="自傳" colorScheme={colorScheme} fullWidth>
+          <CreativeSectionWithColor title="自傳" theme={theme} fullWidth>
             <EditableField value={data.autobiography} onChange={(v) => onChange('autobiography', v)} isEditing={isEditing} multiline />
           </CreativeSectionWithColor>
         </div>
@@ -1575,18 +1535,18 @@ const CreativeTemplate = ({
 const TemplateSectionWithColor = ({
   title,
   children,
-  colorScheme,
+  theme,
 }: {
   title: string;
   children: React.ReactNode;
-  colorScheme: ColorScheme;
+  theme: ThemeColors;
 }) => (
   <div>
     <h2
       className="text-lg font-bold pb-1 mb-3"
       style={{
-        color: colorScheme.primary,
-        borderBottom: `1px solid ${colorScheme.primary}40`,
+        color: theme.main,
+        borderBottom: `1px solid ${theme.main}40`,
       }}
     >
       {title}
@@ -1599,23 +1559,23 @@ const TemplateSectionWithColor = ({
 const CreativeSectionWithColor = ({
   title,
   children,
-  colorScheme,
+  theme,
   useSecondary = false,
   fullWidth = false,
 }: {
   title: string;
   children: React.ReactNode;
-  colorScheme: ColorScheme;
+  theme: ThemeColors;
   useSecondary?: boolean;
   fullWidth?: boolean;
 }) => (
   <div
     className={`p-4 rounded-lg bg-white/50 dark:bg-white/5 ${fullWidth ? 'col-span-full' : ''}`}
-    style={{ borderLeft: `4px solid ${useSecondary ? colorScheme.secondary : colorScheme.primary}` }}
+    style={{ borderLeft: `4px solid ${useSecondary ? theme.secondary : theme.main}` }}
   >
     <h3
       className="font-semibold mb-3"
-      style={{ color: useSecondary ? colorScheme.secondary : colorScheme.primary }}
+      style={{ color: useSecondary ? theme.secondary : theme.main }}
     >
       {title}
     </h3>
