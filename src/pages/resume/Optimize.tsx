@@ -939,12 +939,14 @@ const TemplateSelectionPhase = ({
             >
               <Card className="overflow-hidden group border-border/60 hover:border-primary/40 hover:shadow-warm transition-all duration-300">
                 {/* Template Thumbnail */}
-                <div className="w-full aspect-[4/3] bg-muted/30 rounded-t-lg overflow-hidden border-b border-border/40">
-                  <img
-                    src={templateThumbnails[template.id]}
-                    alt={`${template.name} 預覽`}
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                  />
+                <div className="w-full aspect-[4/3] bg-[#f5efe8] rounded-t-lg overflow-hidden border-b border-border/40 flex items-center justify-center p-4">
+                  <div className="w-[75%] h-auto shadow-md border border-border/30 rounded-sm overflow-hidden bg-white group-hover:scale-105 transition-transform duration-300">
+                    <img
+                      src={templateThumbnails[template.id]}
+                      alt={`${template.name} 預覽`}
+                      className="w-full h-auto object-contain"
+                    />
+                  </div>
                 </div>
 
                 <CardHeader className="pb-2">
