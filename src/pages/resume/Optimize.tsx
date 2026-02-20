@@ -943,7 +943,7 @@ const TemplateSelectionPhase = ({
                   <img
                     src={templateThumbnails[template.id]}
                     alt={`${template.name} 預覽`}
-                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
 
