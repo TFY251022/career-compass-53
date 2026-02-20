@@ -13,6 +13,15 @@ import { useResumes } from '@/contexts/ResumeContext';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import AlertModal from '@/components/modals/AlertModal';
 import { motion, AnimatePresence } from 'framer-motion';
+import templateCorporateImg from '@/assets/template-corporate.png';
+import templateModernImg from '@/assets/template-modern.png';
+import templateCreativeImg from '@/assets/template-creative.png';
+
+const templateThumbnails: Record<string, string> = {
+  corporate: templateCorporateImg,
+  modern: templateModernImg,
+  creative: templateCreativeImg,
+};
 import html2pdf from 'html2pdf.js';
 import RightDrawer from '@/components/panels/RightDrawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -929,10 +938,13 @@ const TemplateSelectionPhase = ({
               transition={{ delay: i * 0.1 }}
             >
               <Card className="overflow-hidden group border-border/60 hover:border-primary/40 hover:shadow-warm transition-all duration-300">
-                {/* Thumbnail Placeholder */}
-                <div className="w-full aspect-[4/3] bg-muted/50 rounded-t-lg flex flex-col items-center justify-center gap-2 border-b border-border/40">
-                  <template.icon className="h-12 w-12 text-muted-foreground/40 group-hover:text-primary/50 transition-colors" />
-                  <span className="text-xs text-muted-foreground/50">模板預覽</span>
+                {/* Template Thumbnail */}
+                <div className="w-full aspect-[4/3] bg-muted/30 rounded-t-lg overflow-hidden border-b border-border/40">
+                  <img
+                    src={templateThumbnails[template.id]}
+                    alt={`${template.name} 預覽`}
+                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
 
                 <CardHeader className="pb-2">
