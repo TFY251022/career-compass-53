@@ -1,14 +1,14 @@
-import { useState, useCallback } from 'react';
-import { Search, Code, Layers } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { AILoadingSpinner, ContentTransition } from '@/components/loading/LoadingStates';
-import { Skeleton } from '@/components/ui/skeleton';
-import { motion } from 'framer-motion';
-import type { SkillCard } from '@/types/job';
-import { JOB_CATEGORIES, ICON_NAME_MAP } from '@/mocks/jobs';
+import { useState, useCallback } from "react";
+import { Search, Code, Layers } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AILoadingSpinner, ContentTransition } from "@/components/loading/LoadingStates";
+import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
+import type { SkillCard } from "@/types/job";
+import { JOB_CATEGORIES, ICON_NAME_MAP } from "@/mocks/jobs";
 
 // ── Icon helper ──────────────────────────────────────────────────
 
@@ -23,9 +23,7 @@ const SkillIcon = ({ skillName }: { skillName: string }) => {
 
   if (imgError) {
     const hash = skillName.charCodeAt(0);
-    return hash % 2 === 0
-      ? <Code className="h-8 w-8 text-primary" />
-      : <Layers className="h-8 w-8 text-primary" />;
+    return hash % 2 === 0 ? <Code className="h-8 w-8 text-primary" /> : <Layers className="h-8 w-8 text-primary" />;
   }
 
   return (
@@ -61,20 +59,20 @@ const SkillGridSkeleton = () => (
 // ── Main Component ───────────────────────────────────────────────
 
 const SkillSearch = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [selectedSub, setSelectedSub] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedSub, setSelectedSub] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [results, setResults] = useState<SkillCard[]>([]);
 
   // Derived data
-  const currentCategory = JOB_CATEGORIES.find(c => c.label === selectedCategory);
+  const currentCategory = JOB_CATEGORIES.find((c) => c.label === selectedCategory);
   const subcategories = currentCategory?.subcategories ?? [];
 
   // Reset subcategory when category changes
   const handleCategoryChange = (value: string) => {
     setSelectedCategory(value);
-    setSelectedSub('');
+    setSelectedSub("");
     setHasSearched(false);
     setResults([]);
   };
@@ -86,9 +84,9 @@ const SkillSearch = () => {
     setHasSearched(true);
 
     // TODO: Replace with API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const sub = subcategories.find(s => s.label === selectedSub);
+    const sub = subcategories.find((s) => s.label === selectedSub);
     setResults(sub?.skills ?? []);
     setIsLoading(false);
   }, [selectedCategory, selectedSub, subcategories]);
@@ -100,10 +98,8 @@ const SkillSearch = () => {
         <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-6">
           <Search className="h-8 w-8 text-primary" />
         </div>
-        <h1 className="text-3xl font-bold mb-4">職涯地圖</h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          選擇您感興趣的職務類別，探索所需的核心技能
-        </p>
+        <h1 className="text-3xl font-bold mb-4">職缺核心技能查詢</h1>
+        <p className="text-muted-foreground max-w-2xl mx-auto">選擇您感興趣的職務類別，探索所需的核心技能</p>
       </div>
 
       {/* Search Controls */}
@@ -114,7 +110,7 @@ const SkillSearch = () => {
               <SelectValue placeholder="選擇職務大類" />
             </SelectTrigger>
             <SelectContent className="bg-popover border z-50">
-              {JOB_CATEGORIES.map(cat => (
+              {JOB_CATEGORIES.map((cat) => (
                 <SelectItem key={cat.label} value={cat.label}>
                   {cat.label}
                 </SelectItem>
@@ -122,16 +118,12 @@ const SkillSearch = () => {
             </SelectContent>
           </Select>
 
-          <Select
-            value={selectedSub}
-            onValueChange={setSelectedSub}
-            disabled={!selectedCategory}
-          >
+          <Select value={selectedSub} onValueChange={setSelectedSub} disabled={!selectedCategory}>
             <SelectTrigger className="flex-1 bg-card">
-              <SelectValue placeholder={selectedCategory ? '選擇細分項目' : '請先選擇職務大類'} />
+              <SelectValue placeholder={selectedCategory ? "選擇細分項目" : "請先選擇職務大類"} />
             </SelectTrigger>
             <SelectContent className="bg-popover border z-50">
-              {subcategories.map(sub => (
+              {subcategories.map((sub) => (
                 <SelectItem key={sub.label} value={sub.label}>
                   {sub.label}
                 </SelectItem>
@@ -171,10 +163,7 @@ const SkillSearch = () => {
           }
         >
           {hasSearched && results.length > 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <p className="text-sm text-muted-foreground mb-6">
                 {selectedSub} — 共 {results.length} 項核心技能
               </p>
@@ -196,11 +185,9 @@ const SkillSearch = () => {
                         </div>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                          {skill.description}
-                        </p>
+                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{skill.description}</p>
                         <div className="flex flex-wrap gap-1.5">
-                          {skill.tags.map(tag => (
+                          {skill.tags.map((tag) => (
                             <Badge key={tag} variant="secondary" className="text-xs">
                               {tag}
                             </Badge>
