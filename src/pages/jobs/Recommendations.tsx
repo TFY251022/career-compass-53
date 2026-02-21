@@ -213,7 +213,7 @@ const Recommendations = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="text-center mb-8">
+              <div className="text-center mb-8 md:mb-12">
                 <div className="inline-flex items-center justify-center h-14 w-14 md:h-16 md:w-16 rounded-full bg-primary/10 mb-4 md:mb-6">
                   <Heart className="h-7 w-7 md:h-8 md:w-8 text-primary" />
                 </div>
@@ -253,15 +253,19 @@ const Recommendations = () => {
               transition={{ duration: 0.3 }}
             >
               {/* Header */}
-              <div className="text-center mb-8 md:mb-12">
-                <div className="inline-flex items-center justify-center h-16 w-16 rounded-full gradient-primary bg-primary/10 mb-6">
-                  <Star className="h-8 w-8 text-primary" />
+              <motion.div
+                className="text-center mb-8 md:mb-10"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <div className="inline-flex items-center justify-center h-16 w-16 rounded-full gradient-primary mb-6 shadow-medium">
+                  <Star className="h-8 w-8 text-primary-foreground" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold mb-4">職缺推薦</h1>
+                <h1 className="text-3xl md:text-4xl font-bold mb-4">為您推薦的專屬職缺</h1>
                 <p className="text-muted-foreground max-w-2xl mx-auto text-base md:text-lg">
                   我們根據您的履歷、個性特質與工作偏好，精心挑選最適合您的職位機會
                 </p>
-              </div>
+              </motion.div>
 
               {/* Refill Button */}
               <div className="max-w-4xl mx-auto mb-6">
