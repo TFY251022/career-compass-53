@@ -253,6 +253,7 @@ const Recommendations = () => {
               transition={{ duration: 0.3 }}
             >
               {/* Header */}
+              <div className="text-center mb-8 md:mb-12">
                 <div className="inline-flex items-center justify-center h-16 w-16 rounded-full gradient-primary bg-primary/10 mb-6">
                   <Star className="h-8 w-8 text-primary" />
                 </div>
@@ -260,7 +261,7 @@ const Recommendations = () => {
                 <p className="text-muted-foreground max-w-2xl mx-auto text-base md:text-lg">
                   我們根據您的履歷、個性特質與工作偏好，精心挑選最適合您的職位機會
                 </p>
-              </motion.div>
+              </div>
 
               {/* Refill Button */}
               <div className="max-w-4xl mx-auto mb-6">
