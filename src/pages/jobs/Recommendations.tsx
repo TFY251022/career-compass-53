@@ -261,7 +261,7 @@ const Recommendations = () => {
                 <div className="inline-flex items-center justify-center h-16 w-16 rounded-full gradient-primary mb-6 shadow-medium">
                   <Star className="h-8 w-8 text-primary-foreground" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold mb-4">為您推薦的專屬職缺</h1>
+                <h1 className="text-3xl md:text-4xl font-bold mb-4">推薦職缺</h1>
                 <p className="text-muted-foreground max-w-2xl mx-auto text-base md:text-lg">
                   我們根據您的履歷、個性特質與工作偏好，精心挑選最適合您的職位機會
                 </p>
