@@ -213,7 +213,7 @@ const Recommendations = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="text-center mb-8 md:mb-12">
+              <div className="text-center mb-8">
                 <div className="inline-flex items-center justify-center h-14 w-14 md:h-16 md:w-16 rounded-full bg-primary/10 mb-4 md:mb-6">
                   <Heart className="h-7 w-7 md:h-8 md:w-8 text-primary" />
                 </div>
