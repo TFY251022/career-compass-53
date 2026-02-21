@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Star } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
+import logoImage from '@/assets/logo.png';
 
 const Footer = () => {
   const quickLinks = [
@@ -22,10 +23,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#fcf1e9]">
-                <Star className="h-5 w-5 text-[#8c4703]" />
-              </div>
+            <Link to="/" className="flex items-center gap-3">
+              <img src={logoImage} alt="職星領航員 Logo" className="h-14 w-14 object-contain opacity-90 brightness-125" />
               <div className="flex flex-col leading-none">
                 <span className="text-lg font-bold text-white">職星領航員</span>
                 <span className="text-xs text-white/60">Career Pilot</span>

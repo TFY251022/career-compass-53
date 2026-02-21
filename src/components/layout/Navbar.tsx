@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { useAppState } from '@/contexts/AppContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
-import { FileText, BarChart3, MessageSquare, User, Menu, LogOut, Settings, FileUp, Search, Target, ChevronDown, Compass, Star, Map, ClipboardList, Lock, Sparkles } from 'lucide-react';
+import { FileText, BarChart3, MessageSquare, User, Menu, LogOut, Settings, FileUp, Search, Target, ChevronDown, Compass, Map, ClipboardList, Lock, Sparkles } from 'lucide-react';
+import logoImage from '@/assets/logo.png';
 import { Separator } from '@/components/ui/separator';
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -40,10 +41,8 @@ const Navbar = () => {
       <nav className="sticky top-0 z-50 w-full header-bg border-b border-white/10">
         <div className="container flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#faeee5]">
-              <Star className="h-5 w-5 text-[#8c4703]" />
-            </div>
+          <Link to="/" className="flex items-center gap-2.5">
+            <img src={logoImage} alt="職星領航員 Logo" className="h-9 w-9 object-contain" />
             <div className="flex flex-col leading-none">
               <span className="text-lg font-bold text-white">職星領航員</span>
               <span className="text-xs text-white/60">Career Pilot</span>
@@ -158,10 +157,8 @@ const Navbar = () => {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-72">
-              <div className="flex items-center gap-2 mb-8">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
-                  <Compass className="h-5 w-5 text-primary-foreground" />
-                </div>
+              <div className="flex items-center gap-2.5 mb-8">
+                <img src={logoImage} alt="職星領航員 Logo" className="h-9 w-9 object-contain" />
                 <div className="flex flex-col leading-none">
                   <span className="text-lg font-bold">職星領航員</span>
                   <span className="text-xs text-muted-foreground">Career Pilot</span>
