@@ -109,18 +109,50 @@ const templates = [
   },
 ];
 
+const OPTIMIZE_RESULT_KEY = 'resume-optimize-state';
+
+interface PersistedOptimizeState {
+  phase: Phase;
+  suggestions: Suggestion[];
+  selectedTemplate: string;
+  selectedThemeIndex: number;
+  resumeData: ResumeData;
+  originalData: OriginalResumeData;
+}
+
+const loadOptimizeState = (): PersistedOptimizeState | null => {
+  try {
+    const saved = localStorage.getItem(OPTIMIZE_RESULT_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch {}
+  return null;
+};
+
+const saveOptimizeState = (state: PersistedOptimizeState) => {
+  localStorage.setItem(OPTIMIZE_RESULT_KEY, JSON.stringify(state));
+};
+
+const clearOptimizeState = () => {
+  localStorage.removeItem(OPTIMIZE_RESULT_KEY);
+};
+
 const Optimize = () => {
   const navigate = useNavigate();
   const { isLoggedIn, isResumeUploaded, isPersonalityQuizDone } = useAppState();
   const { resumes, selectedResumeId, setSelectedResumeId } = useResumes();
-  const [phase, setPhase] = useState<Phase>('initial');
-  const [originalData, setOriginalData] = useState<OriginalResumeData>(mockOriginalResumeData);
-  const [editedOriginalData, setEditedOriginalData] = useState<OriginalResumeData>(mockOriginalResumeData);
-  const [resumeData, setResumeData] = useState<ResumeData>(mockResumeData);
-  const [editedData, setEditedData] = useState<ResumeData>(mockResumeData);
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
-  const [selectedThemeIndex, setSelectedThemeIndex] = useState<number>(0);
+
+  // Restore persisted state if available
+  const persisted = useMemo(() => loadOptimizeState(), []);
+  const canRestore = persisted && (persisted.phase === 'suggestions' || persisted.phase === 'templates' || persisted.phase === 'result');
+
+  const [phase, setPhase] = useState<Phase>(canRestore ? persisted!.phase : 'initial');
+  const [originalData, setOriginalData] = useState<OriginalResumeData>(canRestore ? persisted!.originalData : mockOriginalResumeData);
+  const [editedOriginalData, setEditedOriginalData] = useState<OriginalResumeData>(canRestore ? persisted!.originalData : mockOriginalResumeData);
+  const [resumeData, setResumeData] = useState<ResumeData>(canRestore ? persisted!.resumeData : mockResumeData);
+  const [editedData, setEditedData] = useState<ResumeData>(canRestore ? persisted!.resumeData : mockResumeData);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>(canRestore ? persisted!.suggestions : []);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>(canRestore ? persisted!.selectedTemplate : '');
+  const [selectedThemeIndex, setSelectedThemeIndex] = useState<number>(canRestore ? persisted!.selectedThemeIndex : 0);
   const [isEditing, setIsEditing] = useState(false);
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
   const [showAccessAlert, setShowAccessAlert] = useState(false);
@@ -154,6 +186,7 @@ const Optimize = () => {
     await new Promise(resolve => setTimeout(resolve, 3000));
     setSuggestions(mockSuggestions);
     setPhase('suggestions');
+    saveOptimizeState({ phase: 'suggestions', suggestions: mockSuggestions, selectedTemplate: '', selectedThemeIndex: 0, resumeData, originalData });
   };
 
   const handleSelectTemplate = async (templateId: string) => {
@@ -162,6 +195,7 @@ const Optimize = () => {
     setPhase('generating');
     await new Promise(resolve => setTimeout(resolve, 2500));
     setPhase('result');
+    saveOptimizeState({ phase: 'result', suggestions, selectedTemplate: templateId, selectedThemeIndex: 0, resumeData, originalData });
   };
 
   const handleDownloadSuggestions = () => {
@@ -271,6 +305,7 @@ const Optimize = () => {
     setEditedData(mockResumeData);
     setEditPhase('view');
     setShowSuggestionsDrawer(false);
+    clearOptimizeState();
   };
 
   const handleBackToTemplates = () => {

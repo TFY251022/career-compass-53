@@ -17,6 +17,7 @@ import { MOCK_RESULTS } from '@/data/mockPersonalityResults';
 import PersonalityTestResult from '@/components/personality/PersonalityTestResult';
 
 const STORAGE_KEY = 'personality-test-progress';
+const RESULT_KEY = 'personality-test-result';
 
 interface TestProgress {
   answers: Record<string, string>;
@@ -46,9 +47,20 @@ const PersonalityTest = () => {
   const [progress, setProgress] = useState<TestProgress>(loadProgress);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showIncompleteAlert, setShowIncompleteAlert] = useState(false);
-  const [showResult, setShowResult] = useState(false);
   const [invalidIds, setInvalidIds] = useState<Set<string>>(new Set());
-  const [result, setResult] = useState<PersonalityResult | null>(null);
+
+  // Restore persisted result
+  const [result, setResult] = useState<PersonalityResult | null>(() => {
+    try {
+      const saved = localStorage.getItem(RESULT_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return null;
+  });
+  const [showResult, setShowResult] = useState(() => {
+    if (isPersonalityTestDone) return true;
+    try { return localStorage.getItem(RESULT_KEY) !== null; } catch { return false; }
+  });
 
   const { answers, currentStep } = progress;
   const modules = personalityTestModules;
@@ -59,12 +71,6 @@ const PersonalityTest = () => {
     saveProgress(progress);
   }, [progress]);
 
-  // If already done, show result directly
-  useEffect(() => {
-    if (isPersonalityTestDone) {
-      setShowResult(true);
-    }
-  }, [isPersonalityTestDone]);
 
   const updateProgress = useCallback((partial: Partial<TestProgress>) => {
     setProgress((prev) => ({ ...prev, ...partial }));
@@ -120,6 +126,7 @@ const PersonalityTest = () => {
     await new Promise((resolve) => setTimeout(resolve, 1500));
     const computed = computePersonalityResult(answers);
     setResult(computed);
+    localStorage.setItem(RESULT_KEY, JSON.stringify(computed));
     setIsAnalyzing(false);
     setShowResult(true);
     setIsPersonalityTestDone(true);
@@ -128,6 +135,7 @@ const PersonalityTest = () => {
 
   const handleReset = () => {
     clearProgress();
+    localStorage.removeItem(RESULT_KEY);
     setProgress({ answers: {}, currentStep: 0 });
     setShowResult(false);
     setResult(null);
