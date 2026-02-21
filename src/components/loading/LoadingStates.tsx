@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { Loader2, Star } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import logoImage from '@/assets/logo.png';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface AILoadingSpinnerProps {
@@ -15,9 +16,7 @@ export const AILoadingSpinner = ({ message = '正在為您處理，請稍候...'
       exit={{ opacity: 0 }}
     >
       <div className="relative">
-        <div className="h-16 w-16 rounded-full gradient-primary flex items-center justify-center animate-pulse">
-          <Star className="h-8 w-8 text-primary-foreground" />
-        </div>
+        <img src={logoImage} alt="載入中" className="h-16 w-16 object-contain animate-pulse" />
         <Loader2 className="absolute -top-1 -right-1 h-6 w-6 text-primary animate-spin" />
       </div>
       <p className="mt-4 text-muted-foreground animate-pulse">{message}</p>
