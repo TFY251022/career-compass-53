@@ -1,37 +1,37 @@
-import { Code2, Compass, ArrowRight, RefreshCw } from 'lucide-react';
+import { Code2, Compass, ArrowRight, RefreshCw } from "lucide-react";
 
 const Team = () => {
   const leftValues = [
     {
       icon: Code2,
-      title: '我們是誰',
-      description: '我們是一個由信念驅動的團隊，相信簡單的想法能改變世界。',
+      title: "我們是誰",
+      description: "我們是一個由信念驅動的團隊，相信簡單的想法能改變世界。",
     },
     {
       icon: RefreshCw,
-      title: '我們的使命',
-      description: '每一天，我們都在努力將客戶的夢想轉化為現實。',
+      title: "我們的使命",
+      description: "每一天，我們都在努力將客戶的夢想轉化為現實。",
     },
   ];
 
   const rightValues = [
     {
       icon: Compass,
-      title: '我們的願景',
-      description: '建立一個更好的未來，一次一個項目。',
+      title: "我們的願景",
+      description: "建立一個更好的未來，一次一個項目。",
     },
     {
       icon: ArrowRight,
-      title: '我們如何開始',
-      description: '從最初的想法到今天的成就，我們從未停止前進。',
+      title: "我們如何開始",
+      description: "從最初的想法到今天的成就，我們從未停止前進。",
     },
   ];
 
   const partners = [
-    { name: 'Partner 1', placeholder: true },
-    { name: 'Partner 2', placeholder: true },
-    { name: 'Partner 3', placeholder: true },
-    { name: 'Partner 4', placeholder: true },
+    { name: "Partner 1", placeholder: true },
+    { name: "Partner 2", placeholder: true },
+    { name: "Partner 3", placeholder: true },
+    { name: "Partner 4", placeholder: true },
   ];
 
   return (
@@ -57,9 +57,7 @@ const Team = () => {
                     <item.icon className="h-7 w-7 text-primary" />
                   </div>
                   <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {item.description}
-                  </p>
+                  <p className="text-muted-foreground leading-relaxed">{item.description}</p>
                 </div>
               ))}
             </div>
@@ -96,9 +94,7 @@ const Team = () => {
                     <item.icon className="h-7 w-7 text-primary" />
                   </div>
                   <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {item.description}
-                  </p>
+                  <p className="text-muted-foreground leading-relaxed">{item.description}</p>
                 </div>
               ))}
             </div>
@@ -110,12 +106,8 @@ const Team = () => {
       <section className="py-16 md:py-24 bg-muted/30">
         <div className="container">
           <div className="mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              我們信任的合作夥伴
-            </h2>
-            <p className="text-muted-foreground">
-              這些組織與我們共同推進行業的發展與創新。
-            </p>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">我們信任的合作夥伴</h2>
+            <p className="text-muted-foreground">這些組織與我們共同推進行業的發展與創新。</p>
           </div>
 
           {/* Logo Wall */}
@@ -125,9 +117,7 @@ const Team = () => {
                 key={index}
                 className="h-20 bg-background rounded-lg border border-border/50 flex items-center justify-center px-6 hover:border-primary/30 transition-colors"
               >
-                <span className="text-muted-foreground font-medium">
-                  {partner.name}
-                </span>
+                <span className="text-muted-foreground font-medium">{partner.name}</span>
               </div>
             ))}
           </div>
