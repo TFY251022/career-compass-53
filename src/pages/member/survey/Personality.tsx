@@ -40,14 +40,20 @@ const clearProgress = () => {
   localStorage.removeItem(STORAGE_KEY);
 };
 
+const RESULT_KEY = 'career-survey-done';
+
 const Personality = () => {
-  const { setIsPersonalityQuizDone } = useAppState();
+  const { isPersonalityQuizDone, setIsPersonalityQuizDone } = useAppState();
   const navigate = useNavigate();
 
   const [progress, setProgress] = useState<SurveyProgress>(loadProgress);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showIncompleteAlert, setShowIncompleteAlert] = useState(false);
-  const [showResult, setShowResult] = useState(false);
+  // Restore result view if already completed
+  const [showResult, setShowResult] = useState(() => {
+    if (isPersonalityQuizDone) return true;
+    try { return localStorage.getItem(RESULT_KEY) === 'true'; } catch { return false; }
+  });
   const [invalidIds, setInvalidIds] = useState<Set<string>>(new Set());
 
   const { hasSkillBase, answers, currentStep } = progress;
@@ -155,12 +161,15 @@ const Personality = () => {
     setIsAnalyzing(false);
     setShowResult(true);
     setIsPersonalityQuizDone(true);
+    localStorage.setItem(RESULT_KEY, 'true');
   };
 
   const handleReset = () => {
     clearProgress();
     setProgress({ hasSkillBase: null, answers: {}, currentStep: 0 });
     setShowResult(false);
+    setIsPersonalityQuizDone(false);
+    localStorage.removeItem(RESULT_KEY);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
