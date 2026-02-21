@@ -148,54 +148,54 @@ const MemberCenter = () => {
 
           {/* Status Cards - kept as-is */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
-            <Card>
-              <CardContent className="pt-4 md:pt-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs md:text-sm font-medium">履歷上傳</span>
-                  <Badge variant={isResumeUploaded ? 'default' : 'secondary'} className="text-xs">
-                    {isResumeUploaded ? '已完成' : '未完成'}
-                  </Badge>
-                </div>
-                {!isResumeUploaded && (
-                  <Link to="/member/upload-resume">
-                    <Button variant="link" className="px-0 mt-1 md:mt-2 text-xs md:text-sm h-auto">立即上傳</Button>
-                  </Link>
-                )}
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-4 md:pt-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-primary" />
-                    <span className="text-xs md:text-sm font-medium">人格特質問卷</span>
+            <Link to="/member/upload-resume" className="group block">
+              <Card className="h-full transition-all duration-300 hover:-translate-y-1 hover:shadow-medium cursor-pointer">
+                <CardContent className="pt-4 md:pt-6">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs md:text-sm font-medium">履歷上傳</span>
+                    <Badge variant={isResumeUploaded ? 'default' : 'secondary'} className="text-xs">
+                      {isResumeUploaded ? '已完成' : '未完成'}
+                    </Badge>
                   </div>
-                  <Badge variant={isPersonalityTestDone ? 'default' : 'secondary'} className="text-xs">
-                    {isPersonalityTestDone ? '已完成' : '未完成'}
-                  </Badge>
-                </div>
-                {!isPersonalityTestDone && (
-                  <Link to="/member/survey/personality-test">
-                    <Button variant="link" className="px-0 mt-1 md:mt-2 text-xs md:text-sm h-auto">開始測驗</Button>
-                  </Link>
-                )}
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-4 md:pt-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs md:text-sm font-medium">職涯問卷</span>
-                  <Badge variant={isPersonalityQuizDone ? 'default' : 'secondary'} className="text-xs">
-                    {isPersonalityQuizDone ? '已完成' : '未完成'}
-                  </Badge>
-                </div>
-                {!isPersonalityQuizDone && (
-                  <Link to="/member/survey/personality">
-                    <Button variant="link" className="px-0 mt-1 md:mt-2 text-xs md:text-sm h-auto">開始測驗</Button>
-                  </Link>
-                )}
-              </CardContent>
-            </Card>
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    {isResumeUploaded ? '查看已上傳的履歷' : '立即上傳'}
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/member/survey/personality-test" className="group block">
+              <Card className="h-full transition-all duration-300 hover:-translate-y-1 hover:shadow-medium cursor-pointer">
+                <CardContent className="pt-4 md:pt-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <Sparkles className="h-3.5 w-3.5 text-primary" />
+                      <span className="text-xs md:text-sm font-medium">人格特質問卷</span>
+                    </div>
+                    <Badge variant={isPersonalityTestDone ? 'default' : 'secondary'} className="text-xs">
+                      {isPersonalityTestDone ? '已完成' : '未完成'}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    {isPersonalityTestDone ? '查看測驗結果' : '開始測驗'}
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/member/survey/personality" className="group block">
+              <Card className="h-full transition-all duration-300 hover:-translate-y-1 hover:shadow-medium cursor-pointer">
+                <CardContent className="pt-4 md:pt-6">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs md:text-sm font-medium">職涯問卷</span>
+                    <Badge variant={isPersonalityQuizDone ? 'default' : 'secondary'} className="text-xs">
+                      {isPersonalityQuizDone ? '已完成' : '未完成'}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    {isPersonalityQuizDone ? '查看問卷結果' : '開始測驗'}
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
 
           {/* Hero Portal Cards */}
@@ -237,7 +237,7 @@ const MemberCenter = () => {
               <div
                 className="relative rounded-2xl p-6 md:p-8 flex flex-col items-center text-center h-full overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_0_20px_hsl(var(--primary)/0.3)]"
                 style={{
-                  background: 'linear-gradient(135deg, hsl(152 50% 38%), hsl(165 45% 30%))',
+                  background: 'linear-gradient(135deg, hsl(30 96% 28%), hsl(30 80% 22%))',
                 }}
               >
                 <div className="relative z-10 flex flex-col items-center gap-4">
