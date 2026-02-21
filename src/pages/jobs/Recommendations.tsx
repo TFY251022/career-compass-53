@@ -1,19 +1,30 @@
-import { useState, useEffect } from 'react';
-import { MapPin, Building2, Banknote, ExternalLink, ChevronLeft, ChevronRight, Briefcase, Star, Heart, RefreshCw } from 'lucide-react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Badge } from '@/components/ui/badge';
-import { Link, useSearchParams } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useAppState } from '@/contexts/AppContext';
-import { AILoadingSpinner } from '@/components/loading/LoadingStates';
-import EmbeddedPreferenceSurvey from '@/components/survey/EmbeddedPreferenceSurvey';
-import ResumeSelector from '@/components/survey/ResumeSelector';
-import AlertModal from '@/components/modals/AlertModal';
-import icon104 from '@/assets/104-icon.png';
-import type { JobData } from '@/types/job';
-import { generateMockJobs } from '@/mocks/jobs';
+import { useState, useEffect } from "react";
+import {
+  MapPin,
+  Building2,
+  Banknote,
+  ExternalLink,
+  ChevronLeft,
+  ChevronRight,
+  Briefcase,
+  Star,
+  Heart,
+  RefreshCw,
+} from "lucide-react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { Link, useSearchParams } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAppState } from "@/contexts/AppContext";
+import { AILoadingSpinner } from "@/components/loading/LoadingStates";
+import EmbeddedPreferenceSurvey from "@/components/survey/EmbeddedPreferenceSurvey";
+import ResumeSelector from "@/components/survey/ResumeSelector";
+import AlertModal from "@/components/modals/AlertModal";
+import icon104 from "@/assets/104-icon.png";
+import type { JobData } from "@/types/job";
+import { generateMockJobs } from "@/mocks/jobs";
 
 // Job Card Skeleton
 const JobCardSkeleton = () => (
@@ -64,18 +75,23 @@ const JobCard = ({ job }: { job: JobData }) => (
       <p className="text-muted-foreground text-sm line-clamp-2">{job.description}</p>
       <div className="flex flex-wrap gap-2">
         <Badge variant="secondary" className="flex items-center gap-1">
-          <MapPin className="h-3 w-3" />{job.city}
+          <MapPin className="h-3 w-3" />
+          {job.city}
         </Badge>
         <Badge variant="secondary" className="flex items-center gap-1">
-          <Banknote className="h-3 w-3" />{job.salary}
+          <Banknote className="h-3 w-3" />
+          {job.salary}
         </Badge>
         <Badge variant="outline" className="flex items-center gap-1">
-          <Briefcase className="h-3 w-3" />{job.industry}
+          <Briefcase className="h-3 w-3" />
+          {job.industry}
         </Badge>
       </div>
       <div className="flex gap-3 pt-2">
         <Link to={`/jobs/${job.id}`}>
-          <Button size="sm" className="gap-1">查看詳細</Button>
+          <Button size="sm" className="gap-1">
+            查看詳細
+          </Button>
         </Link>
         <a href={job.externalUrl} target="_blank" rel="noopener noreferrer">
           <Button size="sm" variant="outline" className="gap-1">
@@ -89,18 +105,18 @@ const JobCard = ({ job }: { job: JobData }) => (
 );
 
 // ─── Stage type ───
-type Stage = 'survey' | 'loading' | 'results';
+type Stage = "survey" | "loading" | "results";
 
 const Recommendations = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { isJobPreferenceQuizDone, setIsJobPreferenceQuizDone } = useAppState();
 
   // Determine initial stage
-  const [stage, setStage] = useState<Stage>(isJobPreferenceQuizDone ? 'results' : 'survey');
+  const [stage, setStage] = useState<Stage>(isJobPreferenceQuizDone ? "results" : "survey");
   const [showRefillAlert, setShowRefillAlert] = useState(false);
 
   // Results state
-  const urlPage = parseInt(searchParams.get('page') || '1', 10);
+  const urlPage = parseInt(searchParams.get("page") || "1", 10);
   const initialPage = isNaN(urlPage) || urlPage < 1 ? 1 : urlPage;
   const [isLoading, setIsLoading] = useState(false);
   const [jobs, setJobs] = useState<JobData[]>([]);
@@ -109,8 +125,8 @@ const Recommendations = () => {
 
   // Sync stage when global state changes externally
   useEffect(() => {
-    if (isJobPreferenceQuizDone && stage === 'survey') {
-      setStage('results');
+    if (isJobPreferenceQuizDone && stage === "survey") {
+      setStage("results");
     }
   }, [isJobPreferenceQuizDone]);
 
@@ -124,14 +140,14 @@ const Recommendations = () => {
   };
 
   useEffect(() => {
-    if (stage === 'results') {
+    if (stage === "results") {
       loadJobs(currentPage);
     }
   }, [currentPage, stage]);
 
   // Sync URL params
   useEffect(() => {
-    const urlPageParam = parseInt(searchParams.get('page') || '1', 10);
+    const urlPageParam = parseInt(searchParams.get("page") || "1", 10);
     const validPage = isNaN(urlPageParam) || urlPageParam < 1 ? 1 : Math.min(urlPageParam, totalPages);
     if (validPage !== currentPage) {
       setCurrentPage(validPage);
@@ -142,20 +158,20 @@ const Recommendations = () => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
     setSearchParams({ page: page.toString() });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Survey complete → loading → results
   const handleSurveyComplete = () => {
-    setStage('loading');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setStage("loading");
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
     setTimeout(() => {
       setIsJobPreferenceQuizDone(true);
-      setStage('results');
+      setStage("results");
       setCurrentPage(1);
-      setSearchParams({ page: '1' });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setSearchParams({ page: "1" });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }, 1800);
   };
 
@@ -163,9 +179,9 @@ const Recommendations = () => {
   const handleRefillConfirm = () => {
     setShowRefillAlert(false);
     setIsJobPreferenceQuizDone(false);
-    setStage('survey');
+    setStage("survey");
     setJobs([]);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const getPageNumbers = () => {
@@ -174,11 +190,11 @@ const Recommendations = () => {
       for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
       if (currentPage <= 3) {
-        pages.push(1, 2, 3, 4, '...', totalPages);
+        pages.push(1, 2, 3, 4, "...", totalPages);
       } else if (currentPage >= totalPages - 2) {
-        pages.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+        pages.push(1, "...", totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
       } else {
-        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+        pages.push(1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages);
       }
     }
     return pages;
@@ -189,7 +205,7 @@ const Recommendations = () => {
       <div className="container py-8 md:py-12">
         <AnimatePresence mode="wait">
           {/* ─── Stage 1: Survey ─── */}
-          {stage === 'survey' && (
+          {stage === "survey" && (
             <motion.div
               key="survey"
               initial={{ opacity: 0 }}
@@ -214,7 +230,7 @@ const Recommendations = () => {
           )}
 
           {/* ─── Stage 2: Loading ─── */}
-          {stage === 'loading' && (
+          {stage === "loading" && (
             <motion.div
               key="loading"
               initial={{ opacity: 0 }}
@@ -228,7 +244,7 @@ const Recommendations = () => {
           )}
 
           {/* ─── Stage 3: Results ─── */}
-          {stage === 'results' && (
+          {stage === "results" && (
             <motion.div
               key="results"
               initial={{ opacity: 0 }}
@@ -242,10 +258,10 @@ const Recommendations = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <div className="inline-flex items-center justify-center h-16 w-16 rounded-full gradient-primary mb-6 shadow-medium">
-                  <Star className="h-8 w-8 text-primary-foreground" />
+                <div className="inline-flex items-center justify-center h-16 w-16 rounded-full gradient-primary bg-primary/10 mb-6">
+                  <Star className="h-8 w-8 text-primary" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold mb-4">為您推薦的專屬職缺</h1>
+                <h1 className="text-3xl md:text-4xl font-bold mb-4">職缺推薦</h1>
                 <p className="text-muted-foreground max-w-2xl mx-auto text-base md:text-lg">
                   我們根據您的履歷、個性特質與工作偏好，精心挑選最適合您的職位機會
                 </p>
@@ -253,12 +269,7 @@ const Recommendations = () => {
 
               {/* Refill Button */}
               <div className="max-w-4xl mx-auto mb-6">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-2"
-                  onClick={() => setShowRefillAlert(true)}
-                >
+                <Button variant="outline" size="sm" className="gap-2" onClick={() => setShowRefillAlert(true)}>
                   <RefreshCw className="h-4 w-4" />
                   重新填寫工作偏好
                 </Button>
@@ -321,10 +332,10 @@ const Recommendations = () => {
                     </Button>
                     <div className="flex gap-1">
                       {getPageNumbers().map((page, idx) =>
-                        typeof page === 'number' ? (
+                        typeof page === "number" ? (
                           <Button
                             key={idx}
-                            variant={currentPage === page ? 'default' : 'outline'}
+                            variant={currentPage === page ? "default" : "outline"}
                             size="sm"
                             onClick={() => handlePageChange(page)}
                             className="w-10"
@@ -335,7 +346,7 @@ const Recommendations = () => {
                           <span key={idx} className="flex items-center justify-center w-10 text-muted-foreground">
                             {page}
                           </span>
-                        )
+                        ),
                       )}
                     </div>
                     <Button
