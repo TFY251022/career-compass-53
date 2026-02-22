@@ -100,7 +100,7 @@ const Navbar = () => {
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="gap-2 pl-2 text-white/80 hover:text-white hover:bg-white/10">
-                    <Avatar className="h-8 w-8 border border-white/20 bg-white/10">
+                    <Avatar className="h-8 w-8 border border-white/20 bg-white/80">
                       <AvatarImage src={logoCat} className="object-cover" />
                       <AvatarFallback className="bg-white/10 text-white text-sm">U</AvatarFallback>
                     </Avatar>
