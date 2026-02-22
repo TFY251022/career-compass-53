@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useAppState } from '@/contexts/AppContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
-import { FileText, BarChart3, MessageSquare, User, Menu, LogOut, Settings, FileUp, Search, Target, ChevronDown, Compass, Map, ClipboardList, Lock, Sparkles } from 'lucide-react';
+import { FileText, BarChart3, User, Menu, LogOut, Settings, FileUp, Search, Target, ChevronDown, Compass, Map, ClipboardList, Lock, Sparkles } from 'lucide-react';
 import logoImage from '@/assets/logo.png';
 import { Separator } from '@/components/ui/separator';
 import { useState } from 'react';
@@ -22,8 +22,7 @@ const Navbar = () => {
   { to: '/jobs/skill-search', label: '職缺核心技能查詢', icon: Search, description: '根據技能搜尋最適合的職缺' },
   { to: '/resume/optimize', label: '履歷優化', icon: FileText, description: '專業分析並優化您的履歷' },
   { to: '/analysis/skills', label: '職能圖譜', icon: BarChart3, description: '深度分析技能優勢與發展方向' },
-  { to: '/jobs/recommendations', label: '推薦職缺', icon: Target, description: '根據您的條件推薦最佳職缺' },
-  { to: '/interview/prep', label: '面試輔助', icon: MessageSquare, description: '模擬面試練習與準備' }];
+  { to: '/jobs/recommendations', label: '推薦職缺', icon: Target, description: '根據您的條件推薦最佳職缺' }];
 
 
   const navLinks = [
