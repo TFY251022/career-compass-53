@@ -17,7 +17,7 @@ import JobDetail from "./pages/jobs/JobDetail";
 import Recommendations from "./pages/jobs/Recommendations";
 import Optimize from "./pages/resume/Optimize";
 import Skills from "./pages/analysis/Skills";
-import Prep from "./pages/interview/Prep";
+
 import MemberCenter from "./pages/member/MemberCenter";
 import RegisterForm from "./pages/auth/RegisterForm";
 import UploadResume from "./pages/member/UploadResume";
@@ -59,9 +59,6 @@ const App = () => (
               } />
               <Route path="/analysis/skills" element={
                 <ProtectedRoute><Skills /></ProtectedRoute>
-              } />
-              <Route path="/interview/prep" element={
-                <ProtectedRoute><Prep /></ProtectedRoute>
               } />
               
               {/* 會員 */}

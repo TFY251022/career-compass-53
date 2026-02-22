@@ -2,6 +2,5 @@ export { MOCK_RESUMES, mockOriginalResumeData, mockResumeData, mockSuggestions }
 export { generateMockJobs, getMockJobDetail, mockCoverLetter, JOB_CATEGORIES, ICON_NAME_MAP } from './jobs';
 export { mockUserId, mockProfile } from './member';
 export { radarTemplates, gapAnalysis, learningResources, sideProjects, analysisHistory } from './analysis';
-export { mockTopics, mockThankYouLetter } from './interview';
 export { heroStats, news } from './homepage';
 export { MOCK_RESULTS } from './personality';
