@@ -10,6 +10,7 @@ import EditProfileModal from '@/components/member/EditProfileModal';
 import PasswordModal from '@/components/member/PasswordModal';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import { mockUserId, mockProfile } from '@/mocks/member';
+import logoCat from '@/assets/logocat.png';
 
 const displayName = (name: string, userId: string) =>
   name?.trim() ? name : `用戶_${userId}`;
@@ -75,9 +76,7 @@ const MemberCenter = () => {
                   aria-label="上傳大頭貼"
                 >
                   <Avatar className="h-20 w-20 md:h-24 md:w-24 border-2 border-border">
-                    {(avatarPreview || mockProfile.avatarUrl) && (
-                      <AvatarImage src={avatarPreview || mockProfile.avatarUrl} alt={name} />
-                    )}
+                    <AvatarImage src={avatarPreview || mockProfile.avatarUrl || logoCat} alt={name} />
                     <AvatarFallback className="bg-secondary text-muted-foreground text-2xl md:text-3xl font-semibold">
                       {name.charAt(0)}
                     </AvatarFallback>
