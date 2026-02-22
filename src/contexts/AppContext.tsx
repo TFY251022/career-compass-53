@@ -6,11 +6,13 @@ interface AppState {
   isPersonalityQuizDone: boolean;
   isJobPreferenceQuizDone: boolean;
   isPersonalityTestDone: boolean;
+  avatarUrl: string | null;
   setIsLoggedIn: (value: boolean) => void;
   setIsResumeUploaded: (value: boolean) => void;
   setIsPersonalityQuizDone: (value: boolean) => void;
   setIsJobPreferenceQuizDone: (value: boolean) => void;
   setIsPersonalityTestDone: (value: boolean) => void;
+  setAvatarUrl: (value: string | null) => void;
 }
 
 const APP_STATE_KEY = 'app-global-state';
@@ -21,6 +23,7 @@ interface PersistedFlags {
   isPersonalityQuizDone: boolean;
   isJobPreferenceQuizDone: boolean;
   isPersonalityTestDone: boolean;
+  avatarUrl: string | null;
 }
 
 const loadFlags = (): PersistedFlags => {
@@ -34,6 +37,7 @@ const loadFlags = (): PersistedFlags => {
     isPersonalityQuizDone: false,
     isJobPreferenceQuizDone: false,
     isPersonalityTestDone: false,
+    avatarUrl: null,
   };
 };
 
@@ -46,6 +50,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [isPersonalityQuizDone, setIsPersonalityQuizDone] = useState(initial.isPersonalityQuizDone);
   const [isJobPreferenceQuizDone, setIsJobPreferenceQuizDone] = useState(initial.isJobPreferenceQuizDone);
   const [isPersonalityTestDone, setIsPersonalityTestDone] = useState(initial.isPersonalityTestDone);
+  const [avatarUrl, setAvatarUrl] = useState(initial.avatarUrl);
 
   // Persist flags whenever they change
   useEffect(() => {
@@ -55,9 +60,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       isPersonalityQuizDone,
       isJobPreferenceQuizDone,
       isPersonalityTestDone,
+      avatarUrl,
     };
     localStorage.setItem(APP_STATE_KEY, JSON.stringify(flags));
-  }, [isLoggedIn, isResumeUploaded, isPersonalityQuizDone, isJobPreferenceQuizDone, isPersonalityTestDone]);
+  }, [isLoggedIn, isResumeUploaded, isPersonalityQuizDone, isJobPreferenceQuizDone, isPersonalityTestDone, avatarUrl]);
 
   return (
     <AppContext.Provider
@@ -67,11 +73,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         isPersonalityQuizDone,
         isJobPreferenceQuizDone,
         isPersonalityTestDone,
+        avatarUrl,
         setIsLoggedIn,
         setIsResumeUploaded,
         setIsPersonalityQuizDone,
         setIsJobPreferenceQuizDone,
         setIsPersonalityTestDone,
+        setAvatarUrl,
       }}
     >
       {children}

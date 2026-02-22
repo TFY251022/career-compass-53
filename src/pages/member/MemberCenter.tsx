@@ -21,7 +21,7 @@ const fallback = (value: string | undefined) =>
 const MemberCenter = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleAvatarClick = () => {
@@ -32,11 +32,15 @@ const MemberCenter = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) return;
-    const url = URL.createObjectURL(file);
-    setAvatarPreview(url);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      setAvatarUrl(dataUrl);
+    };
+    reader.readAsDataURL(file);
     e.target.value = '';
   };
-  const { isResumeUploaded, isPersonalityQuizDone, isPersonalityTestDone } = useAppState();
+  const { isResumeUploaded, isPersonalityQuizDone, isPersonalityTestDone, avatarUrl, setAvatarUrl } = useAppState();
 
   const name = displayName(mockProfile.fullName, mockUserId);
   const titleText = fallback(mockProfile.title);
@@ -76,7 +80,7 @@ const MemberCenter = () => {
                   aria-label="上傳大頭貼"
                 >
                   <Avatar className="h-20 w-20 md:h-24 md:w-24 border-2 border-border">
-                    <AvatarImage src={avatarPreview || mockProfile.avatarUrl || logoCat} alt={name} />
+                    <AvatarImage src={avatarUrl || mockProfile.avatarUrl || logoCat} alt={name} />
                     <AvatarFallback className="bg-secondary text-muted-foreground text-2xl md:text-3xl font-semibold">
                       {name.charAt(0)}
                     </AvatarFallback>

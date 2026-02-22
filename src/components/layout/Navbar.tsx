@@ -14,7 +14,7 @@ import AuthModal from '@/components/auth/AuthModal';
 import PasswordModal from '@/components/member/PasswordModal';
 
 const Navbar = () => {
-  const { isLoggedIn, setIsLoggedIn } = useAppState();
+  const { isLoggedIn, setIsLoggedIn, avatarUrl } = useAppState();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
@@ -101,7 +101,7 @@ const Navbar = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="gap-2 pl-2 text-white/80 hover:text-white hover:bg-white/10">
                     <Avatar className="h-8 w-8 border border-white/20 bg-white/80">
-                      <AvatarImage src={logoCat} className="object-cover" />
+                      <AvatarImage src={avatarUrl || logoCat} className="object-cover" />
                       <AvatarFallback className="bg-white/10 text-white text-sm">U</AvatarFallback>
                     </Avatar>
                     <span>會員中心</span>
