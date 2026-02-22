@@ -5,6 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
 import { FileText, BarChart3, User, Menu, LogOut, Settings, FileUp, Search, Target, ChevronDown, Compass, Map, ClipboardList, Lock, Sparkles } from 'lucide-react';
 import logoImage from '@/assets/logo.png';
+import logoCat from '@/assets/logocat.png';
 import { Separator } from '@/components/ui/separator';
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -100,7 +101,7 @@ const Navbar = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="gap-2 pl-2 text-white/80 hover:text-white hover:bg-white/10">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src="/placeholder.svg" />
+                      <AvatarImage src={logoCat} />
                       <AvatarFallback className="bg-white/10 text-white text-sm">U</AvatarFallback>
                     </Avatar>
                     <span>會員中心</span>
