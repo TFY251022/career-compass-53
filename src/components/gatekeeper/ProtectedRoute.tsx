@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppState } from '@/contexts/AppContext';
 import GatekeeperOverlay from './GatekeeperOverlay';
 import AuthModal from '../auth/AuthModal';
@@ -23,10 +23,19 @@ const ProtectedRoute = ({
 }: ProtectedRouteProps) => {
   const state = useAppState();
   const navigate = useNavigate();
+  const location = useLocation();
   const [showAuthModal, setShowAuthModal] = useState(false);
-  // Track latest isLoggedIn via ref to avoid stale closure in handleAuthModalClose
   const isLoggedInRef = useRef(state.isLoggedIn);
   isLoggedInRef.current = state.isLoggedIn;
+  // Track whether this component instance is still mounted
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   const loginOnly = requiredFlags.length === 1 && requiredFlags[0] === 'isLoggedIn';
 
@@ -45,14 +54,13 @@ const ProtectedRoute = ({
 
   const handleAuthModalClose = (isOpen: boolean) => {
     setShowAuthModal(isOpen);
-    // Use ref to get the latest isLoggedIn value (avoids stale closure)
-    if (!isOpen && !isLoggedInRef.current) {
+    if (!isOpen && !isLoggedInRef.current && mountedRef.current) {
       navigate(-1);
     }
   };
 
   const handleGatekeeperClose = (isOpen: boolean) => {
-    if (!isOpen) {
+    if (!isOpen && mountedRef.current) {
       navigate(-1);
     }
   };

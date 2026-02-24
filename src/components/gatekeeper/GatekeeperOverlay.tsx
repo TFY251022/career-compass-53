@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { useAppState } from '@/contexts/AppContext';
 import { Check, Circle, LogIn, FileUp, ClipboardCheck, Brain, Heart, ArrowRight } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import type { GateFlag } from './ProtectedRoute';
 
 interface GatekeeperOverlayProps {
@@ -13,7 +13,6 @@ interface GatekeeperOverlayProps {
 }
 
 const GatekeeperOverlay = ({ open, onOpenChange, onLoginClick, requiredFlags }: GatekeeperOverlayProps) => {
-  const navigate = useNavigate();
   const state = useAppState();
 
   // All possible tasks
@@ -73,9 +72,6 @@ const GatekeeperOverlay = ({ open, onOpenChange, onLoginClick, requiredFlags }: 
   const progress = (completedCount / tasks.length) * 100;
 
   const handleOpenChange = (isOpen: boolean) => {
-    if (!isOpen) {
-      navigate(-1);
-    }
     onOpenChange(isOpen);
   };
 
