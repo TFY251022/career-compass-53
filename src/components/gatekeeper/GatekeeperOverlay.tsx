@@ -59,7 +59,7 @@ const GatekeeperOverlay = ({ open, onOpenChange, onLoginClick, requiredFlags }: 
       label: '完成工作偏好問卷',
       completed: state.isJobPreferenceQuizDone,
       icon: Heart,
-      to: '/member/survey/personality', // TODO: link to preference survey when available
+      to: '/jobs/recommendations',
       actionLabel: '開始填寫',
     },
   };
