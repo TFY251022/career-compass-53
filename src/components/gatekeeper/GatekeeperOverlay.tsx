@@ -135,7 +135,7 @@ const GatekeeperOverlay = ({ open, onOpenChange, onLoginClick, requiredFlags }: 
                 
                 {!task.completed && (
                   task.to ? (
-                    <Link to={task.to} onClick={() => onOpenChange(false)}>
+                    <Link to={task.to}>
                       <Button size="sm" variant="outline" className="gap-1">
                         {task.actionLabel}
                         <ArrowRight className="h-3 w-3" />
