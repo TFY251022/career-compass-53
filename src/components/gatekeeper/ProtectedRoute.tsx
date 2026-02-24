@@ -1,4 +1,4 @@
-import { useState, useEffect, ReactNode } from 'react';
+import { useState, useEffect, useRef, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppState } from '@/contexts/AppContext';
 import GatekeeperOverlay from './GatekeeperOverlay';
@@ -24,6 +24,9 @@ const ProtectedRoute = ({
   const state = useAppState();
   const navigate = useNavigate();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  // Track latest isLoggedIn via ref to avoid stale closure in handleAuthModalClose
+  const isLoggedInRef = useRef(state.isLoggedIn);
+  isLoggedInRef.current = state.isLoggedIn;
 
   const loginOnly = requiredFlags.length === 1 && requiredFlags[0] === 'isLoggedIn';
 
@@ -32,9 +35,6 @@ const ProtectedRoute = ({
   const needsLogin = missingFlags.includes('isLoggedIn');
   const hasNonLoginMissing = missingFlags.some((f) => f !== 'isLoggedIn');
 
-  // If login-only mode and not logged in → show AuthModal directly
-  // If multi-flag mode and not logged in → show AuthModal first
-  // If logged in but missing other flags → show GatekeeperOverlay
   const showGatekeeper = !needsLogin && hasNonLoginMissing && !loginOnly;
 
   useEffect(() => {
@@ -45,7 +45,8 @@ const ProtectedRoute = ({
 
   const handleAuthModalClose = (isOpen: boolean) => {
     setShowAuthModal(isOpen);
-    if (!isOpen && !state.isLoggedIn) {
+    // Use ref to get the latest isLoggedIn value (avoids stale closure)
+    if (!isOpen && !isLoggedInRef.current) {
       navigate(-1);
     }
   };
