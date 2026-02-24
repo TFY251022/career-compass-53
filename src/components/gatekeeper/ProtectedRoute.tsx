@@ -4,46 +4,75 @@ import { useAppState } from '@/contexts/AppContext';
 import GatekeeperOverlay from './GatekeeperOverlay';
 import AuthModal from '../auth/AuthModal';
 
+export type GateFlag =
+  | 'isLoggedIn'
+  | 'isResumeUploaded'
+  | 'isPersonalityQuizDone'
+  | 'isPersonalityTestDone'
+  | 'isJobPreferenceQuizDone';
+
 interface ProtectedRouteProps {
   children: ReactNode;
+  /** Which flags must be satisfied. Defaults to ['isLoggedIn']. */
+  requiredFlags?: GateFlag[];
 }
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isLoggedIn } = useAppState();
-  const [showGatekeeper, setShowGatekeeper] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
+const ProtectedRoute = ({
+  children,
+  requiredFlags = ['isLoggedIn'],
+}: ProtectedRouteProps) => {
+  const state = useAppState();
   const navigate = useNavigate();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const loginOnly = requiredFlags.length === 1 && requiredFlags[0] === 'isLoggedIn';
+
+  // Determine which flags are missing
+  const missingFlags = requiredFlags.filter((flag) => !state[flag]);
+  const needsLogin = missingFlags.includes('isLoggedIn');
+  const hasNonLoginMissing = missingFlags.some((f) => f !== 'isLoggedIn');
+
+  // If login-only mode and not logged in → show AuthModal directly
+  // If multi-flag mode and not logged in → show AuthModal first
+  // If logged in but missing other flags → show GatekeeperOverlay
+  const showGatekeeper = !needsLogin && hasNonLoginMissing && !loginOnly;
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      setShowGatekeeper(true);
-    } else {
-      setShowGatekeeper(false);
+    if (needsLogin) {
+      setShowAuthModal(true);
     }
-  }, [isLoggedIn]);
-
-  const handleLoginClick = () => {
-    setShowAuthModal(true);
-  };
+  }, [needsLogin]);
 
   const handleAuthModalClose = (isOpen: boolean) => {
     setShowAuthModal(isOpen);
-    if (!isOpen && !isLoggedIn) {
-      // Navigate back to previous page when closing auth modal without logging in
+    if (!isOpen && !state.isLoggedIn) {
       navigate(-1);
     }
+  };
+
+  const handleGatekeeperClose = (isOpen: boolean) => {
+    if (!isOpen) {
+      navigate(-1);
+    }
+  };
+
+  const handleGatekeeperLogin = () => {
+    setShowAuthModal(true);
   };
 
   return (
     <>
       {children}
-      <GatekeeperOverlay 
-        open={showGatekeeper} 
-        onOpenChange={setShowGatekeeper}
-        onLoginClick={handleLoginClick}
-      />
-      <AuthModal 
-        open={showAuthModal} 
+      {showGatekeeper && (
+        <GatekeeperOverlay
+          open={showGatekeeper}
+          onOpenChange={handleGatekeeperClose}
+          onLoginClick={handleGatekeeperLogin}
+          requiredFlags={requiredFlags}
+        />
+      )}
+      <AuthModal
+        open={showAuthModal}
         onOpenChange={handleAuthModalClose}
       />
     </>

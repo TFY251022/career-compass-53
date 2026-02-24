@@ -1,23 +1,33 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useAppState } from '@/contexts/AppContext';
-import { Check, Circle, LogIn, FileUp, ClipboardCheck, ArrowRight } from 'lucide-react';
+import { Check, Circle, LogIn, FileUp, ClipboardCheck, Brain, Heart, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import type { GateFlag } from './ProtectedRoute';
 
 interface GatekeeperOverlayProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onLoginClick: () => void;
+  requiredFlags?: GateFlag[];
 }
 
-const GatekeeperOverlay = ({ open, onOpenChange, onLoginClick }: GatekeeperOverlayProps) => {
+const GatekeeperOverlay = ({ open, onOpenChange, onLoginClick, requiredFlags }: GatekeeperOverlayProps) => {
   const navigate = useNavigate();
-  const { isLoggedIn, isResumeUploaded, isPersonalityQuizDone } = useAppState();
+  const state = useAppState();
 
-  const tasks = [
-    {
+  // All possible tasks
+  const allTasks: Record<GateFlag, {
+    label: string;
+    completed: boolean;
+    icon: typeof LogIn;
+    action?: () => void;
+    to?: string;
+    actionLabel: string;
+  }> = {
+    isLoggedIn: {
       label: '登入帳號',
-      completed: isLoggedIn,
+      completed: state.isLoggedIn,
       icon: LogIn,
       action: () => {
         onOpenChange(false);
@@ -25,28 +35,45 @@ const GatekeeperOverlay = ({ open, onOpenChange, onLoginClick }: GatekeeperOverl
       },
       actionLabel: '前往登入',
     },
-    {
+    isResumeUploaded: {
       label: '上傳履歷',
-      completed: isResumeUploaded,
+      completed: state.isResumeUploaded,
       icon: FileUp,
       to: '/member/upload-resume',
       actionLabel: '上傳履歷',
     },
-    {
-      label: '完成個性測驗',
-      completed: isPersonalityQuizDone,
+    isPersonalityQuizDone: {
+      label: '完成職涯問卷',
+      completed: state.isPersonalityQuizDone,
       icon: ClipboardCheck,
       to: '/member/survey/personality',
       actionLabel: '開始測驗',
     },
-  ];
+    isPersonalityTestDone: {
+      label: '完成人格問卷',
+      completed: state.isPersonalityTestDone,
+      icon: Brain,
+      to: '/member/survey/personality-test',
+      actionLabel: '開始測驗',
+    },
+    isJobPreferenceQuizDone: {
+      label: '完成工作偏好問卷',
+      completed: state.isJobPreferenceQuizDone,
+      icon: Heart,
+      to: '/member/survey/personality', // TODO: link to preference survey when available
+      actionLabel: '開始填寫',
+    },
+  };
+
+  // Filter to only required flags
+  const flags = requiredFlags || ['isLoggedIn', 'isResumeUploaded', 'isPersonalityQuizDone'];
+  const tasks = flags.map((f) => allTasks[f]);
 
   const completedCount = tasks.filter(t => t.completed).length;
   const progress = (completedCount / tasks.length) * 100;
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
-      // Navigate back to previous page when closing
       navigate(-1);
     }
     onOpenChange(isOpen);
@@ -54,7 +81,6 @@ const GatekeeperOverlay = ({ open, onOpenChange, onLoginClick }: GatekeeperOverl
 
   return (
     <>
-      {/* Backdrop Blur Overlay */}
       {open && (
         <div className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm" />
       )}
@@ -132,7 +158,7 @@ const GatekeeperOverlay = ({ open, onOpenChange, onLoginClick }: GatekeeperOverl
 
           <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
             <p className="text-sm text-amber-800 dark:text-amber-200">
-              💡 <strong>提示：</strong>登入帳號是使用所有功能的第一步，請先完成登入！
+              💡 <strong>提示：</strong>請依序完成上方任務以解鎖此功能！
             </p>
           </div>
         </DialogContent>
