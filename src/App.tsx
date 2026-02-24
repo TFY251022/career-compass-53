@@ -53,7 +53,7 @@ const App = () => (
                 </ProtectedRoute>
               } />
               <Route path="/jobs/recommendations" element={
-                <ProtectedRoute requiredFlags={['isLoggedIn', 'isResumeUploaded', 'isPersonalityQuizDone', 'isPersonalityTestDone', 'isJobPreferenceQuizDone']}>
+                <ProtectedRoute requiredFlags={['isLoggedIn', 'isResumeUploaded', 'isPersonalityQuizDone', 'isPersonalityTestDone']}>
                   <Recommendations />
                 </ProtectedRoute>
               } />
