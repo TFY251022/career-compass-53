@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAppState } from '@/contexts/AppContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -15,6 +15,7 @@ import PasswordModal from '@/components/member/PasswordModal';
 
 const Navbar = () => {
   const { isLoggedIn, setIsLoggedIn, avatarUrl } = useAppState();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
@@ -33,6 +34,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    navigate('/');
   };
 
   return (
