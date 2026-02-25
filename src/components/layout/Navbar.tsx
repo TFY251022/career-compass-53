@@ -159,11 +159,11 @@ const Navbar = () => {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-72 bg-white p-0">
-              <div className="flex items-center gap-2.5 px-5 pt-5 pb-4 mb-2">
+              <div className="flex items-center gap-2.5 header-bg px-5 pt-5 pb-4 mb-2 -mx-6 -mt-6 pt-6 pl-6">
                 <img src={logoImage} alt="職星領航員 Logo" className="h-9 w-9 object-contain" />
                 <div className="flex flex-col leading-none">
-                  <span className="text-lg font-bold">職星領航員</span>
-                  <span className="text-xs text-muted-foreground">Career Pilot</span>
+                  <span className="text-lg font-bold text-white">職星領航員</span>
+                  <span className="text-xs text-white/60">Career Pilot</span>
                 </div>
               </div>
               <div className="flex flex-col gap-1 px-3">
