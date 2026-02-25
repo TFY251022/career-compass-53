@@ -291,23 +291,23 @@ ${sideProjects.map((p) => `- ${p.name} (技術: ${p.technologies.join(", ")})`).
     <>
       <div className="min-h-screen">
         {/* Header */}
-        <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-30">
-          <div className="container py-6">
-            <div className="flex flex-col items-center text-center gap-2">
-              <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-6">
-                <Radar className="h-8 w-8 text-primary" />
-              </div>
-              <h1 className="text-3xl font-bold mb-4">職能圖譜</h1>
-              <p className="text-muted-foreground max-w-2xl mx-auto">深入分析您的技能優勢與發展潛力</p>
+        <div className="container py-8">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-6">
+              <Radar className="h-8 w-8 text-primary" />
             </div>
-            <div className="flex justify-end mt-4">
-              {!isLoading && (
-                <Button className="gradient-primary gap-2 hidden sm:flex" onClick={handleDownloadReport}>
-                  <FileText className="h-4 w-4" />
-                  下載分析報告
-                </Button>
-              )}
-            </div>
+            <h1 className="text-3xl font-bold mb-4">職能圖譜</h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              深入分析您的技能優勢與發展潛力
+            </p>
+          </div>
+          <div className="flex justify-end">
+            {!isLoading && (
+              <Button className="gradient-primary gap-2 hidden sm:flex" onClick={handleDownloadReport}>
+                <FileText className="h-4 w-4" />
+                下載分析報告
+              </Button>
+            )}
           </div>
         </div>
 
