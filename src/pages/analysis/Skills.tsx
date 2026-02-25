@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Radar,
@@ -32,7 +32,12 @@ import {
   Legend,
   Radar as RechartsRadar,
 } from "recharts";
-import { radarTemplates, gapAnalysis, learningResources, sideProjects } from "@/mocks/analysis";
+import { useResumes } from "@/contexts/ResumeContext";
+import { getMyUserId } from "@/services/memberService";
+import { generateAnalysis } from "@/services/analysisService";
+import type { AnalysisResult } from "@/types/analysis";
+// Fallback mock data for download report when no API result yet
+import { radarTemplates as mockRadarTemplates, gapAnalysis as mockGapAnalysis, learningResources as mockLearningResources, sideProjects as mockSideProjects } from "@/mocks/analysis";
 
 const ANALYSIS_DONE_KEY = "skills-analysis-done";
 
@@ -77,13 +82,14 @@ const GapAnalysisSkeleton = () => (
   </div>
 );
 
-const careerTypeKeys = Object.keys(radarTemplates) as Array<keyof typeof radarTemplates>;
-
 // ── Sub-view type ──
 type SubView = "main" | "learning" | "sideproject";
 
+const ANALYSIS_RESULT_KEY = "skills-analysis-result";
+
 const Skills = () => {
   const navigate = useNavigate();
+  const { resumes } = useResumes();
 
   // Determine initial phase from localStorage
   const [phase, setPhase] = useState<AnalysisPhase>(() =>
@@ -94,23 +100,72 @@ const Skills = () => {
   const [subViewLoading, setSubViewLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState(loadingMessages[0]);
 
-  // Branded loading sequence
+  // Analysis result state – load persisted result or fall back to mocks
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult>(() => {
+    try {
+      const saved = localStorage.getItem(ANALYSIS_RESULT_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {
+      radarTemplates: mockRadarTemplates,
+      gapAnalysis: mockGapAnalysis,
+      learningResources: mockLearningResources,
+      sideProjects: mockSideProjects,
+    };
+  });
+
+  // Derived data from analysis result
+  const radarTemplates = analysisResult.radarTemplates;
+  const gapAnalysis = analysisResult.gapAnalysis;
+  const learningResources = analysisResult.learningResources;
+  const sideProjects = analysisResult.sideProjects;
+  const careerTypeKeys = Object.keys(radarTemplates);
+
+  // Get latest resume_id (most recent updatedAt)
+  const latestResumeId = useMemo(() => {
+    if (resumes.length === 0) return null;
+    const sorted = [...resumes].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    return sorted[0].id;
+  }, [resumes]);
+
+  // Branded loading sequence + API call
   const startAnalysis = useCallback(async () => {
     setPhase("loading");
-    for (let i = 0; i < loadingMessages.length; i++) {
-      setLoadingMsg(loadingMessages[i]);
-      await new Promise((r) => setTimeout(r, 1200));
-    }
+
+    // Fetch user_id and prepare payload
+    const userId = await getMyUserId();
+    const resumeId = latestResumeId;
+
+    // Start loading messages animation concurrently with API call
+    const animationPromise = (async () => {
+      for (let i = 0; i < loadingMessages.length; i++) {
+        setLoadingMsg(loadingMessages[i]);
+        await new Promise((r) => setTimeout(r, 1200));
+      }
+    })();
+
+    // API call runs in parallel with animation
+    const apiPromise = generateAnalysis({
+      user_id: userId,
+      resume_id: resumeId ?? 0,
+    });
+
+    // Wait for both animation and API to complete
+    const [, result] = await Promise.all([animationPromise, apiPromise]);
+
+    // Persist result and update state
+    setAnalysisResult(result);
+    localStorage.setItem(ANALYSIS_RESULT_KEY, JSON.stringify(result));
     localStorage.setItem(ANALYSIS_DONE_KEY, "true");
     setPhase("done");
-  }, []);
+  }, [latestResumeId]);
 
   // Re-analyse
   const handleReAnalyse = useCallback(() => {
     localStorage.removeItem(ANALYSIS_DONE_KEY);
+    localStorage.removeItem(ANALYSIS_RESULT_KEY);
     startAnalysis();
   }, [startAnalysis]);
-
 
   const currentTemplate = radarTemplates[selectedCareer];
 
