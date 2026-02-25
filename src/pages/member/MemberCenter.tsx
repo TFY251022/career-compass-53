@@ -115,7 +115,7 @@ const MemberCenter = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => setPasswordModalOpen(true)}
-                    className="border-primary/40 text-primary hover:bg-primary/5 hover:shadow-[0_0_8px_hsl(var(--primary)/0.15)] hover:-translate-y-0.5 transition-all"
+                    className="border-primary text-primary-dark hover:bg-primary/10 hover:shadow-[0_0_8px_hsl(var(--primary)/0.25)] hover:-translate-y-0.5 transition-all"
                   >
                     <Lock className="h-4 w-4 mr-1.5" />
                     變更密碼
