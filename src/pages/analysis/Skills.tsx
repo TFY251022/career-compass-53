@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Radar,
@@ -12,14 +12,17 @@ import {
   ExternalLink,
   Info,
   ArrowLeft,
+  ScanSearch,
+  RefreshCw,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AILoadingSpinner, ContentTransition } from "@/components/loading/LoadingStates";
-import { motion } from "framer-motion";
+import { ContentTransition } from "@/components/loading/LoadingStates";
+import { motion, AnimatePresence } from "framer-motion";
+import logoImage from "@/assets/logo.png";
 import {
   RadarChart,
   PolarGrid,
@@ -31,7 +34,17 @@ import {
 } from "recharts";
 import { radarTemplates, gapAnalysis, learningResources, sideProjects } from "@/mocks/analysis";
 
-// All mock data imported from src/mocks/analysis.ts
+const ANALYSIS_DONE_KEY = "skills-analysis-done";
+
+const loadingMessages = [
+  "正在解析履歷關鍵字...",
+  "正在匹配人格特質...",
+  "正在比對目標職位需求...",
+  "正在計算職能落差...",
+  "正在生成個人化建議...",
+];
+
+type AnalysisPhase = "idle" | "loading" | "done";
 
 // Skeleton components
 const RadarChartSkeleton = () => (
@@ -72,20 +85,31 @@ type SubView = "main" | "learning" | "sideproject";
 const Skills = () => {
   const navigate = useNavigate();
 
-  const [isLoading, setIsLoading] = useState(true);
+  // Determine initial phase from localStorage
+  const [phase, setPhase] = useState<AnalysisPhase>(() =>
+    localStorage.getItem(ANALYSIS_DONE_KEY) === "true" ? "done" : "idle"
+  );
   const [selectedCareer, setSelectedCareer] = useState<string>("frontend");
   const [subView, setSubView] = useState<SubView>("main");
   const [subViewLoading, setSubViewLoading] = useState(false);
+  const [loadingMsg, setLoadingMsg] = useState(loadingMessages[0]);
 
-  // Load data
-  useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setIsLoading(false);
-    };
-    loadData();
+  // Branded loading sequence
+  const startAnalysis = useCallback(async () => {
+    setPhase("loading");
+    for (let i = 0; i < loadingMessages.length; i++) {
+      setLoadingMsg(loadingMessages[i]);
+      await new Promise((r) => setTimeout(r, 1200));
+    }
+    localStorage.setItem(ANALYSIS_DONE_KEY, "true");
+    setPhase("done");
   }, []);
+
+  // Re-analyse
+  const handleReAnalyse = useCallback(() => {
+    localStorage.removeItem(ANALYSIS_DONE_KEY);
+    startAnalysis();
+  }, [startAnalysis]);
 
 
   const currentTemplate = radarTemplates[selectedCareer];
@@ -172,7 +196,10 @@ ${sideProjects.map((p) => `- ${p.name} (技術: ${p.technologies.join(", ")})`).
             </div>
 
             {subViewLoading ? (
-              <AILoadingSpinner message="正在載入學習資源..." />
+              <div className="flex flex-col items-center justify-center py-12">
+                <img src={logoImage} alt="載入中" className="h-16 w-16 object-contain animate-pulse" />
+                <p className="mt-4 text-[#8d4903] animate-pulse">正在載入學習資源...</p>
+              </div>
             ) : (
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
                 <h1 className="text-2xl font-bold text-foreground">學習資源推薦</h1>
@@ -241,7 +268,10 @@ ${sideProjects.map((p) => `- ${p.name} (技術: ${p.technologies.join(", ")})`).
             </div>
 
             {subViewLoading ? (
-              <AILoadingSpinner message="正在載入 Side Project 推薦..." />
+              <div className="flex flex-col items-center justify-center py-12">
+                <img src={logoImage} alt="載入中" className="h-16 w-16 object-contain animate-pulse" />
+                <p className="mt-4 text-[#8d4903] animate-pulse">正在載入 Side Project 推薦...</p>
+              </div>
             ) : (
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
                 <h1 className="text-2xl font-bold text-foreground">Side Project 推薦</h1>
@@ -286,7 +316,110 @@ ${sideProjects.map((p) => `- ${p.name} (技術: ${p.technologies.join(", ")})`).
     );
   }
 
-  // ── Main View ──
+  // ── Pre-Analysis (idle) State ──
+  if (phase === "idle") {
+    return (
+      <div className="min-h-screen">
+        <div className="container py-8">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-6">
+              <Radar className="h-8 w-8 text-primary" />
+            </div>
+            <h1 className="text-3xl font-bold mb-4">職能圖譜</h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              深入分析您的技能優勢與發展潛力
+            </p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center justify-center py-16"
+          >
+            <Card className="max-w-lg w-full shadow-warm">
+              <CardContent className="pt-8 pb-8 flex flex-col items-center text-center space-y-6">
+                <div className="h-20 w-20 rounded-full bg-[#fbf1e8] flex items-center justify-center">
+                  <ScanSearch className="h-10 w-10 text-[#8d4903]" />
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-xl font-bold">準備分析</h2>
+                  <p className="text-muted-foreground text-sm leading-relaxed max-w-sm">
+                    系統將根據您的履歷、職涯問卷與人格特質進行綜合分析。
+                  </p>
+                </div>
+                <button
+                  onClick={startAnalysis}
+                  className="px-8 py-4 rounded-xl font-semibold text-white gradient-primary shadow-medium
+                    transition-all duration-300 hover:-translate-y-1 hover:shadow-large
+                    hover:brightness-110 flex items-center justify-center gap-3"
+                >
+                  <Radar className="h-5 w-5" />
+                  開始職能深度分析
+                </button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Loading State ──
+  if (phase === "loading") {
+    return (
+      <div className="min-h-screen">
+        <div className="container py-8">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-6">
+              <Radar className="h-8 w-8 text-primary" />
+            </div>
+            <h1 className="text-3xl font-bold mb-4">職能圖譜</h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              深入分析您的技能優勢與發展潛力
+            </p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center justify-center py-20 space-y-8"
+          >
+            <motion.img
+              src={logoImage}
+              alt="分析中"
+              className="h-24 w-24 object-contain"
+              animate={{ scale: [1, 1.08, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={loadingMsg}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="text-lg font-medium text-[#8d4903]"
+              >
+                {loadingMsg}
+              </motion.p>
+            </AnimatePresence>
+            <div className="w-64 h-2 rounded-full bg-[#fbf1e8] overflow-hidden">
+              <motion.div
+                className="h-full rounded-full"
+                style={{ background: "linear-gradient(90deg, #8d4903, #c4742b)" }}
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: loadingMessages.length * 1.2, ease: "linear" }}
+              />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Main View (phase === "done") ──
   return (
     <>
       <div className="min-h-screen">
@@ -301,13 +434,15 @@ ${sideProjects.map((p) => `- ${p.name} (技術: ${p.technologies.join(", ")})`).
               深入分析您的技能優勢與發展潛力
             </p>
           </div>
-          <div className="flex justify-end">
-            {!isLoading && (
-              <Button className="gradient-primary gap-2 hidden sm:flex" onClick={handleDownloadReport}>
-                <FileText className="h-4 w-4" />
-                下載分析報告
-              </Button>
-            )}
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" className="gap-2" onClick={handleReAnalyse}>
+              <RefreshCw className="h-4 w-4" />
+              重新分析
+            </Button>
+            <Button className="gradient-primary gap-2 hidden sm:flex" onClick={handleDownloadReport}>
+              <FileText className="h-4 w-4" />
+              下載分析報告
+            </Button>
           </div>
         </div>
 
@@ -315,8 +450,7 @@ ${sideProjects.map((p) => `- ${p.name} (技術: ${p.technologies.join(", ")})`).
         <div className="container py-8 space-y-16">
           {/* Section 1: Radar Chart */}
           <section id="radar" className="scroll-mt-32">
-            <ContentTransition isLoading={isLoading} skeleton={<RadarChartSkeleton />}>
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg flex items-center justify-center bg-background">
                     <Radar className="h-5 w-5 text-primary" />
@@ -413,12 +547,10 @@ ${sideProjects.map((p) => `- ${p.name} (技術: ${p.technologies.join(", ")})`).
                   </CardContent>
                 </Card>
               </motion.div>
-            </ContentTransition>
-          </section>
+           </section>
 
           {/* Section 2: Gap Analysis (落差分析報告) */}
           <section id="gap" className="scroll-mt-32">
-            <ContentTransition isLoading={isLoading} skeleton={<GapAnalysisSkeleton />}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -530,20 +662,10 @@ ${sideProjects.map((p) => `- ${p.name} (技術: ${p.technologies.join(", ")})`).
                   </CardContent>
                 </Card>
               </motion.div>
-            </ContentTransition>
           </section>
 
           {/* Section 3: 推薦行動計畫 (below 目標職位) */}
           <section id="action-plan" className="scroll-mt-32">
-            <ContentTransition
-              isLoading={isLoading}
-              skeleton={
-                <div className="space-y-4">
-                  <Skeleton className="h-8 w-48" />
-                  <Skeleton className="h-24 w-full rounded-lg" />
-                </div>
-              }
-            >
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -568,11 +690,9 @@ ${sideProjects.map((p) => `- ${p.name} (技術: ${p.technologies.join(", ")})`).
                   </CardContent>
                 </Card>
               </motion.div>
-            </ContentTransition>
           </section>
 
           {/* Section 4: Bottom Action Buttons */}
-          {!isLoading && (
             <section className="pb-8">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -600,17 +720,14 @@ ${sideProjects.map((p) => `- ${p.name} (技術: ${p.technologies.join(", ")})`).
                 </button>
               </motion.div>
             </section>
-          )}
 
           {/* Mobile Download Button */}
-          {!isLoading && (
             <div className="sm:hidden pt-4">
               <Button className="w-full gradient-primary gap-2" onClick={handleDownloadReport}>
                 <Download className="h-4 w-4" />
                 下載分析報告
               </Button>
             </div>
-          )}
         </div>
       </div>
     </>
