@@ -159,7 +159,7 @@ const Navbar = () => {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-72 bg-white p-0">
-              <div className="flex items-center gap-2.5 px-5 pt-5 pb-4 mb-2">
+              <div className="flex items-center gap-2.5 px-5 pt-5 pb-4 mb-2 bg-[#fbf1e8]">
                 <img src={logoImage} alt="職星領航員 Logo" className="h-9 w-9 object-contain" />
                 <div className="flex flex-col leading-none">
                   <span className="text-lg font-bold">職星領航員</span>
