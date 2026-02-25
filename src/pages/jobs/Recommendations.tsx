@@ -54,7 +54,7 @@ const JobCardSkeleton = () => (
 );
 
 const JobCard = ({ job }: { job: JobData }) => (
-  <Card className="overflow-hidden hover:shadow-medium hover:-translate-y-1 transition-all duration-300 group border-border hover:border-primary/30 hover:shadow-[0_8px_30px_rgba(34,197,94,0.12)]">
+  <Card className="overflow-hidden hover:shadow-medium hover:-translate-y-1 transition-all duration-300 group border-border hover:border-primary/30 hover:shadow-[0_8px_30px_rgba(141,73,3,0.12)]">
     <CardHeader className="pb-3">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
