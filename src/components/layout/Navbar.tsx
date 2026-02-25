@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useAppState } from '@/contexts/AppContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
-import { FileText, BarChart3, User, Menu, LogOut, Settings, FileUp, Search, Target, ChevronDown, Compass, Map, ClipboardList, Lock, Sparkles } from 'lucide-react';
+import { FileText, BarChart3, User, Menu, LogOut, Settings, FileUp, Search, Target, ChevronDown, Compass, Map, ClipboardList, Lock, Sparkles, HelpCircle } from 'lucide-react';
 import logoImage from '@/assets/logo.png';
 import logoCat from '@/assets/logocat.png';
 import { Separator } from '@/components/ui/separator';
@@ -172,6 +172,10 @@ const Navbar = () => {
                     <span className="font-medium">{link.label}</span>
                   </Link>
                 )}
+                <Link to="/faq" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors">
+                    <HelpCircle className="h-5 w-5 text-primary" />
+                    <span className="font-medium">常見問答</span>
+                </Link>
                 <div className="border-t border-border my-2 pt-2">
                   <p className="text-xs text-muted-foreground px-3 mb-2">服務項目</p>
                   {productLinks.map((link) =>
