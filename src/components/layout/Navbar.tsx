@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useAppState } from '@/contexts/AppContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
-import { FileText, BarChart3, User, Menu, LogOut, Settings, FileUp, Search, Target, ChevronDown, Compass, Map, ClipboardList, Lock, Sparkles, HelpCircle } from 'lucide-react';
+import { FileText, BarChart3, User, Menu, LogOut, FileUp, Search, Target, ChevronDown, Map, ClipboardList, Lock, Sparkles, HelpCircle } from 'lucide-react';
 import logoImage from '@/assets/logo.png';
 import logoCat from '@/assets/logocat.png';
 import { Separator } from '@/components/ui/separator';
