@@ -530,9 +530,9 @@ ${sideProjects.map((p) => `- ${p.name} (技術: ${p.technologies.join(", ")})`).
 
                 <Card className="transition-all duration-300 hover:shadow-medium">
                   <CardContent className="pt-6">
-                    <div className="flex flex-col md:flex-row items-center gap-8">
-                      {/* Radar chart */}
-                      <div className="h-80 w-full md:flex-1">
+                    <div className="flex flex-row items-center gap-4 md:gap-8">
+                      {/* Radar chart - always takes priority */}
+                      <div className="h-64 sm:h-80 flex-1 min-w-0">
                         <ResponsiveContainer width="100%" height="100%">
                           <RadarChart data={currentTemplate.data}>
                             <PolarGrid stroke="#dabea8" />
@@ -571,15 +571,15 @@ ${sideProjects.map((p) => `- ${p.name} (技術: ${p.technologies.join(", ")})`).
                         </ResponsiveContainer>
                       </div>
 
-                      {/* Mascot - right side */}
-                      <div className="shrink-0 flex flex-col items-center gap-3 md:w-48">
+                      {/* Mascot - beside radar, shrinks on mobile */}
+                      <div className="shrink-0 flex flex-col items-center gap-2 w-20 sm:w-32 md:w-48">
                         <img
                           src={currentTemplate.mascot}
                           alt={currentTemplate.label}
-                          className="w-48 h-48 object-contain"
+                          className="w-20 h-20 sm:w-32 sm:h-32 md:w-48 md:h-48 object-contain"
                         />
 
-                        <span className="text-sm font-semibold text-muted-foreground">{currentTemplate.label}</span>
+                        <span className="text-xs sm:text-sm font-semibold text-muted-foreground text-center">{currentTemplate.label}</span>
                       </div>
                     </div>
                   </CardContent>
