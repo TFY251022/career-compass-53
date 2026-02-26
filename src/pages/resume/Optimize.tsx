@@ -198,11 +198,12 @@ const Optimize = () => {
     saveOptimizeState({ phase: 'result', suggestions, selectedTemplate: templateId, selectedThemeIndex: 0, resumeData, originalData });
   };
 
-  const handleDownloadSuggestions = () => {
-    const content = suggestions.map(s =>
-      `【${s.section}】\n原始：${s.original}\n優化：${s.optimized}\n`
-    ).join('\n');
-    downloadTextFile(content, '履歷優化建議.txt');
+  const handleDownloadSuggestions = async () => {
+    const { exportHtmlToPdf, buildSuggestionsReportHtml } = await import('@/utils/pdfExport');
+    await exportHtmlToPdf({
+      filename: '履歷優化建議報告.pdf',
+      htmlContent: buildSuggestionsReportHtml(suggestions),
+    });
   };
 
   const handleDownloadResume = async () => {
