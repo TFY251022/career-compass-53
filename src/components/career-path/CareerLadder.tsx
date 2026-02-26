@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Star } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -167,21 +167,10 @@ const TransitionMarker = ({ isMobile }: { isMobile: boolean }) => (
   </div>
 );
 
-/* ── Template Switcher ── */
-const templateKeys = Object.keys(careerTemplates) as Array<keyof typeof careerTemplates>;
-const templateLabels: Record<string, string> = {
-  frontend: '前端',
-  backend: '後端',
-  fullstack: '全端',
-  data: '資料科學',
-  ai: 'AI',
-  devops: 'DevOps',
-};
-
 /* ── Main Component ── */
 const CareerLadder = ({ isLoading }: { isLoading: boolean }) => {
   const isMobile = useIsMobile();
-  const [activeTemplate, setActiveTemplate] = useState<string>(mockTargetCareer);
+  const activeTemplate = mockTargetCareer;
   const template = careerTemplates[activeTemplate];
 
   const steps = useMemo<StepData[]>(() => {
@@ -227,20 +216,6 @@ const CareerLadder = ({ isLoading }: { isLoading: boolean }) => {
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-2 md:pb-4 overflow-hidden">
-        {/* Template switcher */}
-        <div className="flex flex-wrap gap-1.5 mb-3">
-          {templateKeys.map((key) => (
-            <Button
-              key={key}
-              size="sm"
-              variant={activeTemplate === key ? 'default' : 'outline'}
-              className="text-xs h-7 px-2.5"
-              onClick={() => setActiveTemplate(key)}
-            >
-              {templateLabels[key]}
-            </Button>
-          ))}
-        </div>
 
         <div className="flex items-start justify-between gap-4">
           <div>
