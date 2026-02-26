@@ -1,4 +1,4 @@
-import { BarChart3, RefreshCw, Award, Zap, Battery, Target } from 'lucide-react';
+import { BarChart3, RefreshCw, Zap, Battery, Target } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
@@ -61,12 +61,15 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
       {/* Primary Archetype Card */}
       <Card className={cardClass} style={{ boxShadow: cardShadow }}>
         <CardContent className="p-6 md:p-8 text-center">
-          <div
-            className="inline-flex items-center justify-center h-16 w-16 rounded-full mb-4 transition-colors duration-500"
-            style={{ backgroundColor: accentColorLight }}
-          >
-            <Award className="h-8 w-8 transition-colors duration-500" style={{ color: accentColor }} />
-          </div>
+          <motion.img
+            key={detail.image}
+            src={detail.image}
+            alt={detail.name}
+            className="w-28 h-28 md:w-36 md:h-36 object-contain mb-4"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          />
           <p className="text-xs text-muted-foreground mb-1 tracking-widest uppercase">主要天賦原型</p>
           <h2 className="text-xl md:text-2xl font-bold mb-1">{primaryArchetype.name}</h2>
           <p className="text-xs text-muted-foreground mb-3">{detail.englishName}</p>
@@ -152,25 +155,13 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
       <Card className={`${cardClass} overflow-hidden`} style={{ boxShadow: cardShadow }}>
         <CardContent className="p-0">
           <div className="p-6 md:p-8 text-center border-b border-border/30">
-            <h3 className="text-base font-semibold mb-1">你的主要工作適配模式</h3>
+            <h3 className="text-base font-semibold mb-1">主要工作適配模式</h3>
             <p className="text-xs text-muted-foreground">
               以下說明你在不同工作情境中的自然反應模式，並非行為規範。
             </p>
           </div>
 
           <div className="flex flex-col items-center p-6 md:p-8">
-            <motion.img
-              key={detail.image}
-              src={detail.image}
-              alt={detail.name}
-              className="w-36 h-36 md:w-44 md:h-44 object-contain mb-5"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            />
-            <h4 className="text-lg font-bold mb-1">{detail.name}</h4>
-            <p className="text-xs text-muted-foreground mb-5">{detail.englishName}</p>
-
             <div className="w-full space-y-4 text-left">
               {/* Strength */}
               <div
