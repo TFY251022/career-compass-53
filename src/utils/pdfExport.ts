@@ -74,6 +74,7 @@ export function buildSkillsReportHtml(data: {
   summary: string;
   templateLabel: string;
   radarData: { dimension: string; user: number; target: number }[];
+  radarChartImage?: string;
   selfAssessment: string;
   aiAssessment: string;
   matchPercentage: number;
@@ -84,6 +85,10 @@ export function buildSkillsReportHtml(data: {
   learningResources: { title: string; description: string }[];
   sideProjects: { name: string; technologies: string[] }[];
 }): string {
+  const radarImageHtml = data.radarChartImage
+    ? `<div style="text-align:center;margin:16px 0;"><img src="${data.radarChartImage}" style="max-width:100%;height:auto;border-radius:8px;" alt="職能雷達圖" /></div>`
+    : '';
+
   return `
     <div>
       ${h('h1', 'font-size:22px;text-align:center;color:#1F3A5F;margin-bottom:4px;', '職能分析報告')}
@@ -92,7 +97,8 @@ export function buildSkillsReportHtml(data: {
       ${sectionTitle('一、整體評估')}
       <p>${data.summary}</p>
 
-      ${sectionTitle(`二、職能雷達圖數據（${data.templateLabel}）`)}
+      ${sectionTitle(`二、職能雷達圖（${data.templateLabel}）`)}
+      ${radarImageHtml}
       ${bulletList(data.radarData.map(d => `${d.dimension}：當前 ${d.user}% ／ 目標 ${d.target}%`))}
 
       ${sectionTitle('三、職能差距分析')}

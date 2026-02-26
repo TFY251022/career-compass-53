@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Radar,
@@ -177,15 +177,44 @@ const Skills = () => {
     setSubViewLoading(false);
   };
 
+  const radarChartRef = useRef<HTMLDivElement>(null);
+
   // Download report as PDF
   const handleDownloadReport = async () => {
     const { exportHtmlToPdf, buildSkillsReportHtml } = await import('@/utils/pdfExport');
+    // Capture radar chart as image using html2canvas (bundled with html2pdf.js)
+    let radarImageBase64: string | undefined;
+    if (radarChartRef.current) {
+      try {
+        const html2canvasModule = await import('html2pdf.js');
+        // html2pdf.js bundles html2canvas; we access it via rendering to canvas
+        const tempWrapper = document.createElement('div');
+        tempWrapper.appendChild(radarChartRef.current.cloneNode(true) as HTMLElement);
+        tempWrapper.style.position = 'fixed';
+        tempWrapper.style.left = '-9999px';
+        tempWrapper.style.width = `${radarChartRef.current.offsetWidth}px`;
+        tempWrapper.style.height = `${radarChartRef.current.offsetHeight}px`;
+        tempWrapper.style.background = '#fff';
+        document.body.appendChild(tempWrapper);
+        
+        const canvas = await html2canvasModule.default()
+          .set({ html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: '#ffffff' } })
+          .from(tempWrapper)
+          .toCanvas();
+        radarImageBase64 = canvas.toDataURL('image/png');
+        document.body.removeChild(tempWrapper);
+      } catch (e) {
+        console.warn('Failed to capture radar chart image', e);
+      }
+    }
+
     await exportHtmlToPdf({
       filename: '職能分析報告.pdf',
       htmlContent: buildSkillsReportHtml({
         summary: gapAnalysis.summary,
         templateLabel: currentTemplate.label,
         radarData: currentTemplate.data,
+        radarChartImage: radarImageBase64,
         selfAssessment: gapAnalysis.selfAssessment,
         aiAssessment: gapAnalysis.aiAssessment,
         matchPercentage: gapAnalysis.matchPercentage,
@@ -497,7 +526,7 @@ const Skills = () => {
                   <CardContent className="pt-6">
                     <div className="flex flex-row items-center gap-4 md:gap-8">
                       {/* Radar chart - always takes priority */}
-                      <div className="h-64 sm:h-80 flex-1 min-w-0">
+                      <div ref={radarChartRef} className="h-64 sm:h-80 flex-1 min-w-0">
                         <ResponsiveContainer width="100%" height="100%">
                           <RadarChart data={currentTemplate.data}>
                             <PolarGrid stroke="#dabea8" />
