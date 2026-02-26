@@ -95,7 +95,7 @@ const Skills = () => {
   const [phase, setPhase] = useState<AnalysisPhase>(() =>
     localStorage.getItem(ANALYSIS_DONE_KEY) === "true" ? "done" : "idle"
   );
-  const [selectedCareer, setSelectedCareer] = useState<string>("frontend");
+  
   const [subView, setSubView] = useState<SubView>("main");
   const [subViewLoading, setSubViewLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState(loadingMessages[0]);
@@ -119,7 +119,7 @@ const Skills = () => {
   const gapAnalysis = analysisResult.gapAnalysis;
   const learningResources = analysisResult.learningResources;
   const sideProjects = analysisResult.sideProjects;
-  const careerTypeKeys = Object.keys(radarTemplates);
+  const firstCareerKey = Object.keys(radarTemplates)[0];
 
   // Get latest resume_id (most recent updatedAt)
   const latestResumeId = useMemo(() => {
@@ -167,7 +167,7 @@ const Skills = () => {
     startAnalysis();
   }, [startAnalysis]);
 
-  const currentTemplate = radarTemplates[selectedCareer];
+  const currentTemplate = radarTemplates[firstCareerKey];
 
   // Navigate to sub-view with loading
   const openSubView = async (view: SubView) => {
@@ -492,20 +492,6 @@ const Skills = () => {
                   <h2 className="text-xl font-bold">職能雷達圖</h2>
                 </div>
 
-                {/* Career type selector */}
-                <div className="flex flex-wrap gap-2">
-                  {careerTypeKeys.map((key) => (
-                    <Button
-                      key={key}
-                      variant={selectedCareer === key ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedCareer(key)}
-                      className={selectedCareer === key ? "gradient-primary" : ""}
-                    >
-                      {radarTemplates[key].label}
-                    </Button>
-                  ))}
-                </div>
 
                 <Card className="transition-all duration-300 hover:shadow-medium">
                   <CardContent className="pt-6">
