@@ -167,11 +167,6 @@ const PersonalityTest = () => {
             {/* Result View */}
             {showResult && result ? (
               <PersonalityTestResult result={result} onReset={handleReset} />
-            ) : showResult ? (
-              <PersonalityTestResult
-                result={{ rawScores: { structure: 0, ambiguity: 0, decision: 0, learning: 0, transfer: 0 }, scaledScores: { structure: 0, ambiguity: 0, decision: 0, learning: 0, transfer: 0 }, archetypes: [{ id: 'GENERALIST', name: '綜合型' }] }}
-                onReset={handleReset}
-              />
             ) : (
               /* Module Step */
               <motion.div
