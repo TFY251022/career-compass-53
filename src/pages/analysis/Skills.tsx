@@ -177,47 +177,26 @@ const Skills = () => {
     setSubViewLoading(false);
   };
 
-  // Download report
-  const handleDownloadReport = () => {
-    const reportContent = `
-職能分析報告
-================
-
-一、整體評估
-${gapAnalysis.summary}
-
-二、職能雷達圖數據 (${currentTemplate.label})
-${currentTemplate.data.map((d) => `- ${d.dimension}: 當前 ${d.user}% / 目標 ${d.target}%`).join("\n")}
-
-三、職能差距分析
-- 自評職級: ${gapAnalysis.selfAssessment}
-- 評估職級: ${gapAnalysis.aiAssessment}
-- 匹配度: ${gapAnalysis.matchPercentage}%
-- 目標職位: ${gapAnalysis.targetPosition}
-
-認知偏差說明:
-${gapAnalysis.cognitiveBias}
-
-評估說明:
-${gapAnalysis.assessmentExplanation}
-
-優先改善項目:
-${gapAnalysis.gaps.map((g) => `- ${g.skill}: 當前 ${g.current}% → 目標 ${g.target}% (優先級: ${g.priority})`).join("\n")}
-
-四、推薦學習資源
-${learningResources.map((r) => `- ${r.title}: ${r.description}`).join("\n")}
-
-五、推薦 Side Project
-${sideProjects.map((p) => `- ${p.name} (技術: ${p.technologies.join(", ")})`).join("\n")}
-    `.trim();
-
-    const blob = new Blob([reportContent], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "職能分析報告.txt";
-    a.click();
-    URL.revokeObjectURL(url);
+  // Download report as PDF
+  const handleDownloadReport = async () => {
+    const { exportHtmlToPdf, buildSkillsReportHtml } = await import('@/utils/pdfExport');
+    await exportHtmlToPdf({
+      filename: '職能分析報告.pdf',
+      htmlContent: buildSkillsReportHtml({
+        summary: gapAnalysis.summary,
+        templateLabel: currentTemplate.label,
+        radarData: currentTemplate.data,
+        selfAssessment: gapAnalysis.selfAssessment,
+        aiAssessment: gapAnalysis.aiAssessment,
+        matchPercentage: gapAnalysis.matchPercentage,
+        targetPosition: gapAnalysis.targetPosition,
+        cognitiveBias: gapAnalysis.cognitiveBias,
+        assessmentExplanation: gapAnalysis.assessmentExplanation,
+        gaps: gapAnalysis.gaps,
+        learningResources,
+        sideProjects,
+      }),
+    });
   };
 
   // Render difficulty stars
