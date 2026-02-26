@@ -13,7 +13,7 @@ import { motion } from 'framer-motion';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import { personalityTestModules, type PTModule } from '@/data/personalityTestQuestions';
 import { computePersonalityResult, type PersonalityResult } from '@/data/personalityScoring';
-import { MOCK_RESULTS } from '@/data/mockPersonalityResults';
+
 import PersonalityTestResult from '@/components/personality/PersonalityTestResult';
 
 const STORAGE_KEY = 'personality-test-progress';
@@ -157,18 +157,6 @@ const PersonalityTest = () => {
           <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
             探索您的認知風格與決策偏好，幫助我們提供更精準的職涯建議
           </p>
-          {/* Dev shortcut */}
-          {!showResult && (
-            <button
-              onClick={() => {
-                setResult(MOCK_RESULTS.STRUCTURE_ARCHITECT);
-                setShowResult(true);
-              }}
-              className="mt-3 px-3 py-1 rounded border-2 border-dashed border-primary/30 text-xs text-primary hover:bg-primary/5 transition-colors"
-            >
-              🔧 DEV: 直接預覽結果頁
-            </button>
-          )}
         </div>
 
         <div className="max-w-2xl mx-auto">
