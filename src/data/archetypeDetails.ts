@@ -96,5 +96,5 @@ export const ARCHETYPE_DETAILS: Record<string, ArchetypeDetail> = {
 };
 
 export function getArchetypeDetail(id: string): ArchetypeDetail {
-  return ARCHETYPE_DETAILS[id] || ARCHETYPE_DETAILS.GENERALIST;
+  return ARCHETYPE_DETAILS[id] || ARCHETYPE_DETAILS.STRUCTURE_ARCHITECT;
 }
