@@ -65,7 +65,7 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
             key={detail.image}
             src={detail.image}
             alt={detail.name}
-            className="w-28 h-28 md:w-36 md:h-36 object-contain mb-4"
+            className="w-28 h-28 md:w-36 md:h-36 object-contain mb-4 mx-auto block"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
