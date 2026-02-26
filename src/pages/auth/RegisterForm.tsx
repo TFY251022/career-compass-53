@@ -1,12 +1,16 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { UserPlus } from 'lucide-react';
+import AuthModal from '@/components/auth/AuthModal';
 
 const RegisterForm = () => {
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+
   return (
+    <>
     <div className="container py-12 animate-fade-in">
       <div className="max-w-md mx-auto">
         <div className="text-center mb-8">
@@ -42,14 +46,20 @@ const RegisterForm = () => {
             <Button className="w-full gradient-primary">註冊</Button>
             <p className="text-center text-sm text-muted-foreground">
               已有帳號？{' '}
-              <Link to="/" className="text-primary hover:underline">
+              <button
+                type="button"
+                onClick={() => setAuthModalOpen(true)}
+                className="text-primary hover:underline font-medium"
+              >
                 登入
-              </Link>
+              </button>
             </p>
           </CardContent>
         </Card>
       </div>
     </div>
+    <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
+    </>
   );
 };
 
