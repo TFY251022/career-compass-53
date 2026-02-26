@@ -44,10 +44,10 @@ const TEMPLATE_THEMES: Record<string, ThemeColors[]> = {
     { name: '靜謐藍灰', main: '#334155', secondary: '#94A3B8', accent: '#22D3EE', text: '#1E293B' },
   ],
   creative: [
-    { name: '莫蘭迪粉橘', main: '#E07A5F', secondary: '#F2CC8F', accent: '#3D405B', text: '#2B2B2B' },
-    { name: '紫藍創意系', main: '#6D28D9', secondary: '#A78BFA', accent: '#F472B6', text: '#1F1F1F' },
-    { name: '活力橘藍對比', main: '#F97316', secondary: '#2563EB', accent: '#FACC15', text: '#222222' },
-    { name: '黑底霓虹', main: '#0F172A', secondary: '#1E293B', accent: '#F43F5E', text: '#F8FAFC' },
+    { name: '莫蘭迪粉橘', main: '#E07A5F', secondary: '#C9604A', accent: '#E8A87C', text: '#2B2B2B' },
+    { name: '紫藍創意系', main: '#6D28D9', secondary: '#5320A8', accent: '#9F6CEE', text: '#1F1F1F' },
+    { name: '活力橘藍對比', main: '#F97316', secondary: '#D95F0E', accent: '#FDBA74', text: '#222222' },
+    { name: '黑底霓虹', main: '#0F172A', secondary: '#1E293B', accent: '#475569', text: '#2B2B2B' },
   ],
 };
 
