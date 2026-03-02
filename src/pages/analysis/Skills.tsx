@@ -465,7 +465,7 @@ const Skills = () => {
           </motion.div>
         </section>
 
-        {/* Section 2: 領航員分析您適合的職類 (Target Position + SWOT merged) */}
+        {/* Section 2: 領航員分析您適合的職類 */}
         <section id="gap" className="scroll-mt-32">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-6">
             <div className="flex items-center gap-3">
@@ -526,43 +526,95 @@ const Skills = () => {
                 </div>
               </CardContent>
             </Card>
-
-            {/* SWOT Analysis */}
-            <div>
-              <h3 className="text-lg font-semibold mb-4">SWOT 分析</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {swotCards.map((card, idx) => (
-                  <motion.div key={card.label} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 + idx * 0.08 }}>
-                    <Card className={`h-full border-l-4 ${card.bg}`} style={{ borderLeftColor: card.color.replace("text-", "") }}>
-                      <CardContent className="pt-5 pb-5">
-                        <div className="flex items-center gap-2 mb-2">
-                          <card.icon className={`h-5 w-5 ${card.color}`} />
-                          <span className={`font-semibold ${card.color}`}>{card.label}</span>
-                        </div>
-                        <p className="text-sm text-foreground/80 leading-relaxed">{card.text}</p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-              {swot.gap && (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mt-4">
-                  <Card className="border-l-4" style={{ borderLeftColor: "#8d4903" }}>
-                    <CardContent className="pt-5 pb-5">
-                      <div className="flex items-center gap-2 mb-2">
-                        <CircleDot className="h-5 w-5 text-primary" />
-                        <span className="font-semibold text-primary">核心落差</span>
-                      </div>
-                      <p className="text-sm text-foreground/80 leading-relaxed">{swot.gap}</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )}
-            </div>
           </motion.div>
         </section>
 
-        {/* Section 3: Action Plan Timeline */}
+        {/* Section 3: SWOT Analysis — standalone */}
+        <section id="swot" className="scroll-mt-32">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Shield className="h-5 w-5 text-primary" />
+              </div>
+              <h2 className="text-xl font-bold">SWOT 分析</h2>
+            </div>
+
+            {/* SWOT 2×2 grid inspired by template */}
+            <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {/* Centre badge — visible on sm+ */}
+              <div className="hidden sm:flex absolute inset-0 items-center justify-center z-10 pointer-events-none">
+                <div className="h-20 w-20 rounded-full bg-white shadow-lg flex items-center justify-center border-2 border-primary/20">
+                  <span className="text-xs font-bold text-primary tracking-wide leading-tight text-center">SWOT<br/>分析</span>
+                </div>
+              </div>
+
+              {swotCards.map((card, idx) => {
+                const letters = ["S", "W", "O", "T"];
+                const borderColors = ["#059669", "#d97706", "#0284c7", "#e11d48"];
+                const bgColors = ["#ecfdf5", "#fffbeb", "#f0f9ff", "#fff1f2"];
+                const letterColors = ["#065f46", "#92400e", "#075985", "#9f1239"];
+                return (
+                  <motion.div
+                    key={card.label}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.18 + idx * 0.08 }}
+                  >
+                    <div
+                      className="relative rounded-2xl border-2 p-5 h-full transition-all duration-300 hover:shadow-medium hover:-translate-y-1"
+                      style={{ borderColor: borderColors[idx], backgroundColor: bgColors[idx] }}
+                    >
+                      {/* Large background letter */}
+                      <span
+                        className="absolute top-3 right-4 text-6xl font-black opacity-10 select-none leading-none pointer-events-none"
+                        style={{ color: borderColors[idx] }}
+                      >
+                        {letters[idx]}
+                      </span>
+
+                      {/* Icon circle */}
+                      <div
+                        className="h-10 w-10 rounded-full flex items-center justify-center mb-3"
+                        style={{ backgroundColor: `${borderColors[idx]}20` }}
+                      >
+                        <card.icon className="h-5 w-5" style={{ color: borderColors[idx] }} />
+                      </div>
+
+                      <h4 className="font-bold text-sm mb-1.5" style={{ color: letterColors[idx] }}>
+                        {letters[idx]} — {card.label}
+                      </h4>
+                      <p className="text-sm leading-relaxed text-foreground/80">{card.text}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* 核心落差 — highlighted */}
+            {swot.gap && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
+                <Card className="border-2 border-primary/40 shadow-warm ring-1 ring-primary/20 bg-gradient-to-br from-[#fbf1e8] to-white">
+                  <CardContent className="pt-5 pb-5">
+                    <div className="flex items-start gap-3">
+                      <div className="h-9 w-9 rounded-full bg-primary/15 flex items-center justify-center shrink-0 mt-0.5">
+                        <CircleDot className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="font-bold text-primary">核心落差</span>
+                          <Badge variant="secondary" className="text-[10px] uppercase tracking-wider">重點</Badge>
+                        </div>
+                        <p className="text-sm text-[#502D03] leading-relaxed font-medium">{swot.gap}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+          </motion.div>
+        </section>
+
+        {/* Section 4: Action Plan Timeline */}
         <section id="action-plan" className="scroll-mt-32">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-6">
             <div className="flex items-center gap-3">
