@@ -98,9 +98,9 @@ const Skills = () => {
   });
 
   // Derived
-  const { report_metadata, preliminary_summary, radar_chart, gap_analysis, learningResources, sideProjects } = analysisResult;
-  const swot = useMemo(() => parseSWOT(gap_analysis.target_position.gap_description), [gap_analysis.target_position.gap_description]);
-  const mascotSrc = getMascotForRole(gap_analysis.target_position.role);
+  const { report_metadata, preliminary_summary, radar_chart, gap_analysis, learningResources, sideProjects } = analysisResult ?? {};
+  const swot = useMemo(() => parseSWOT(gap_analysis?.target_position?.gap_description ?? ''), [gap_analysis?.target_position?.gap_description]);
+  const mascotSrc = getMascotForRole(gap_analysis?.target_position?.role ?? '');
 
   const latestResumeId = useMemo(() => {
     if (resumes.length === 0) return null;
@@ -149,15 +149,15 @@ const Skills = () => {
     await exportHtmlToPdf({
       filename: "職能分析報告.pdf",
       htmlContent: buildSkillsReportHtml({
-        coreInsight: preliminary_summary.core_insight,
-        radarDimensions: radar_chart.dimensions,
-        selfAssessment: gap_analysis.current_status.self_assessment,
-        actualLevel: gap_analysis.current_status.actual_level,
-        cognitiveBias: gap_analysis.current_status.cognitive_bias,
-        targetRole: gap_analysis.target_position.role,
-        matchScore: gap_analysis.target_position.match_score,
-        gapDescription: gap_analysis.target_position.gap_description,
-        actionPlan: gap_analysis.action_plan,
+        coreInsight: preliminary_summary?.core_insight ?? '',
+        radarDimensions: radar_chart?.dimensions ?? [],
+        selfAssessment: gap_analysis?.current_status?.self_assessment ?? '',
+        actualLevel: gap_analysis?.current_status?.actual_level ?? '',
+        cognitiveBias: gap_analysis?.current_status?.cognitive_bias ?? '',
+        targetRole: gap_analysis?.target_position?.role ?? '',
+        matchScore: gap_analysis?.target_position?.match_score ?? 0,
+        gapDescription: gap_analysis?.target_position?.gap_description ?? '',
+        actionPlan: gap_analysis?.action_plan ?? { short_term: '', mid_term: '', long_term: '' },
         learningResources,
         sideProjects,
       }),
@@ -351,9 +351,9 @@ const Skills = () => {
 
   // ── Timeline items ──
   const timelineItems = [
-    { label: "短期計畫", icon: Clock, text: gap_analysis.action_plan.short_term, accent: "#8d4903" },
-    { label: "中期計畫", icon: CalendarDays, text: gap_analysis.action_plan.mid_term, accent: "#c4742b" },
-    { label: "長期計畫", icon: CalendarRange, text: gap_analysis.action_plan.long_term, accent: "#dabea8" },
+    { label: "短期計畫", icon: Clock, text: gap_analysis?.action_plan?.short_term ?? '', accent: "#8d4903" },
+    { label: "中期計畫", icon: CalendarDays, text: gap_analysis?.action_plan?.mid_term ?? '', accent: "#c4742b" },
+    { label: "長期計畫", icon: CalendarRange, text: gap_analysis?.action_plan?.long_term ?? '', accent: "#dabea8" },
   ];
 
   // ── Main View (phase === "done") ──
@@ -396,7 +396,7 @@ const Skills = () => {
             <Card className="shadow-warm">
               <CardContent className="pt-6">
                 <div className="p-5 rounded-xl" style={{ backgroundColor: "#FFFBF5" }}>
-                  <p className="text-[#675143] leading-relaxed text-sm md:text-base">{preliminary_summary.core_insight}</p>
+                  <p className="text-[#675143] leading-relaxed text-sm md:text-base">{preliminary_summary?.core_insight}</p>
                 </div>
               </CardContent>
             </Card>
@@ -417,7 +417,7 @@ const Skills = () => {
                 <div className="flex flex-row items-center gap-4 md:gap-8">
                   <div ref={radarChartRef} className="h-64 sm:h-80 flex-1 min-w-0">
                     <ResponsiveContainer width="100%" height="100%">
-                      <RadarChart data={radar_chart.dimensions.map((d) => ({ axis: d.axis, score: d.score }))}>
+                      <RadarChart data={(radar_chart?.dimensions ?? []).map((d) => ({ axis: d.axis, score: d.score }))}>
                         <PolarGrid stroke="#dabea8" />
                         <PolarAngleAxis dataKey="axis" tick={{ fill: "hsl(var(--foreground))", fontSize: 12 }} />
                         <PolarRadiusAxis angle={30} domain={[0, 5]} tickCount={6} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} />
@@ -426,8 +426,8 @@ const Skills = () => {
                     </ResponsiveContainer>
                   </div>
                   <div className="shrink-0 flex flex-col items-center gap-2 w-20 sm:w-32 md:w-48">
-                    <img src={mascotSrc} alt={gap_analysis.target_position.role} className="w-20 h-20 sm:w-32 sm:h-32 md:w-48 md:h-48 object-contain" />
-                    <span className="text-xs sm:text-sm font-semibold text-muted-foreground text-center">{gap_analysis.target_position.role}</span>
+                    <img src={mascotSrc} alt={gap_analysis?.target_position?.role ?? ''} className="w-20 h-20 sm:w-32 sm:h-32 md:w-48 md:h-48 object-contain" />
+                    <span className="text-xs sm:text-sm font-semibold text-muted-foreground text-center">{gap_analysis?.target_position?.role}</span>
                   </div>
                 </div>
               </CardContent>
@@ -450,14 +450,14 @@ const Skills = () => {
               <Card className="transition-all duration-300 hover:shadow-medium hover:-translate-y-1">
                 <CardContent className="pt-6">
                   <p className="text-sm text-muted-foreground mb-2">自評等級</p>
-                  <p className="text-2xl font-bold text-foreground">{gap_analysis.current_status.self_assessment}</p>
+                  <p className="text-2xl font-bold text-foreground">{gap_analysis?.current_status?.self_assessment}</p>
                 </CardContent>
               </Card>
               <Card className="transition-all duration-300 hover:shadow-medium hover:-translate-y-1 border-primary/30 shadow-warm">
                 <CardContent className="pt-6">
                   <div className="p-4 rounded-lg" style={{ backgroundColor: "#fbf1e8" }}>
                     <p className="text-sm text-[#675143] mb-2">實際等級</p>
-                    <p className="text-2xl font-bold text-primary">{gap_analysis.current_status.actual_level}</p>
+                    <p className="text-2xl font-bold text-primary">{gap_analysis?.current_status?.actual_level}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -473,7 +473,7 @@ const Skills = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-foreground mb-2">認知偏差分析</p>
-                      <p className="text-sm text-[#675143] leading-relaxed">{gap_analysis.current_status.cognitive_bias}</p>
+                      <p className="text-sm text-[#675143] leading-relaxed">{gap_analysis?.current_status?.cognitive_bias}</p>
                     </div>
                   </div>
                 </div>
@@ -486,14 +486,14 @@ const Skills = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">目標職位</p>
-                    <p className="text-lg font-semibold">{gap_analysis.target_position.role}</p>
+                    <p className="text-lg font-semibold">{gap_analysis?.target_position?.role}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-muted-foreground">匹配度</p>
-                    <p className="text-3xl font-bold text-primary">{gap_analysis.target_position.match_score}%</p>
+                    <p className="text-3xl font-bold text-primary">{gap_analysis?.target_position?.match_score ?? 0}%</p>
                   </div>
                 </div>
-                <Progress value={gap_analysis.target_position.match_score} className="h-3" />
+                <Progress value={gap_analysis?.target_position?.match_score ?? 0} className="h-3" />
               </CardContent>
             </Card>
 
