@@ -592,11 +592,11 @@ const Skills = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-muted-foreground mb-2">領航員分析您適合的職類</p>
-                      <p className="text-3xl font-bold text-primary mb-2">{gap_analysis?.target_position?.role}</p>
+                      <p className="text-3xl font-bold text-primary mb-3">{gap_analysis?.target_position?.role}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground mb-2">匹配度</p>
-                      <p className="text-3xl font-bold text-primary mb-2">
+                      <p className="text-3xl font-bold text-primary mb-3">
                         {gap_analysis?.target_position?.match_score ?? 0}%
                       </p>
                     </div>
