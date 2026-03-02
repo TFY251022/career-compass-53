@@ -56,6 +56,13 @@ export interface ReportMetadata {
 
 export interface PreliminarySummary {
   core_insight: string;
+  industry_insight: string;
+  personal_summary: string;
+}
+
+/** Ideal dimension scores for a target role (used as radar overlay) */
+export interface TargetRadarData {
+  dimensions: RadarDimension[];
 }
 
 /* ── Payload sent to POST /analysis/generate ── */
@@ -69,6 +76,7 @@ export interface AnalysisResult {
   report_metadata: ReportMetadata;
   preliminary_summary: PreliminarySummary;
   radar_chart: RadarChartData;
+  target_radar?: TargetRadarData;
   gap_analysis: GapAnalysis;
   learningResources: LearningResource[];
   sideProjects: SideProject[];
