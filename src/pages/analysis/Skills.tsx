@@ -720,20 +720,20 @@ const Skills = () => {
             {/* 核心落差 — highlighted */}
             {swot.gap && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
-                <Card className="border-2 border-primary/40 shadow-warm ring-1 ring-primary/20 bg-gradient-to-br from-[#fbf1e8] to-white">
-                  <CardContent className="pt-5 pb-5">
+                <Card className="max-w-2xl border-2 border-primary/40 shadow-warm ring-1 ring-primary/20 bg-gradient-to-br from-[#fbf1e8] to-white">
+                  <CardContent className="pt-8 pb-8">
                     <div className="flex items-start gap-3">
                       <div className="h-9 w-9 rounded-full bg-primary/15 flex items-center justify-center shrink-0 mt-0.5">
                         <CircleDot className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="font-bold text-primary">核心落差</span>
+                          <span className="font-bold text-lg text-primary">核心落差</span>
                           <Badge variant="secondary" className="text-[10px] uppercase tracking-wider">
                             重點
                           </Badge>
                         </div>
-                        <p className="text-sm text-[#502D03] leading-relaxed font-medium">{swot.gap}</p>
+                        <p className="text-base text-[#502D03] leading-relaxed font-medium">{swot.gap}</p>
                       </div>
                     </div>
                   </CardContent>
