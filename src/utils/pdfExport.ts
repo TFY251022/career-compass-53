@@ -71,52 +71,48 @@ export function buildSuggestionsReportHtml(suggestions: { section: string; origi
 
 /** 職能圖譜分析報告 */
 export function buildSkillsReportHtml(data: {
-  summary: string;
-  templateLabel: string;
-  radarData: { dimension: string; user: number; target: number }[];
-  radarChartImage?: string;
+  coreInsight: string;
+  radarDimensions: { axis: string; score: number }[];
   selfAssessment: string;
-  aiAssessment: string;
-  matchPercentage: number;
-  targetPosition: string;
+  actualLevel: string;
   cognitiveBias: string;
-  assessmentExplanation: string;
-  gaps: { skill: string; current: number; target: number; priority: string }[];
+  targetRole: string;
+  matchScore: number;
+  gapDescription: string;
+  actionPlan: { short_term: string; mid_term: string; long_term: string };
   learningResources: { title: string; description: string }[];
   sideProjects: { name: string; technologies: string[] }[];
 }): string {
-  const radarImageHtml = data.radarChartImage
-    ? `<div style="text-align:center;margin:16px 0;"><img src="${data.radarChartImage}" style="max-width:100%;height:auto;border-radius:8px;" alt="職能雷達圖" /></div>`
-    : '';
-
   return `
     <div>
       ${h('h1', 'font-size:22px;text-align:center;color:#1F3A5F;margin-bottom:4px;', '職能分析報告')}
       ${h('p', 'text-align:center;color:#888;font-size:12px;margin-bottom:24px;', `生成日期：${new Date().toLocaleDateString('zh-TW')}`)}
 
-      ${sectionTitle('一、整體評估')}
-      <p>${data.summary}</p>
+      ${sectionTitle('一、核心洞察')}
+      <p>${data.coreInsight}</p>
 
-      ${sectionTitle(`二、職能雷達圖（${data.templateLabel}）`)}
-      ${radarImageHtml}
-      ${bulletList(data.radarData.map(d => `${d.dimension}：當前 ${d.user}% ／ 目標 ${d.target}%`))}
+      ${sectionTitle('二、職能雷達圖')}
+      ${bulletList(data.radarDimensions.map(d => `${d.axis}：${d.score} / 5`))}
 
-      ${sectionTitle('三、職能差距分析')}
+      ${sectionTitle('三、落差分析')}
       ${bulletList([
-        `自評職級：${data.selfAssessment}`,
-        `評估職級：${data.aiAssessment}`,
-        `匹配度：${data.matchPercentage}%`,
-        `目標職位：${data.targetPosition}`,
+        `自評等級：${data.selfAssessment}`,
+        `實際等級：${data.actualLevel}`,
+        `目標職位：${data.targetRole}`,
+        `匹配度：${data.matchScore}%`,
       ])}
-      <p><strong>認知偏差說明：</strong>${data.cognitiveBias}</p>
-      <p><strong>評估說明：</strong>${data.assessmentExplanation}</p>
-      ${sectionTitle('優先改善項目')}
-      ${bulletList(data.gaps.map(g => `${g.skill}：當前 ${g.current}% → 目標 ${g.target}%（優先級：${g.priority}）`))}
+      <p><strong>認知偏差分析：</strong>${data.cognitiveBias}</p>
+      <p>${data.gapDescription.replace(/\n/g, '<br/>')}</p>
 
-      ${sectionTitle('四、推薦學習資源')}
+      ${sectionTitle('四、行動計畫')}
+      <p><strong>短期：</strong>${data.actionPlan.short_term}</p>
+      <p><strong>中期：</strong>${data.actionPlan.mid_term}</p>
+      <p><strong>長期：</strong>${data.actionPlan.long_term}</p>
+
+      ${sectionTitle('五、推薦學習資源')}
       ${bulletList(data.learningResources.map(r => `${r.title}：${r.description}`))}
 
-      ${sectionTitle('五、推薦 Side Project')}
+      ${sectionTitle('六、推薦 Side Project')}
       ${bulletList(data.sideProjects.map(p => `${p.name}（技術：${p.technologies.join('、')}）`))}
     </div>
   `;
