@@ -596,7 +596,7 @@ const Skills = () => {
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground">匹配度</p>
-                      <p className="text-3xl font-bold text-primary">
+                      <p className="text-2xl font-bold text-primary">
                         {gap_analysis?.target_position?.match_score ?? 0}%
                       </p>
                     </div>
