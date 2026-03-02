@@ -21,8 +21,8 @@ import {
   CircleDot,
   Clock,
   CalendarDays,
-  CalendarRange,
-} from "lucide-react";
+  CalendarRange } from
+"lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,8 +36,8 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   ResponsiveContainer,
-  Radar as RechartsRadar,
-} from "recharts";
+  Radar as RechartsRadar } from
+"recharts";
 import { useResumes } from "@/contexts/ResumeContext";
 import { getMyUserId } from "@/services/memberService";
 import { generateAnalysis } from "@/services/analysisService";
@@ -49,12 +49,12 @@ const ANALYSIS_DONE_KEY = "skills-analysis-done";
 const ANALYSIS_RESULT_KEY = "skills-analysis-result";
 
 const loadingMessages = [
-  "正在解析履歷關鍵字...",
-  "正在匹配人格特質...",
-  "正在比對目標職位需求...",
-  "正在計算職能落差...",
-  "正在生成個人化建議...",
-];
+"正在解析履歷關鍵字...",
+"正在匹配人格特質...",
+"正在比對目標職位需求...",
+"正在計算職能落差...",
+"正在生成個人化建議..."];
+
 
 type AnalysisPhase = "idle" | "loading" | "done";
 type SubView = "main" | "learning" | "sideproject";
@@ -68,7 +68,7 @@ const mascotMap: Record<string, string> = {
   AI: "/mascots/ai.png",
   演算法: "/mascots/ai.png",
   DevOps: "/mascots/devops.png",
-  SRE: "/mascots/devops.png",
+  SRE: "/mascots/devops.png"
 };
 
 function getMascotForRole(role: string): string {
@@ -83,7 +83,7 @@ const Skills = () => {
   const { resumes } = useResumes();
 
   const [phase, setPhase] = useState<AnalysisPhase>(() =>
-    localStorage.getItem(ANALYSIS_DONE_KEY) === "true" ? "done" : "idle"
+  localStorage.getItem(ANALYSIS_DONE_KEY) === "true" ? "done" : "idle"
   );
   const [subView, setSubView] = useState<SubView>("main");
   const [subViewLoading, setSubViewLoading] = useState(false);
@@ -160,18 +160,18 @@ const Skills = () => {
         gapDescription: gap_analysis?.target_position?.gap_description ?? '',
         actionPlan: gap_analysis?.action_plan ?? { short_term: '', mid_term: '', long_term: '' },
         learningResources,
-        sideProjects,
-      }),
+        sideProjects
+      })
     });
   };
 
-  const renderDifficulty = (level: number) => (
-    <div className="flex gap-1">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <Star key={i} className={`h-4 w-4 ${i <= level ? "text-primary fill-primary" : "text-muted-foreground/30"}`} />
-      ))}
-    </div>
-  );
+  const renderDifficulty = (level: number) =>
+  <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map((i) =>
+    <Star key={i} className={`h-4 w-4 ${i <= level ? "text-primary fill-primary" : "text-muted-foreground/30"}`} />
+    )}
+    </div>;
+
 
   // ── Learning Resources Sub-view ──
   if (subView === "learning") {
@@ -186,42 +186,42 @@ const Skills = () => {
               <Download className="h-5 w-5 text-[#502D03]" />
             </Button>
           </div>
-          {subViewLoading ? (
-            <div className="flex flex-col items-center justify-center py-12">
+          {subViewLoading ?
+          <div className="flex flex-col items-center justify-center py-12">
               <img src={logoImage} alt="載入中" className="h-16 w-16 object-contain animate-pulse" />
               <p className="mt-4 text-[#8d4903] animate-pulse">正在載入學習資源...</p>
-            </div>
-          ) : (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+            </div> :
+
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
               <h1 className="text-2xl font-bold text-foreground">學習資源推薦</h1>
               <p className="text-muted-foreground">
                 根據您的職能差距分析，我們為您精選以下學習資源。建議優先完成「高優先」技能的相關課程，每週投入 5-10 小時，預計 3-6 個月內可達成目標職位的技能要求。
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {learningResources.map((resource, index) => (
-                  <motion.div key={resource.title} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
+                {learningResources.map((resource, index) =>
+              <motion.div key={resource.title} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
                     <Card className="h-full bg-white transition-all duration-300 hover:shadow-medium hover:-translate-y-1 group cursor-pointer">
                       <CardContent className="pt-6 h-full flex flex-col">
                         <h3 className="font-semibold mb-2 group-hover:text-primary transition-colors">{resource.title}</h3>
                         <p className="text-sm text-muted-foreground mb-4 flex-grow">{resource.description}</p>
                         <div className="flex items-center justify-between">
                           <div className="flex flex-wrap gap-1">
-                            {resource.tags.map((tag) => (
-                              <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
-                            ))}
+                            {resource.tags.map((tag) =>
+                        <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
+                        )}
                           </div>
                           <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                         </div>
                       </CardContent>
                     </Card>
                   </motion.div>
-                ))}
+              )}
               </div>
             </motion.div>
-          )}
+          }
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   // ── Side Project Sub-view ──
@@ -237,27 +237,27 @@ const Skills = () => {
               <Download className="h-5 w-5 text-[#502D03]" />
             </Button>
           </div>
-          {subViewLoading ? (
-            <div className="flex flex-col items-center justify-center py-12">
+          {subViewLoading ?
+          <div className="flex flex-col items-center justify-center py-12">
               <img src={logoImage} alt="載入中" className="h-16 w-16 object-contain animate-pulse" />
               <p className="mt-4 text-[#8d4903] animate-pulse">正在載入 Side Project 推薦...</p>
-            </div>
-          ) : (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+            </div> :
+
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
               <h1 className="text-2xl font-bold text-foreground">Side Project 推薦</h1>
               <p className="text-muted-foreground">
                 實作 Side Project 是提升技術深度最有效的方式。以下專案根據您的職能落差量身推薦，建議從低難度開始逐步挑戰。
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {sideProjects.map((project, index) => (
-                  <motion.div key={project.name} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
+                {sideProjects.map((project, index) =>
+              <motion.div key={project.name} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
                     <Card className="h-full bg-white transition-all duration-300 hover:shadow-medium hover:-translate-y-1">
                       <CardContent className="pt-6 h-full flex flex-col">
                         <h3 className="font-semibold text-lg mb-3">{project.name}</h3>
                         <div className="flex flex-wrap gap-1 mb-4">
-                          {project.technologies.map((tech) => (
-                            <Badge key={tech} variant="outline" className="text-xs">{tech}</Badge>
-                          ))}
+                          {project.technologies.map((tech) =>
+                      <Badge key={tech} variant="outline" className="text-xs">{tech}</Badge>
+                      )}
                         </div>
                         <p className="text-sm text-muted-foreground mb-4 flex-grow">{project.highlights}</p>
                         <div className="flex items-center justify-between pt-3 border-t">
@@ -267,13 +267,13 @@ const Skills = () => {
                       </CardContent>
                     </Card>
                   </motion.div>
-                ))}
+              )}
               </div>
             </motion.div>
-          )}
+          }
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   // ── Pre-Analysis (idle) State ──
@@ -302,16 +302,16 @@ const Skills = () => {
                 </div>
                 <button
                   onClick={startAnalysis}
-                  className="px-8 py-4 rounded-xl font-semibold text-white gradient-primary shadow-medium transition-all duration-300 hover:-translate-y-1 hover:shadow-large hover:brightness-110 flex items-center justify-center gap-3"
-                >
+                  className="px-8 py-4 rounded-xl font-semibold text-white gradient-primary shadow-medium transition-all duration-300 hover:-translate-y-1 hover:shadow-large hover:brightness-110 flex items-center justify-center gap-3">
+
                   <Radar className="h-5 w-5" /> 開始職能深度分析
                 </button>
               </CardContent>
             </Card>
           </motion.div>
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   // ── Loading State ──
@@ -338,24 +338,24 @@ const Skills = () => {
             </div>
           </motion.div>
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   // ── SWOT card helper ──
   const swotCards = [
-    { label: "優勢", icon: Shield, text: swot.strengths, color: "text-emerald-700", bg: "bg-emerald-50" },
-    { label: "劣勢", icon: AlertTriangle, text: swot.weaknesses, color: "text-amber-700", bg: "bg-amber-50" },
-    { label: "機會", icon: Zap, text: swot.opportunities, color: "text-sky-700", bg: "bg-sky-50" },
-    { label: "威脅", icon: ShieldAlert, text: swot.threats, color: "text-rose-700", bg: "bg-rose-50" },
-  ];
+  { label: "優勢", icon: Shield, text: swot.strengths, color: "text-emerald-700", bg: "bg-emerald-50" },
+  { label: "劣勢", icon: AlertTriangle, text: swot.weaknesses, color: "text-amber-700", bg: "bg-amber-50" },
+  { label: "機會", icon: Zap, text: swot.opportunities, color: "text-sky-700", bg: "bg-sky-50" },
+  { label: "威脅", icon: ShieldAlert, text: swot.threats, color: "text-rose-700", bg: "bg-rose-50" }];
+
 
   // ── Timeline items ──
   const timelineItems = [
-    { label: "短期計畫", icon: Clock, text: gap_analysis?.action_plan?.short_term ?? '', accent: "#8d4903" },
-    { label: "中期計畫", icon: CalendarDays, text: gap_analysis?.action_plan?.mid_term ?? '', accent: "#c4742b" },
-    { label: "長期計畫", icon: CalendarRange, text: gap_analysis?.action_plan?.long_term ?? '', accent: "#dabea8" },
-  ];
+  { label: "短期計畫", icon: Clock, text: gap_analysis?.action_plan?.short_term ?? '', accent: "#8d4903" },
+  { label: "中期計畫", icon: CalendarDays, text: gap_analysis?.action_plan?.mid_term ?? '', accent: "#c4742b" },
+  { label: "長期計畫", icon: CalendarRange, text: gap_analysis?.action_plan?.long_term ?? '', accent: "#dabea8" }];
+
 
   // ── Main View (phase === "done") ──
   return (
@@ -440,7 +440,7 @@ const Skills = () => {
                       <RadarChart data={(radar_chart?.dimensions ?? []).map((d, i) => ({
                         axis: d.axis,
                         score: d.score,
-                        target: targetRadar?.dimensions?.[i]?.score ?? 0,
+                        target: targetRadar?.dimensions?.[i]?.score ?? 0
                       }))}>
                         <PolarGrid stroke="#dabea8" />
                         <PolarAngleAxis dataKey="axis" tick={{ fill: "hsl(var(--foreground))", fontSize: 12 }} />
@@ -458,7 +458,7 @@ const Skills = () => {
                 {/* Legend */}
                 <div className="flex items-center justify-center gap-6 mt-4 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: "#8d4903", opacity: 0.7 }} />您的職能</span>
-                  <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-sm border-2 border-dashed" style={{ borderColor: "#c4742b" }} />目標職類</span>
+                  <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-sm border-2 border-dashed" style={{ borderColor: "#c4742b" }} />推薦職類</span>
                 </div>
               </CardContent>
             </Card>
@@ -544,7 +544,7 @@ const Skills = () => {
               {/* Centre badge — visible on sm+ */}
               <div className="hidden sm:flex absolute inset-0 items-center justify-center z-10 pointer-events-none">
                 <div className="h-20 w-20 rounded-full bg-white shadow-lg flex items-center justify-center border-2 border-primary/20">
-                  <span className="text-xs font-bold text-primary tracking-wide leading-tight text-center">SWOT<br/>分析</span>
+                  <span className="text-xs font-bold text-primary tracking-wide leading-tight text-center">SWOT<br />分析</span>
                 </div>
               </div>
 
@@ -558,25 +558,25 @@ const Skills = () => {
                     key={card.label}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.18 + idx * 0.08 }}
-                  >
+                    transition={{ delay: 0.18 + idx * 0.08 }}>
+
                     <div
                       className="relative rounded-2xl border-2 p-5 h-full transition-all duration-300 hover:shadow-medium hover:-translate-y-1"
-                      style={{ borderColor: borderColors[idx], backgroundColor: bgColors[idx] }}
-                    >
+                      style={{ borderColor: borderColors[idx], backgroundColor: bgColors[idx] }}>
+
                       {/* Large background letter */}
                       <span
                         className="absolute top-3 right-4 text-6xl font-black opacity-10 select-none leading-none pointer-events-none"
-                        style={{ color: borderColors[idx] }}
-                      >
+                        style={{ color: borderColors[idx] }}>
+
                         {letters[idx]}
                       </span>
 
                       {/* Icon circle */}
                       <div
                         className="h-10 w-10 rounded-full flex items-center justify-center mb-3"
-                        style={{ backgroundColor: `${borderColors[idx]}20` }}
-                      >
+                        style={{ backgroundColor: `${borderColors[idx]}20` }}>
+
                         <card.icon className="h-5 w-5" style={{ color: borderColors[idx] }} />
                       </div>
 
@@ -585,14 +585,14 @@ const Skills = () => {
                       </h4>
                       <p className="text-sm leading-relaxed text-foreground/80">{card.text}</p>
                     </div>
-                  </motion.div>
-                );
+                  </motion.div>);
+
               })}
             </div>
 
             {/* 核心落差 — highlighted */}
-            {swot.gap && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
+            {swot.gap &&
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
                 <Card className="border-2 border-primary/40 shadow-warm ring-1 ring-primary/20 bg-gradient-to-br from-[#fbf1e8] to-white">
                   <CardContent className="pt-5 pb-5">
                     <div className="flex items-start gap-3">
@@ -610,7 +610,7 @@ const Skills = () => {
                   </CardContent>
                 </Card>
               </motion.div>
-            )}
+            }
           </motion.div>
         </section>
 
@@ -629,19 +629,19 @@ const Skills = () => {
               <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#8d4903] via-[#c4742b] to-[#dabea8] hidden md:block" />
 
               <div className="space-y-6 md:space-y-8">
-                {timelineItems.map((item, idx) => (
-                  <motion.div
-                    key={item.label}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.25 + idx * 0.12 }}
-                    className="md:pl-14 relative"
-                  >
+                {timelineItems.map((item, idx) =>
+                <motion.div
+                  key={item.label}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.25 + idx * 0.12 }}
+                  className="md:pl-14 relative">
+
                     {/* Timeline dot */}
                     <div
-                      className="hidden md:flex absolute left-2.5 top-5 h-5 w-5 rounded-full border-2 border-white items-center justify-center z-10"
-                      style={{ backgroundColor: item.accent }}
-                    >
+                    className="hidden md:flex absolute left-2.5 top-5 h-5 w-5 rounded-full border-2 border-white items-center justify-center z-10"
+                    style={{ backgroundColor: item.accent }}>
+
                       <div className="h-2 w-2 rounded-full bg-white" />
                     </div>
 
@@ -655,7 +655,7 @@ const Skills = () => {
                       </CardContent>
                     </Card>
                   </motion.div>
-                ))}
+                )}
               </div>
             </div>
           </motion.div>
@@ -666,14 +666,14 @@ const Skills = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => openSubView("learning")}
-              className="w-full sm:w-auto max-w-xs px-8 py-4 rounded-xl font-semibold text-white gradient-primary shadow-medium transition-all duration-300 hover:-translate-y-1 hover:shadow-large hover:brightness-110 flex items-center justify-center gap-3"
-            >
+              className="w-full sm:w-auto max-w-xs px-8 py-4 rounded-xl font-semibold text-white gradient-primary shadow-medium transition-all duration-300 hover:-translate-y-1 hover:shadow-large hover:brightness-110 flex items-center justify-center gap-3">
+
               <BookOpen className="h-5 w-5" /> 學習資源推薦
             </button>
             <button
               onClick={() => openSubView("sideproject")}
-              className="w-full sm:w-auto max-w-xs px-8 py-4 rounded-xl font-semibold text-white gradient-primary shadow-medium transition-all duration-300 hover:-translate-y-1 hover:shadow-large hover:brightness-110 flex items-center justify-center gap-3"
-            >
+              className="w-full sm:w-auto max-w-xs px-8 py-4 rounded-xl font-semibold text-white gradient-primary shadow-medium transition-all duration-300 hover:-translate-y-1 hover:shadow-large hover:brightness-110 flex items-center justify-center gap-3">
+
               <Lightbulb className="h-5 w-5" /> Side Project 推薦
             </button>
           </motion.div>
@@ -686,8 +686,8 @@ const Skills = () => {
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default Skills;
