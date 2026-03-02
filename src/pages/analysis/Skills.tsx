@@ -153,14 +153,16 @@ const Skills = () => {
     await exportHtmlToPdf({
       filename: "職能分析報告.pdf",
       htmlContent: buildSkillsReportHtml({
-        coreInsight: preliminary_summary?.core_insight ?? "",
+        industryInsight: preliminary_summary?.industry_insight || preliminary_summary?.core_insight || "",
+        personalSummary: preliminary_summary?.personal_summary || "",
         radarDimensions: radar_chart?.dimensions ?? [],
+        targetRadarDimensions: targetRadar?.dimensions,
         selfAssessment: gap_analysis?.current_status?.self_assessment ?? "",
         actualLevel: gap_analysis?.current_status?.actual_level ?? "",
         cognitiveBias: gap_analysis?.current_status?.cognitive_bias ?? "",
         targetRole: gap_analysis?.target_position?.role ?? "",
         matchScore: gap_analysis?.target_position?.match_score ?? 0,
-        gapDescription: gap_analysis?.target_position?.gap_description ?? "",
+        swot,
         actionPlan: gap_analysis?.action_plan ?? { short_term: "", mid_term: "", long_term: "" },
         learningResources,
         sideProjects,
