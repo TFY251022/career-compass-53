@@ -410,6 +410,7 @@ const Skills = () => {
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Star className="h-5 w-5 text-primary fill-primary" />
                     個人總結
+                    <Badge variant="secondary" className="ml-auto text-[10px] uppercase tracking-wider">重點</Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -471,16 +472,16 @@ const Skills = () => {
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Target className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-xl font-bold">分析職類</h2>
+              <h2 className="text-xl font-bold">領航員分析您適合的職類</h2>
             </div>
 
             {/* Target Position + Match */}
-            <Card className="transition-all duration-300 hover:shadow-medium" style={{ backgroundColor: "#FFFBF5" }}>
+            <Card className="transition-all duration-300 hover:shadow-medium">
               <CardContent className="pt-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">領航員分析您適合的職類為</p>
-                    <p className="text-2xl font-bold text-[#675143]">{gap_analysis?.target_position?.role}</p>
+                    <p className="text-sm text-muted-foreground">領航員分析您適合的職類</p>
+                    <p className="text-xl font-bold">{gap_analysis?.target_position?.role}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-muted-foreground">匹配度</p>
@@ -494,18 +495,18 @@ const Skills = () => {
             {/* Current Status: Self vs Actual — 同風格背景 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card className="transition-all duration-300 hover:shadow-medium hover:-translate-y-1 border-primary/30 shadow-warm">
-                <CardContent className="pt-4 pb-4">
-                  <div className="p-3 rounded-lg bg-white">
-                    <p className="text-xs text-[#675143] mb-1">自評等級</p>
-                    <p className="text-lg font-bold text-foreground">{gap_analysis?.current_status?.self_assessment}</p>
+                <CardContent className="pt-6">
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: "#fbf1e8" }}>
+                    <p className="text-sm text-[#675143] mb-2">自評等級</p>
+                    <p className="text-2xl font-bold text-primary">{gap_analysis?.current_status?.self_assessment}</p>
                   </div>
                 </CardContent>
               </Card>
               <Card className="transition-all duration-300 hover:shadow-medium hover:-translate-y-1 border-primary/30 shadow-warm">
-                <CardContent className="pt-4 pb-4">
-                  <div className="p-3 rounded-lg bg-white">
-                    <p className="text-xs text-[#675143] mb-1">實際等級</p>
-                    <p className="text-lg font-bold text-primary">{gap_analysis?.current_status?.actual_level}</p>
+                <CardContent className="pt-6">
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: "#fbf1e8" }}>
+                    <p className="text-sm text-[#675143] mb-2">實際等級</p>
+                    <p className="text-2xl font-bold text-primary">{gap_analysis?.current_status?.actual_level}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -541,7 +542,7 @@ const Skills = () => {
             </div>
 
             {/* SWOT 2×2 grid inspired by template */}
-            <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-5">
               {/* Centre badge — visible on sm+ */}
               <div className="hidden sm:flex absolute inset-0 items-center justify-center z-10 pointer-events-none">
                 <div className="h-28 w-28 rounded-full bg-white shadow-xl flex items-center justify-center border-2 border-primary/30">
@@ -562,12 +563,12 @@ const Skills = () => {
                     transition={{ delay: 0.18 + idx * 0.08 }}>
 
                     <div
-                      className="relative rounded-2xl border-2 p-4 h-full transition-all duration-300 hover:shadow-medium hover:-translate-y-1"
+                      className="relative rounded-2xl border-2 p-5 h-full transition-all duration-300 hover:shadow-medium hover:-translate-y-1"
                       style={{ borderColor: borderColors[idx], backgroundColor: bgColors[idx] }}>
 
                       {/* Large background letter */}
                       <span
-                        className="absolute top-2 right-3 text-5xl font-black opacity-10 select-none leading-none pointer-events-none"
+                        className="absolute top-3 right-4 text-6xl font-black opacity-10 select-none leading-none pointer-events-none"
                         style={{ color: borderColors[idx] }}>
 
                         {letters[idx]}
@@ -575,16 +576,16 @@ const Skills = () => {
 
                       {/* Icon circle */}
                       <div
-                        className="h-8 w-8 rounded-full flex items-center justify-center mb-2"
+                        className="h-10 w-10 rounded-full flex items-center justify-center mb-3"
                         style={{ backgroundColor: `${borderColors[idx]}20` }}>
 
-                        <card.icon className="h-4 w-4" style={{ color: borderColors[idx] }} />
+                        <card.icon className="h-5 w-5" style={{ color: borderColors[idx] }} />
                       </div>
 
-                      <h4 className="font-bold text-base mb-1" style={{ color: letterColors[idx] }}>
+                      <h4 className="font-bold text-sm mb-1.5" style={{ color: letterColors[idx] }}>
                         {card.label}
                       </h4>
-                      <p className="text-xs leading-relaxed text-foreground/80">{card.text}</p>
+                      <p className="text-sm leading-relaxed text-foreground/80">{card.text}</p>
                     </div>
                   </motion.div>);
 
@@ -595,14 +596,17 @@ const Skills = () => {
             {swot.gap &&
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
                 <Card className="border-2 border-primary/40 shadow-warm ring-1 ring-primary/20 bg-gradient-to-br from-[#fbf1e8] to-white">
-                  <CardContent className="pt-6 pb-6">
-                    <div className="flex items-start gap-4">
-                      <div className="h-12 w-12 rounded-full bg-primary/15 flex items-center justify-center shrink-0 mt-0.5">
-                        <CircleDot className="h-6 w-6 text-primary" />
+                  <CardContent className="pt-5 pb-5">
+                    <div className="flex items-start gap-3">
+                      <div className="h-9 w-9 rounded-full bg-primary/15 flex items-center justify-center shrink-0 mt-0.5">
+                        <CircleDot className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex-1">
-                        <span className="font-bold text-lg text-primary mb-3 block">核心落差</span>
-                        <p className="text-base text-[#502D03] leading-relaxed font-medium">{swot.gap}</p>
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="font-bold text-primary">核心落差</span>
+                          <Badge variant="secondary" className="text-[10px] uppercase tracking-wider">重點</Badge>
+                        </div>
+                        <p className="text-sm text-[#502D03] leading-relaxed font-medium">{swot.gap}</p>
                       </div>
                     </div>
                   </CardContent>
