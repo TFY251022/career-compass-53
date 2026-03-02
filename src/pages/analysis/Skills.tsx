@@ -591,12 +591,12 @@ const Skills = () => {
                 <div className="p-4 rounded-lg" style={{ backgroundColor: "#fbf1e8" }}>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-muted-foreground">領航員分析您適合的職類</p>
-                      <p className="text-3xl font-bold text-primary">{gap_analysis?.target_position?.role}</p>
+                      <p className="text-sm text-muted-foreground mb-2">領航員分析您適合的職類</p>
+                      <p className="text-3xl font-bold text-primary mb-2">{gap_analysis?.target_position?.role}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-muted-foreground">匹配度</p>
-                      <p className="text-3xl font-bold text-primary">
+                      <p className="text-sm text-muted-foreground mb-2">匹配度</p>
+                      <p className="text-3xl font-bold text-primary mb-2">
                         {gap_analysis?.target_position?.match_score ?? 0}%
                       </p>
                     </div>
@@ -617,8 +617,8 @@ const Skills = () => {
                 </CardContent>
               </Card>
               <Card className="transition-all duration-300 hover:shadow-medium hover:-translate-y-1 border-primary/30 shadow-warm">
-                <CardContent className="pt-2">
-                  <div className="p-2 rounded-lg" style={{ backgroundColor: "#FFFFFF" }}>
+                <CardContent className="pt-5">
+                  <div className="p-4 rounded-lg bg-white">
                     <p className="text-sm text-[#675143] mb-2">實際等級</p>
                     <p className="text-2xl font-bold text-primary">{gap_analysis?.current_status?.actual_level}</p>
                   </div>
