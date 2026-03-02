@@ -617,8 +617,8 @@ const Skills = () => {
                 </CardContent>
               </Card>
               <Card className="transition-all duration-300 hover:shadow-medium hover:-translate-y-1 border-primary/30 shadow-warm">
-                <CardContent className="pt-5">
-                  <div className="p-4 rounded-lg" style={{ backgroundColor: "#FFFFFF" }}>
+                <CardContent className="pt-2">
+                  <div className="p-2 rounded-lg" style={{ backgroundColor: "#FFFFFF" }}>
                     <p className="text-sm text-[#675143] mb-2">實際等級</p>
                     <p className="text-2xl font-bold text-primary">{gap_analysis?.current_status?.actual_level}</p>
                   </div>
