@@ -537,11 +537,11 @@ const Skills = () => {
                       </RadarChart>
                     </ResponsiveContainer>
                   </div>
-                  <div className="shrink-0 flex flex-col items-center gap-2 w-24 sm:w-40 md:w-56">
+                  <div className="shrink-0 flex flex-col items-center gap-2 w-32 sm:w-48 md:w-64 mr-6">
                     <img
                       src={mascotSrc}
                       alt={gap_analysis?.target_position?.role ?? ""}
-                      className="w-24 h-24 sm:w-40 sm:h-40 md:w-56 md:h-56 object-contain"
+                      className="w-32 h-32 sm:w-48 sm:h-64 md:w-64 md:h-64 object-contain"
                     />
                     <span className="text-xs sm:text-sm font-semibold text-muted-foreground text-center">
                       {gap_analysis?.target_position?.role}
