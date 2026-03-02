@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin, Wallet, Building2 } from 'lucide-react';
+import { MapPin, Wallet } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -16,11 +16,6 @@ const taiwanCities = [
   '台東縣', '澎湖縣', '金門縣', '連江縣'
 ];
 
-const workModes = [
-  { id: 'onsite', label: '實體辦公' },
-  { id: 'remote', label: '完全遠端' },
-  { id: 'hybrid', label: '混合模式' },
-];
 
 interface EmbeddedPreferenceSurveyProps {
   onComplete: () => void;
@@ -30,7 +25,6 @@ const EmbeddedPreferenceSurvey = ({ onComplete }: EmbeddedPreferenceSurveyProps)
   const [regionType, setRegionType] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
   const [salaryRange, setSalaryRange] = useState<number[]>([40000, 80000]);
-  const [workMode, setWorkMode] = useState('');
   const [showIncompleteAlert, setShowIncompleteAlert] = useState(false);
 
   const formatSalary = (value: number) => {
@@ -46,7 +40,7 @@ const EmbeddedPreferenceSurvey = ({ onComplete }: EmbeddedPreferenceSurveyProps)
 
   const handleSubmit = () => {
     const isTaiwanWithoutCity = regionType === 'taiwan' && !selectedCity;
-    if (!regionType || isTaiwanWithoutCity || !workMode) {
+    if (!regionType || isTaiwanWithoutCity) {
       setShowIncompleteAlert(true);
       return;
     }
@@ -139,39 +133,6 @@ const EmbeddedPreferenceSurvey = ({ onComplete }: EmbeddedPreferenceSurveyProps)
               <span>{formatSalary(100000)}</span>
               <span>{formatSalary(200000)}</span>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Work Mode */}
-        <Card>
-          <CardHeader className="pb-2 md:pb-4">
-            <CardTitle className="text-base md:text-lg flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-primary" />
-              辦公模式
-            </CardTitle>
-            <CardDescription className="text-xs md:text-sm">
-              請選擇您偏好的工作方式
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup value={workMode} onValueChange={setWorkMode} className="space-y-3">
-              {workModes.map((mode) => (
-                <div
-                  key={mode.id}
-                  className={`flex items-center space-x-3 p-3 md:p-4 rounded-lg transition-colors cursor-pointer border ${
-                    workMode === mode.id
-                      ? 'bg-primary/10 border-primary/30'
-                      : 'border-transparent hover:bg-muted'
-                  }`}
-                  onClick={() => setWorkMode(mode.id)}
-                >
-                  <RadioGroupItem value={mode.id} id={`pref-${mode.id}`} />
-                  <Label htmlFor={`pref-${mode.id}`} className="flex-1 cursor-pointer text-sm md:text-base">
-                    {mode.label}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
           </CardContent>
         </Card>
 
