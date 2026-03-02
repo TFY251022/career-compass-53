@@ -588,7 +588,7 @@ const Skills = () => {
             {/* Target Position + Match */}
             <Card className="transition-all duration-300 hover:shadow-medium">
               <CardContent className="pt-6 space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between" style={{ backgroundColor: "#fbf1e8" }}>
                   <div>
                     <p className="text-sm text-muted-foreground">領航員分析您適合的職類</p>
                     <p className="text-3xl font-bold text-primary">{gap_analysis?.target_position?.role}</p>
