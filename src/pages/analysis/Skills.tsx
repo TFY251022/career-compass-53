@@ -410,7 +410,6 @@ const Skills = () => {
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Star className="h-5 w-5 text-primary fill-primary" />
                     個人總結
-                    <Badge variant="secondary" className="ml-auto text-[10px] uppercase tracking-wider">重點</Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -472,15 +471,15 @@ const Skills = () => {
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Target className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-xl font-bold">領航員分析您適合的職類</h2>
+              <h2 className="text-xl font-bold">分析職類</h2>
             </div>
 
             {/* Target Position + Match */}
-            <Card className="transition-all duration-300 hover:shadow-medium">
+            <Card className="transition-all duration-300 hover:shadow-medium" style={{ backgroundColor: "#FFFBF5" }}>
               <CardContent className="pt-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">領航員分析您適合的職類</p>
+                    <p className="text-sm text-muted-foreground">分析職類</p>
                     <p className="text-xl font-bold">{gap_analysis?.target_position?.role}</p>
                   </div>
                   <div className="text-right">
@@ -496,15 +495,15 @@ const Skills = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card className="transition-all duration-300 hover:shadow-medium hover:-translate-y-1 border-primary/30 shadow-warm">
                 <CardContent className="pt-6">
-                  <div className="p-4 rounded-lg" style={{ backgroundColor: "#fbf1e8" }}>
+                  <div className="p-4 rounded-lg bg-white">
                     <p className="text-sm text-[#675143] mb-2">自評等級</p>
-                    <p className="text-2xl font-bold text-primary">{gap_analysis?.current_status?.self_assessment}</p>
+                    <p className="text-2xl font-bold text-foreground">{gap_analysis?.current_status?.self_assessment}</p>
                   </div>
                 </CardContent>
               </Card>
               <Card className="transition-all duration-300 hover:shadow-medium hover:-translate-y-1 border-primary/30 shadow-warm">
                 <CardContent className="pt-6">
-                  <div className="p-4 rounded-lg" style={{ backgroundColor: "#fbf1e8" }}>
+                  <div className="p-4 rounded-lg bg-white">
                     <p className="text-sm text-[#675143] mb-2">實際等級</p>
                     <p className="text-2xl font-bold text-primary">{gap_analysis?.current_status?.actual_level}</p>
                   </div>
@@ -582,7 +581,7 @@ const Skills = () => {
                         <card.icon className="h-5 w-5" style={{ color: borderColors[idx] }} />
                       </div>
 
-                      <h4 className="font-bold text-sm mb-1.5" style={{ color: letterColors[idx] }}>
+                      <h4 className="font-bold text-lg mb-1.5" style={{ color: letterColors[idx] }}>
                         {card.label}
                       </h4>
                       <p className="text-sm leading-relaxed text-foreground/80">{card.text}</p>
@@ -596,17 +595,14 @@ const Skills = () => {
             {swot.gap &&
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
                 <Card className="border-2 border-primary/40 shadow-warm ring-1 ring-primary/20 bg-gradient-to-br from-[#fbf1e8] to-white">
-                  <CardContent className="pt-5 pb-5">
-                    <div className="flex items-start gap-3">
-                      <div className="h-9 w-9 rounded-full bg-primary/15 flex items-center justify-center shrink-0 mt-0.5">
-                        <CircleDot className="h-5 w-5 text-primary" />
+                  <CardContent className="pt-6 pb-6">
+                    <div className="flex items-start gap-4">
+                      <div className="h-12 w-12 rounded-full bg-primary/15 flex items-center justify-center shrink-0 mt-0.5">
+                        <CircleDot className="h-6 w-6 text-primary" />
                       </div>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="font-bold text-primary">核心落差</span>
-                          <Badge variant="secondary" className="text-[10px] uppercase tracking-wider">重點</Badge>
-                        </div>
-                        <p className="text-sm text-[#502D03] leading-relaxed font-medium">{swot.gap}</p>
+                        <span className="font-bold text-lg text-primary mb-3 block">核心落差</span>
+                        <p className="text-base text-[#502D03] leading-relaxed font-medium">{swot.gap}</p>
                       </div>
                     </div>
                   </CardContent>
