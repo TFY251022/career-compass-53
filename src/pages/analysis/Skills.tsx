@@ -707,7 +707,7 @@ const Skills = () => {
                         <card.icon className="h-5 w-5" style={{ color: borderColors[idx] }} />
                       </div>
 
-                      <h4 className="font-bold text-sm mb-1.5" style={{ color: letterColors[idx] }}>
+                      <h4 className="font-bold text-lg mb-1.5" style={{ color: letterColors[idx] }}>
                         {card.label}
                       </h4>
                       <p className="text-sm leading-relaxed text-foreground/80">{card.text}</p>
