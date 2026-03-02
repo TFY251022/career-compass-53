@@ -601,7 +601,8 @@ const Skills = () => {
                       </p>
                     </div>
                   </div>
-                  <Progress value={gap_analysis?.target_position?.match_score ?? 0} className="h-2" />
+                  <p></p>
+                  <Progress value={gap_analysis?.target_position?.match_score ?? 0} className="h-3" />
                 </div>
               </CardContent>
             </Card>
