@@ -71,48 +71,76 @@ export function buildSuggestionsReportHtml(suggestions: { section: string; origi
 
 /** 職能圖譜分析報告 */
 export function buildSkillsReportHtml(data: {
-  coreInsight: string;
+  industryInsight: string;
+  personalSummary: string;
   radarDimensions: { axis: string; score: number }[];
+  targetRadarDimensions?: { axis: string; score: number }[];
   selfAssessment: string;
   actualLevel: string;
   cognitiveBias: string;
   targetRole: string;
   matchScore: number;
-  gapDescription: string;
+  swot: { strengths: string; weaknesses: string; opportunities: string; threats: string; gap: string };
   actionPlan: { short_term: string; mid_term: string; long_term: string };
   learningResources: { title: string; description: string }[];
   sideProjects: { name: string; technologies: string[] }[];
 }): string {
+  const swotBlock = (label: string, color: string, text: string) =>
+    text ? `<div style="margin-bottom:10px;padding:10px 14px;border-left:4px solid ${color};background:${color}10;border-radius:4px;">
+      <strong style="color:${color};">${label}</strong>
+      <p style="margin:4px 0 0;font-size:13px;">${text}</p>
+    </div>` : '';
+
   return `
     <div>
       ${h('h1', 'font-size:22px;text-align:center;color:#1F3A5F;margin-bottom:4px;', '職能分析報告')}
       ${h('p', 'text-align:center;color:#888;font-size:12px;margin-bottom:24px;', `生成日期：${new Date().toLocaleDateString('zh-TW')}`)}
 
       ${sectionTitle('一、核心洞察')}
-      <p>${data.coreInsight}</p>
+      ${h('h3', 'font-size:14px;color:#675143;margin:0 0 4px;', '產業洞察')}
+      <p style="margin-bottom:12px;">${data.industryInsight}</p>
+      ${h('h3', 'font-size:15px;color:#502D03;margin:0 0 4px;font-weight:700;', '⭐ 個人總結')}
+      <p style="font-weight:600;color:#502D03;margin-bottom:0;">${data.personalSummary}</p>
 
       ${sectionTitle('二、職能雷達圖')}
-      ${bulletList(data.radarDimensions.map(d => `${d.axis}：${d.score} / 5`))}
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px;">
+        <tr style="background:#f5f0eb;"><th style="text-align:left;padding:6px 10px;">維度</th><th style="text-align:center;padding:6px 10px;">您的分數</th>${data.targetRadarDimensions ? '<th style="text-align:center;padding:6px 10px;">目標基準</th>' : ''}</tr>
+        ${data.radarDimensions.map((d, i) => `<tr style="border-bottom:1px solid #eee;"><td style="padding:6px 10px;">${d.axis}</td><td style="text-align:center;padding:6px 10px;">${d.score} / 5</td>${data.targetRadarDimensions ? `<td style="text-align:center;padding:6px 10px;">${data.targetRadarDimensions[i]?.score ?? '-'} / 5</td>` : ''}</tr>`).join('')}
+      </table>
 
-      ${sectionTitle('三、落差分析')}
-      ${bulletList([
-        `自評等級：${data.selfAssessment}`,
-        `實際等級：${data.actualLevel}`,
-        `目標職位：${data.targetRole}`,
-        `匹配度：${data.matchScore}%`,
-      ])}
-      <p><strong>認知偏差分析：</strong>${data.cognitiveBias}</p>
-      <p>${data.gapDescription.replace(/\n/g, '<br/>')}</p>
+      ${sectionTitle('三、領航員分析職類')}
+      <div style="background:#fbf1e8;padding:14px 18px;border-radius:8px;margin-bottom:12px;">
+        <p style="margin:0 0 4px;color:#675143;font-size:12px;">領航員分析您適合的職類</p>
+        <p style="margin:0;font-size:20px;font-weight:700;color:#8d4903;">${data.targetRole} <span style="font-size:14px;margin-left:12px;">匹配度 ${data.matchScore}%</span></p>
+      </div>
+      <div style="display:flex;gap:16px;margin-bottom:12px;">
+        <div style="flex:1;padding:10px 14px;border:1px solid #ddd;border-radius:8px;"><p style="margin:0 0 2px;color:#675143;font-size:12px;">自評等級</p><p style="margin:0;font-size:16px;font-weight:700;">${data.selfAssessment}</p></div>
+        <div style="flex:1;padding:10px 14px;border:1px solid #ddd;border-radius:8px;"><p style="margin:0 0 2px;color:#675143;font-size:12px;">實際等級</p><p style="margin:0;font-size:16px;font-weight:700;color:#8d4903;">${data.actualLevel}</p></div>
+      </div>
+      <div style="background:#FFFBF5;padding:12px 16px;border-radius:8px;">
+        <p style="margin:0 0 4px;font-weight:600;">認知偏差分析</p>
+        <p style="margin:0;font-size:13px;color:#675143;">${data.cognitiveBias}</p>
+      </div>
 
-      ${sectionTitle('四、行動計畫')}
-      <p><strong>短期：</strong>${data.actionPlan.short_term}</p>
-      <p><strong>中期：</strong>${data.actionPlan.mid_term}</p>
-      <p><strong>長期：</strong>${data.actionPlan.long_term}</p>
+      ${sectionTitle('四、SWOT 分析')}
+      ${swotBlock('優勢', '#059669', data.swot.strengths)}
+      ${swotBlock('劣勢', '#d97706', data.swot.weaknesses)}
+      ${swotBlock('機會', '#0284c7', data.swot.opportunities)}
+      ${swotBlock('威脅', '#e11d48', data.swot.threats)}
+      ${data.swot.gap ? `<div style="margin-top:12px;padding:12px 16px;border:2px solid #8d4903;border-radius:8px;background:linear-gradient(135deg,#fbf1e8,#fff);">
+        <strong style="color:#8d4903;">核心落差</strong>
+        <p style="margin:4px 0 0;color:#502D03;font-weight:500;">${data.swot.gap}</p>
+      </div>` : ''}
 
-      ${sectionTitle('五、推薦學習資源')}
+      ${sectionTitle('五、職涯行動計畫')}
+      <p><strong>🔹 短期計畫：</strong>${data.actionPlan.short_term}</p>
+      <p><strong>🔸 中期計畫：</strong>${data.actionPlan.mid_term}</p>
+      <p><strong>🔹 長期計畫：</strong>${data.actionPlan.long_term}</p>
+
+      ${sectionTitle('六、推薦學習資源')}
       ${bulletList(data.learningResources.map(r => `${r.title}：${r.description}`))}
 
-      ${sectionTitle('六、推薦 Side Project')}
+      ${sectionTitle('七、推薦 Side Project')}
       ${bulletList(data.sideProjects.map(p => `${p.name}（技術：${p.technologies.join('、')}）`))}
     </div>
   `;
