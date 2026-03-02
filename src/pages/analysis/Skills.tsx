@@ -729,9 +729,6 @@ const Skills = () => {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <span className="font-bold text-lg text-primary">核心落差</span>
-                          <Badge variant="secondary" className="text-[10px] uppercase tracking-wider">
-                            重點
-                          </Badge>
                         </div>
                         <p className="text-base text-[#502D03] leading-relaxed font-medium">{swot.gap}</p>
                       </div>
