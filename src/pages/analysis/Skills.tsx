@@ -601,7 +601,6 @@ const Skills = () => {
                       </p>
                     </div>
                   </div>
-                  <p className="text-sm text-muted-foreground></p>
                   <Progress value={gap_analysis?.target_position?.match_score ?? 0} className="h-3" />
                 </div>
               </CardContent>
@@ -611,15 +610,15 @@ const Skills = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card className="transition-all duration-300 hover:shadow-medium hover:-translate-y-1 border-primary/30 shadow-warm">
                 <CardContent className="pt-6">
-                  <div className="p-4 rounded-lg" style={{ backgroundColor: "#fbf1e8" }}>
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: "#FFFFFF" }}>
                     <p className="text-sm text-[#675143] mb-2">自評等級</p>
-                    <p className="text-2xl font-bold text-primary">{gap_analysis?.current_status?.self_assessment}</p>
+                    <p className="text-2xl font-bold">{gap_analysis?.current_status?.self_assessment}</p>
                   </div>
                 </CardContent>
               </Card>
               <Card className="transition-all duration-300 hover:shadow-medium hover:-translate-y-1 border-primary/30 shadow-warm">
                 <CardContent className="pt-6">
-                  <div className="p-4 rounded-lg" style={{ backgroundColor: "#fbf1e8" }}>
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: "#FFFFFF" }}>
                     <p className="text-sm text-[#675143] mb-2">實際等級</p>
                     <p className="text-2xl font-bold text-primary">{gap_analysis?.current_status?.actual_level}</p>
                   </div>
