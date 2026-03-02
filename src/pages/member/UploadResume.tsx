@@ -323,7 +323,7 @@ const UploadResume = () => {
               <ResultView 
                 data={resultData} 
                 onReset={handleReset}
-                onNavigate={() => navigate('/career-quiz')}
+                onNavigate={() => navigate('/member/survey/personality')}
                 onSave={(updated) => {
                   setResultData(updated);
                   setIsResumeUploaded(true);
