@@ -369,8 +369,8 @@ const Skills = () => {
           <p className="text-muted-foreground max-w-2xl mx-auto">深入分析您的技能優勢與發展潛力</p>
           {/* Metadata */}
           <div className="flex items-center justify-center gap-4 mt-3 text-xs text-muted-foreground">
-            <span>使用者 ID：{report_metadata.user_id}</span>
-            <span>生成時間：{new Date(report_metadata.timestamp).toLocaleString("zh-TW")}</span>
+            <span>使用者 ID：{report_metadata?.user_id}</span>
+            <span>生成時間：{report_metadata?.timestamp ? new Date(report_metadata.timestamp).toLocaleString("zh-TW") : ''}</span>
           </div>
         </div>
         <div className="flex justify-end gap-2">
