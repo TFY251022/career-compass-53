@@ -588,19 +588,21 @@ const Skills = () => {
             {/* Target Position + Match */}
             <Card className="transition-all duration-300 hover:shadow-medium">
               <CardContent className="pt-6 space-y-4">
-                <div className="flex items-center justify-between" style={{ backgroundColor: "#fbf1e8" }}>
-                  <div>
-                    <p className="text-sm text-muted-foreground">領航員分析您適合的職類</p>
-                    <p className="text-3xl font-bold text-primary">{gap_analysis?.target_position?.role}</p>
+                <div className="p-4 rounded-lg" style={{ backgroundColor: "#fbf1e8" }}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">領航員分析您適合的職類</p>
+                      <p className="text-3xl font-bold text-primary">{gap_analysis?.target_position?.role}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-muted-foreground">匹配度</p>
+                      <p className="text-3xl font-bold text-primary">
+                        {gap_analysis?.target_position?.match_score ?? 0}%
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm text-muted-foreground">匹配度</p>
-                    <p className="text-3xl font-bold text-primary">
-                      {gap_analysis?.target_position?.match_score ?? 0}%
-                    </p>
-                  </div>
+                  <Progress value={gap_analysis?.target_position?.match_score ?? 0} className="h-3" />
                 </div>
-                <Progress value={gap_analysis?.target_position?.match_score ?? 0} className="h-3" />
               </CardContent>
             </Card>
 
