@@ -1,45 +1,39 @@
-export interface RadarDataPoint {
-  dimension: string;
-  user: number;
-  target: number;
+/* ── Radar Chart ── */
+export interface RadarDimension {
+  axis: string;
+  score: number;
 }
 
-export interface RadarTemplate {
-  label: string;
-  mascot: string;
-  data: RadarDataPoint[];
+export interface RadarChartData {
+  dimensions: RadarDimension[];
 }
 
-export interface GapItem {
-  skill: string;
-  current: number;
-  target: number;
-  priority: string;
+/* ── Gap Analysis ── */
+export interface GapCurrentStatus {
+  self_assessment: string;
+  actual_level: string;
+  cognitive_bias: string;
 }
 
-export interface GapAnalysisData {
-  selfAssessment: string;
-  aiAssessment: string;
-  assessmentExplanation: string;
-  matchPercentage: number;
-  targetPosition: string;
-  cognitiveBias: string;
-  summary: string;
-  gaps: GapItem[];
+export interface TargetPosition {
+  role: string;
+  match_score: number;
+  gap_description: string; // Contains SWOT sections delimited by 【...】
 }
 
-export interface AnalysisHistoryItem {
-  id: number;
-  date: string;
-  title: string;
-  summary: string;
-  content: {
-    strengths: string[];
-    improvements: string[];
-    recommendations: string[];
-  };
+export interface ActionPlan {
+  short_term: string;
+  mid_term: string;
+  long_term: string;
 }
 
+export interface GapAnalysis {
+  current_status: GapCurrentStatus;
+  target_position: TargetPosition;
+  action_plan: ActionPlan;
+}
+
+/* ── Supplementary ── */
 export interface LearningResource {
   title: string;
   description: string;
@@ -54,16 +48,57 @@ export interface SideProject {
   difficulty: number;
 }
 
-/** Payload sent to POST /analysis/generate */
+/* ── Report Metadata ── */
+export interface ReportMetadata {
+  user_id: string;
+  timestamp: string;
+}
+
+export interface PreliminarySummary {
+  core_insight: string;
+}
+
+/* ── Payload sent to POST /analysis/generate ── */
 export interface AnalysisRequest {
   user_id: string;
   resume_id: number;
 }
 
-/** Full result returned from the analysis API */
+/* ── Full result returned from the analysis API ── */
 export interface AnalysisResult {
-  radarTemplates: Record<string, RadarTemplate>;
-  gapAnalysis: GapAnalysisData;
+  report_metadata: ReportMetadata;
+  preliminary_summary: PreliminarySummary;
+  radar_chart: RadarChartData;
+  gap_analysis: GapAnalysis;
   learningResources: LearningResource[];
   sideProjects: SideProject[];
+}
+
+/* ── Legacy types kept for history feature ── */
+export interface AnalysisHistoryItem {
+  id: number;
+  date: string;
+  title: string;
+  summary: string;
+  content: {
+    strengths: string[];
+    improvements: string[];
+    recommendations: string[];
+  };
+}
+
+/** Parse SWOT sections from gap_description text */
+export function parseSWOT(text: string): { strengths: string; weaknesses: string; opportunities: string; threats: string; gap: string } {
+  const extract = (label: string) => {
+    const regex = new RegExp(`【${label}[^】]*】[：:]?\\s*(.+?)(?=【|$)`, 's');
+    const match = text.match(regex);
+    return match ? match[1].trim() : '';
+  };
+  return {
+    strengths: extract('優勢'),
+    weaknesses: extract('劣勢'),
+    opportunities: extract('機會'),
+    threats: extract('威脅'),
+    gap: extract('核心落差'),
+  };
 }
