@@ -242,7 +242,7 @@ const Skills = () => {
     return (
       <>
         <div className="min-h-screen bg-card">
-          <div className="container py-8">
+          <div className="container py-8 md:py-12">
             {/* Top bar */}
             <div className="flex items-center justify-between mb-8">
               <Button
@@ -314,7 +314,7 @@ const Skills = () => {
       <>
         
         <div className="min-h-screen bg-card">
-          <div className="container py-8">
+          <div className="container py-8 md:py-12">
             {/* Top bar */}
             <div className="flex items-center justify-between mb-8">
               <Button
@@ -383,7 +383,7 @@ const Skills = () => {
   if (phase === "idle") {
     return (
       <div className="min-h-screen">
-        <div className="container py-8">
+        <div className="container py-8 md:py-12">
           <div className="text-center mb-12">
             <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-6">
               <Radar className="h-8 w-8 text-primary" />
@@ -432,7 +432,7 @@ const Skills = () => {
   if (phase === "loading") {
     return (
       <div className="min-h-screen">
-        <div className="container py-8">
+        <div className="container py-8 md:py-12">
           <div className="text-center mb-12">
             <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-6">
               <Radar className="h-8 w-8 text-primary" />
@@ -487,7 +487,7 @@ const Skills = () => {
     <>
       <div className="min-h-screen">
         {/* Header */}
-        <div className="container py-8">
+        <div className="container py-8 md:py-12">
           <div className="text-center mb-12">
             <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-6">
               <Radar className="h-8 w-8 text-primary" />
@@ -510,7 +510,7 @@ const Skills = () => {
         </div>
 
         {/* Full-width main content */}
-        <div className="container py-8 space-y-16">
+        <div className="container py-8 md:py-12 space-y-16">
           {/* Section 1: Radar Chart */}
           <section id="radar" className="scroll-mt-32">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
