@@ -500,7 +500,7 @@ const Skills = () => {
             <Card className="transition-all duration-300 hover:shadow-medium">
               <CardContent className="pt-6">
                 <div className="flex flex-row items-center gap-4 md:gap-8">
-                  <div ref={radarChartRef} className="h-80 sm:h-96 flex-1 min-w-0">
+                  <div ref={radarChartRef} className="h-64 sm:h-80 flex-1 min-w-0">
                     <ResponsiveContainer width="100%" height="100%">
                       <RadarChart
                         data={(radar_chart?.dimensions ?? []).map((d, i) => ({
@@ -720,7 +720,7 @@ const Skills = () => {
             {/* 核心落差 — highlighted */}
             {swot.gap && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
-                <Card className="max-w-2xl border-2 border-primary/40 shadow-warm ring-1 ring-primary/20 bg-gradient-to-br from-[#fbf1e8] to-white">
+                <Card className="w-full border-2 border-primary/40 shadow-warm ring-1 ring-primary/20 bg-gradient-to-br from-[#fbf1e8] to-white">
                   <CardContent className="pt-8 pb-8">
                     <div className="flex items-start gap-3">
                       <div className="h-9 w-9 rounded-full bg-primary/15 flex items-center justify-center shrink-0 mt-0.5">
