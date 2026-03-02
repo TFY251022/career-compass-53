@@ -601,7 +601,7 @@ const Skills = () => {
                       </p>
                     </div>
                   </div>
-                  <p></p>
+                  <p className="text-sm text-muted-foreground></p>
                   <Progress value={gap_analysis?.target_position?.match_score ?? 0} className="h-3" />
                 </div>
               </CardContent>
