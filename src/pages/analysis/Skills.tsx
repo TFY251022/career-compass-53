@@ -479,8 +479,8 @@ const Skills = () => {
               <CardContent className="pt-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">分析職類</p>
-                    <p className="text-xl font-bold">{gap_analysis?.target_position?.role}</p>
+                    <p className="text-sm text-muted-foreground">領航員分析您適合的職類為</p>
+                    <p className="text-2xl font-bold text-[#675143]">{gap_analysis?.target_position?.role}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-muted-foreground">匹配度</p>
