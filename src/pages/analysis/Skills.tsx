@@ -581,7 +581,7 @@ const Skills = () => {
                       </div>
 
                       <h4 className="font-bold text-sm mb-1.5" style={{ color: letterColors[idx] }}>
-                        {letters[idx]} — {card.label}
+                        {card.label}
                       </h4>
                       <p className="text-sm leading-relaxed text-foreground/80">{card.text}</p>
                     </div>
