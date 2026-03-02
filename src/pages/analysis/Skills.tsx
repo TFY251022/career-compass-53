@@ -98,7 +98,8 @@ const Skills = () => {
   });
 
   // Derived
-  const { report_metadata, preliminary_summary, radar_chart, gap_analysis, learningResources, sideProjects } = analysisResult ?? {};
+  const { preliminary_summary, radar_chart, gap_analysis, learningResources, sideProjects } = analysisResult ?? {};
+  const targetRadar = analysisResult?.target_radar;
   const swot = useMemo(() => parseSWOT(gap_analysis?.target_position?.gap_description ?? ''), [gap_analysis?.target_position?.gap_description]);
   const mascotSrc = getMascotForRole(gap_analysis?.target_position?.role ?? '');
 
@@ -367,11 +368,6 @@ const Skills = () => {
           </div>
           <h1 className="text-3xl font-bold mb-4">職能圖譜</h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">深入分析您的技能優勢與發展潛力</p>
-          {/* Metadata */}
-          <div className="flex items-center justify-center gap-4 mt-3 text-xs text-muted-foreground">
-            <span>使用者 ID：{report_metadata?.user_id}</span>
-            <span>生成時間：{report_metadata?.timestamp ? new Date(report_metadata.timestamp).toLocaleString("zh-TW") : ''}</span>
-          </div>
         </div>
         <div className="flex justify-end gap-2">
           <Button variant="outline" className="gap-2" onClick={handleReAnalyse}>
@@ -393,13 +389,37 @@ const Skills = () => {
               </div>
               <h2 className="text-xl font-bold">核心洞察</h2>
             </div>
-            <Card className="shadow-warm">
-              <CardContent className="pt-6">
-                <div className="p-5 rounded-xl" style={{ backgroundColor: "#FFFBF5" }}>
-                  <p className="text-[#675143] leading-relaxed text-sm md:text-base">{preliminary_summary?.core_insight}</p>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* 產業洞察 */}
+              <Card className="shadow-warm">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-primary" />
+                    產業洞察
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="p-4 rounded-xl" style={{ backgroundColor: "#FFFBF5" }}>
+                    <p className="text-[#675143] leading-relaxed text-sm">{preliminary_summary?.industry_insight || preliminary_summary?.core_insight}</p>
+                  </div>
+                </CardContent>
+              </Card>
+              {/* 個人總結 */}
+              <Card className="shadow-warm border-primary/40 ring-1 ring-primary/20">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Star className="h-4 w-4 text-primary fill-primary" />
+                    個人總結
+                    <Badge variant="secondary" className="ml-auto text-[10px] uppercase tracking-wider">重點</Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="p-4 rounded-xl bg-gradient-to-br from-[#fbf1e8] to-[#FFFBF5] border border-primary/10">
+                    <p className="text-[#502D03] leading-relaxed text-sm font-medium">{preliminary_summary?.personal_summary || ''}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </motion.div>
         </section>
 
@@ -417,10 +437,15 @@ const Skills = () => {
                 <div className="flex flex-row items-center gap-4 md:gap-8">
                   <div ref={radarChartRef} className="h-64 sm:h-80 flex-1 min-w-0">
                     <ResponsiveContainer width="100%" height="100%">
-                      <RadarChart data={(radar_chart?.dimensions ?? []).map((d) => ({ axis: d.axis, score: d.score }))}>
+                      <RadarChart data={(radar_chart?.dimensions ?? []).map((d, i) => ({
+                        axis: d.axis,
+                        score: d.score,
+                        target: targetRadar?.dimensions?.[i]?.score ?? 0,
+                      }))}>
                         <PolarGrid stroke="#dabea8" />
                         <PolarAngleAxis dataKey="axis" tick={{ fill: "hsl(var(--foreground))", fontSize: 12 }} />
                         <PolarRadiusAxis angle={30} domain={[0, 5]} tickCount={6} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} />
+                        <RechartsRadar name="目標職類" dataKey="target" stroke="#c4742b" fill="#c4742b" fillOpacity={0.15} strokeWidth={2} strokeDasharray="6 3" />
                         <RechartsRadar name="您的職能" dataKey="score" stroke="#8d4903" fill="#8d4903" fillOpacity={0.45} strokeWidth={3} />
                       </RadarChart>
                     </ResponsiveContainer>
@@ -430,20 +455,42 @@ const Skills = () => {
                     <span className="text-xs sm:text-sm font-semibold text-muted-foreground text-center">{gap_analysis?.target_position?.role}</span>
                   </div>
                 </div>
+                {/* Legend */}
+                <div className="flex items-center justify-center gap-6 mt-4 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: "#8d4903", opacity: 0.7 }} />您的職能</span>
+                  <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-sm border-2 border-dashed" style={{ borderColor: "#c4742b" }} />目標職類</span>
+                </div>
               </CardContent>
             </Card>
           </motion.div>
         </section>
 
-        {/* Section 2: Gap Analysis */}
+        {/* Section 2: 領航員分析您適合的職類 (Target Position + SWOT merged) */}
         <section id="gap" className="scroll-mt-32">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-6">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Target className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-xl font-bold">落差分析</h2>
+              <h2 className="text-xl font-bold">領航員分析您適合的職類</h2>
             </div>
+
+            {/* Target Position + Match */}
+            <Card className="transition-all duration-300 hover:shadow-medium">
+              <CardContent className="pt-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">目標職位</p>
+                    <p className="text-lg font-semibold">{gap_analysis?.target_position?.role}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-muted-foreground">匹配度</p>
+                    <p className="text-3xl font-bold text-primary">{gap_analysis?.target_position?.match_score ?? 0}%</p>
+                  </div>
+                </div>
+                <Progress value={gap_analysis?.target_position?.match_score ?? 0} className="h-3" />
+              </CardContent>
+            </Card>
 
             {/* Current Status: Self vs Actual */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -477,23 +524,6 @@ const Skills = () => {
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Target Position + Match */}
-            <Card className="transition-all duration-300 hover:shadow-medium">
-              <CardContent className="pt-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">目標職位</p>
-                    <p className="text-lg font-semibold">{gap_analysis?.target_position?.role}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-muted-foreground">匹配度</p>
-                    <p className="text-3xl font-bold text-primary">{gap_analysis?.target_position?.match_score ?? 0}%</p>
-                  </div>
-                </div>
-                <Progress value={gap_analysis?.target_position?.match_score ?? 0} className="h-3" />
               </CardContent>
             </Card>
 

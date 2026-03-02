@@ -14,6 +14,10 @@ export const mockAnalysisResult: AnalysisResult = {
   preliminary_summary: {
     core_insight:
       '目前，前端開發領域持續受到關注，尤其是 JavaScript 框架如 React 和 Vue.js 的使用日益普及。使用者在前端開發方面具有豐富的經驗，特別是在使用 React 和 Vue.js 上，並且有實際的優化經驗，這是其在市場中的競爭優勢。',
+    industry_insight:
+      '目前，前端開發領域持續受到關注，尤其是 JavaScript 框架如 React 和 Vue.js 的使用日益普及。企業對具備 TypeScript、效能優化以及跨平台開發能力的工程師需求持續攀升，全端技能組合已成為市場趨勢。',
+    personal_summary:
+      '您在前端開發方面具有豐富的經驗，特別是在使用 React 和 Vue.js 上，並且有實際的效能優化經驗，這是您在市場中的核心競爭優勢。建議持續深化後端與雲端部署能力，以拓展職涯寬度。',
   },
   radar_chart: {
     dimensions: [
@@ -23,6 +27,16 @@ export const mockAnalysisResult: AnalysisResult = {
       { axis: 'AI 與數據', score: 0.5 },
       { axis: '工程品質', score: 3.0 },
       { axis: '軟實力', score: 3.0 },
+    ],
+  },
+  target_radar: {
+    dimensions: [
+      { axis: '前端開發', score: 4.5 },
+      { axis: '後端開發', score: 3.5 },
+      { axis: '運維部署', score: 3.0 },
+      { axis: 'AI 與數據', score: 2.0 },
+      { axis: '工程品質', score: 4.0 },
+      { axis: '軟實力', score: 3.5 },
     ],
   },
   gap_analysis: {
