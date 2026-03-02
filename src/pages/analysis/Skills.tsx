@@ -500,7 +500,7 @@ const Skills = () => {
             <Card className="transition-all duration-300 hover:shadow-medium">
               <CardContent className="pt-6">
                 <div className="flex flex-row items-center gap-4 md:gap-8">
-                  <div ref={radarChartRef} className="h-64 sm:h-80 flex-1 min-w-0">
+                  <div ref={radarChartRef} className="h-80 sm:h-96 flex-1 min-w-0">
                     <ResponsiveContainer width="100%" height="100%">
                       <RadarChart
                         data={(radar_chart?.dimensions ?? []).map((d, i) => ({
