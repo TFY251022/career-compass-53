@@ -389,9 +389,9 @@ const Skills = () => {
               </div>
               <h2 className="text-xl font-bold">核心洞察</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               {/* 產業洞察 */}
-              <Card className="shadow-warm">
+              <Card className="shadow-warm md:col-span-2">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base flex items-center gap-2">
                     <TrendingUp className="h-4 w-4 text-primary" />
@@ -404,18 +404,18 @@ const Skills = () => {
                   </div>
                 </CardContent>
               </Card>
-              {/* 個人總結 */}
-              <Card className="shadow-warm border-primary/40 ring-1 ring-primary/20">
+              {/* 個人總結 — 重點放大 */}
+              <Card className="shadow-warm border-primary/40 ring-1 ring-primary/20 md:col-span-3">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Star className="h-4 w-4 text-primary fill-primary" />
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Star className="h-5 w-5 text-primary fill-primary" />
                     個人總結
                     <Badge variant="secondary" className="ml-auto text-[10px] uppercase tracking-wider">重點</Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="p-4 rounded-xl bg-gradient-to-br from-[#fbf1e8] to-[#FFFBF5] border border-primary/10">
-                    <p className="text-[#502D03] leading-relaxed text-sm font-medium">{preliminary_summary?.personal_summary || ''}</p>
+                  <div className="p-5 rounded-xl bg-gradient-to-br from-[#fbf1e8] to-[#FFFBF5] border border-primary/10">
+                    <p className="text-[#502D03] leading-relaxed text-base font-semibold">{preliminary_summary?.personal_summary || ''}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -450,8 +450,8 @@ const Skills = () => {
                       </RadarChart>
                     </ResponsiveContainer>
                   </div>
-                  <div className="shrink-0 flex flex-col items-center gap-2 w-20 sm:w-32 md:w-48">
-                    <img src={mascotSrc} alt={gap_analysis?.target_position?.role ?? ''} className="w-20 h-20 sm:w-32 sm:h-32 md:w-48 md:h-48 object-contain" />
+                  <div className="shrink-0 flex flex-col items-center gap-2 w-24 sm:w-40 md:w-56">
+                    <img src={mascotSrc} alt={gap_analysis?.target_position?.role ?? ''} className="w-24 h-24 sm:w-40 sm:h-40 md:w-56 md:h-56 object-contain" />
                     <span className="text-xs sm:text-sm font-semibold text-muted-foreground text-center">{gap_analysis?.target_position?.role}</span>
                   </div>
                 </div>
@@ -472,7 +472,7 @@ const Skills = () => {
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Target className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-xl font-bold">分析職類</h2>
+              <h2 className="text-xl font-bold">領航員分析您適合的職類</h2>
             </div>
 
             {/* Target Position + Match */}
@@ -480,8 +480,8 @@ const Skills = () => {
               <CardContent className="pt-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">目標職位</p>
-                    <p className="font-semibold text-4xl text-primary">{gap_analysis?.target_position?.role}</p>
+                    <p className="text-sm text-muted-foreground">領航員分析您適合的職類</p>
+                    <p className="text-xl font-bold">{gap_analysis?.target_position?.role}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-muted-foreground">匹配度</p>
@@ -492,19 +492,21 @@ const Skills = () => {
               </CardContent>
             </Card>
 
-            {/* Current Status: Self vs Actual */}
+            {/* Current Status: Self vs Actual — 同風格背景 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="transition-all duration-300 hover:shadow-medium hover:-translate-y-1">
+              <Card className="transition-all duration-300 hover:shadow-medium hover:-translate-y-1 border-primary/30 shadow-warm">
                 <CardContent className="pt-6">
-                  <p className="text-sm mb-2 text-primary-foreground">自評等級</p>
-                  <p className="text-2xl font-bold text-foreground">{gap_analysis?.current_status?.self_assessment}</p>
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: "#fbf1e8" }}>
+                    <p className="text-sm text-[#675143] mb-2">自評等級</p>
+                    <p className="text-2xl font-bold text-primary">{gap_analysis?.current_status?.self_assessment}</p>
+                  </div>
                 </CardContent>
               </Card>
               <Card className="transition-all duration-300 hover:shadow-medium hover:-translate-y-1 border-primary/30 shadow-warm">
                 <CardContent className="pt-6">
                   <div className="p-4 rounded-lg" style={{ backgroundColor: "#fbf1e8" }}>
                     <p className="text-sm text-[#675143] mb-2">實際等級</p>
-                    <p className="text-2xl font-bold text-primary-foreground">{gap_analysis?.current_status?.actual_level}</p>
+                    <p className="text-2xl font-bold text-primary">{gap_analysis?.current_status?.actual_level}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -543,8 +545,8 @@ const Skills = () => {
             <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-5">
               {/* Centre badge — visible on sm+ */}
               <div className="hidden sm:flex absolute inset-0 items-center justify-center z-10 pointer-events-none">
-                <div className="h-20 w-20 rounded-full bg-white shadow-lg flex items-center justify-center border-2 border-primary/20">
-                  <span className="text-xs font-bold text-primary tracking-wide leading-tight text-center">SWOT<br />分析</span>
+                <div className="h-28 w-28 rounded-full bg-white shadow-xl flex items-center justify-center border-2 border-primary/30">
+                  <span className="text-sm font-bold text-primary tracking-wide leading-tight text-center">SWOT<br />分析</span>
                 </div>
               </div>
 
