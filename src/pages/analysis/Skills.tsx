@@ -44,7 +44,6 @@ import { generateAnalysis } from "@/services/analysisService";
 import type { AnalysisResult } from "@/types/analysis";
 import { parseSWOT } from "@/types/analysis";
 import { mockAnalysisResult } from "@/mocks/analysis";
-import SwotDiagram from "@/components/analysis/SwotDiagram";
 
 const ANALYSIS_DONE_KEY = "skills-analysis-done";
 const ANALYSIS_RESULT_KEY = "skills-analysis-result";
@@ -344,7 +343,12 @@ const Skills = () => {
   }
 
   // ── SWOT card helper ──
-  // swotCards removed — now using SwotDiagram component
+  const swotCards = [
+    { label: "優勢", icon: Shield, text: swot.strengths, color: "text-emerald-700", bg: "bg-emerald-50" },
+    { label: "劣勢", icon: AlertTriangle, text: swot.weaknesses, color: "text-amber-700", bg: "bg-amber-50" },
+    { label: "機會", icon: Zap, text: swot.opportunities, color: "text-sky-700", bg: "bg-sky-50" },
+    { label: "威脅", icon: ShieldAlert, text: swot.threats, color: "text-rose-700", bg: "bg-rose-50" },
+  ];
 
   // ── Timeline items ──
   const timelineItems = [
@@ -535,7 +539,56 @@ const Skills = () => {
               <h2 className="text-xl font-bold">SWOT 分析</h2>
             </div>
 
-            <SwotDiagram data={swot} />
+            {/* SWOT 2×2 grid inspired by template */}
+            <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {/* Centre badge — visible on sm+ */}
+              <div className="hidden sm:flex absolute inset-0 items-center justify-center z-10 pointer-events-none">
+                <div className="h-20 w-20 rounded-full bg-white shadow-lg flex items-center justify-center border-2 border-primary/20">
+                  <span className="text-xs font-bold text-primary tracking-wide leading-tight text-center">SWOT<br/>分析</span>
+                </div>
+              </div>
+
+              {swotCards.map((card, idx) => {
+                const letters = ["S", "W", "O", "T"];
+                const borderColors = ["#059669", "#d97706", "#0284c7", "#e11d48"];
+                const bgColors = ["#ecfdf5", "#fffbeb", "#f0f9ff", "#fff1f2"];
+                const letterColors = ["#065f46", "#92400e", "#075985", "#9f1239"];
+                return (
+                  <motion.div
+                    key={card.label}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.18 + idx * 0.08 }}
+                  >
+                    <div
+                      className="relative rounded-2xl border-2 p-5 h-full transition-all duration-300 hover:shadow-medium hover:-translate-y-1"
+                      style={{ borderColor: borderColors[idx], backgroundColor: bgColors[idx] }}
+                    >
+                      {/* Large background letter */}
+                      <span
+                        className="absolute top-3 right-4 text-6xl font-black opacity-10 select-none leading-none pointer-events-none"
+                        style={{ color: borderColors[idx] }}
+                      >
+                        {letters[idx]}
+                      </span>
+
+                      {/* Icon circle */}
+                      <div
+                        className="h-10 w-10 rounded-full flex items-center justify-center mb-3"
+                        style={{ backgroundColor: `${borderColors[idx]}20` }}
+                      >
+                        <card.icon className="h-5 w-5" style={{ color: borderColors[idx] }} />
+                      </div>
+
+                      <h4 className="font-bold text-sm mb-1.5" style={{ color: letterColors[idx] }}>
+                        {letters[idx]} — {card.label}
+                      </h4>
+                      <p className="text-sm leading-relaxed text-foreground/80">{card.text}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
 
             {/* 核心落差 — highlighted */}
             {swot.gap && (
