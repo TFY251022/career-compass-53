@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Upload, FileText, User, Camera, X, Briefcase, GraduationCap, Award, Languages, Phone, Mail } from 'lucide-react';
+import { Upload, FileText, User, Camera, X, Briefcase, GraduationCap, Award, Languages, Phone, Mail, Save, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -104,7 +104,7 @@ const UploadResume = () => {
     await new Promise(resolve => setTimeout(resolve, 500));
     setIsAnalyzing(false);
     setShowResult(true);
-    setIsResumeUploaded(true);
+    // Don't set isResumeUploaded here — only after explicit save
   };
 
   const handlePdfUpload = async (file: File) => {
@@ -323,7 +323,6 @@ const UploadResume = () => {
               <ResultView 
                 data={resultData} 
                 onReset={handleReset}
-                onNavigate={() => navigate('/member/survey/personality')}
                 onSave={(updated) => {
                   setResultData(updated);
                   setIsResumeUploaded(true);
@@ -804,7 +803,6 @@ const ResumeForm = ({
 interface ResultViewProps {
   data: ResumeData;
   onReset: () => void;
-  onNavigate: () => void;
   onSave: (updated: ResumeData) => void;
 }
 
@@ -863,10 +861,13 @@ const EditableField = ({
   </div>
 );
 
-const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
+const ResultView = ({ data, onReset, onSave }: ResultViewProps) => {
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const [editData, setEditData] = useState<ResumeData>({ ...data });
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+  const [showSaveSuccess, setShowSaveSuccess] = useState(false);
   const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
   const [showValidationAlert, setShowValidationAlert] = useState(false);
 
@@ -925,6 +926,14 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
     setIsEditing(false);
     setShowSaveConfirm(false);
     setInvalidFields(new Set());
+    setIsSaved(true);
+    setShowSaveSuccess(true);
+  };
+
+  /* Direct save (non-editing mode) */
+  const handleDirectSave = () => {
+    setShowSaveConfirm(true);
+    setEditData({ ...data });
   };
 
   const languageOptions = ['中文', '英文', '台語', '日文', '韓文', '法文', '德文', '西班牙文', '其他'];
@@ -966,18 +975,20 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
             <CardTitle className="text-xl">履歷摘要報告</CardTitle>
             <CardDescription>以下是您的履歷資訊摘要</CardDescription>
           </div>
-          {/* Edit / Cancel Toggle */}
-          <div className="absolute right-6 top-6">
-            {isEditing ? (
-              <Button variant="outline" size="sm" onClick={handleCancelEdit} className="text-destructive border-destructive/30 hover:bg-destructive/10">
-                <X className="h-4 w-4 mr-1" /> 取消編輯
-              </Button>
-            ) : (
-              <Button variant="outline" size="sm" onClick={handleEnterEdit} className="border-primary/30 text-primary hover:bg-primary/10">
-                <FileText className="h-4 w-4 mr-1" /> 編輯資訊
-              </Button>
-            )}
-          </div>
+          {/* Edit / Cancel Toggle — hidden after saved */}
+          {!isSaved && (
+            <div className="absolute right-6 top-6">
+              {isEditing ? (
+                <Button variant="outline" size="sm" onClick={handleCancelEdit} className="text-destructive border-destructive/30 hover:bg-destructive/10">
+                  <X className="h-4 w-4 mr-1" /> 取消編輯
+                </Button>
+              ) : (
+                <Button variant="outline" size="sm" onClick={handleEnterEdit} className="border-primary/30 text-primary hover:bg-primary/10">
+                  <FileText className="h-4 w-4 mr-1" /> 編輯資訊
+                </Button>
+              )}
+            </div>
+          )}
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Avatar and Basic Info */}
@@ -1152,6 +1163,34 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
         </CardContent>
       </Card>
 
+      {/* Reminder banner — shown before save */}
+      {!isSaved && !isEditing && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3 p-4 rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-700"
+        >
+          <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0" />
+          <p className="text-sm text-amber-800 dark:text-amber-200">
+            請確認資料無誤後按下「<strong>儲存至資料庫</strong>」，才算完成履歷上傳流程。
+          </p>
+        </motion.div>
+      )}
+
+      {/* Saved success banner */}
+      {isSaved && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3 p-4 rounded-lg border border-green-300 bg-green-50 dark:bg-green-900/20 dark:border-green-700"
+        >
+          <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 shrink-0" />
+          <p className="text-sm text-green-800 dark:text-green-200">
+            履歷已成功儲存！您可以繼續填寫職涯問卷以獲得更精準的推薦。
+          </p>
+        </motion.div>
+      )}
+
       {/* Footer Actions */}
       {isEditing ? (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
@@ -1159,13 +1198,23 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
             確認並儲存
           </Button>
         </motion.div>
+      ) : isSaved ? (
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button variant="outline" onClick={onReset} className="flex-1">
+            重新上傳 / 填寫
+          </Button>
+          <Button onClick={() => navigate('/member/survey/personality')} className="flex-1 gradient-primary">
+            填寫職涯問卷
+          </Button>
+        </div>
       ) : (
         <div className="flex flex-col sm:flex-row gap-3">
           <Button variant="outline" onClick={onReset} className="flex-1">
             重新上傳 / 填寫
           </Button>
-          <Button onClick={onNavigate} className="flex-1 gradient-primary">
-            填寫職涯問卷
+          <Button onClick={handleDirectSave} className="flex-1 gradient-primary">
+            <Save className="h-4 w-4 mr-2" />
+            儲存至資料庫
           </Button>
         </div>
       )}
@@ -1184,11 +1233,20 @@ const ResultView = ({ data, onReset, onNavigate, onSave }: ResultViewProps) => {
         onClose={() => setShowSaveConfirm(false)}
         type="info"
         title="確認儲存資訊？"
-        message="是否確認儲存目前的履歷資訊？這將作為後續職缺推薦的依據。"
+        message="是否確認儲存目前的履歷資訊？儲存後將無法再編輯，資料將作為後續職缺推薦的依據。"
         showCancel
         confirmLabel="確認儲存"
         cancelLabel="取消"
         onConfirm={handleConfirmSave}
+      />
+
+      <AlertModal
+        open={showSaveSuccess}
+        onClose={() => setShowSaveSuccess(false)}
+        type="success"
+        title="儲存成功"
+        message="您的履歷已成功儲存至資料庫！"
+        confirmLabel="了解"
       />
     </motion.div>
   );
