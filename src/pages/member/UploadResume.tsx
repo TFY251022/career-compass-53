@@ -867,7 +867,7 @@ const ResultView = ({ data, onReset, onSave }: ResultViewProps) => {
   const [isSaved, setIsSaved] = useState(false);
   const [editData, setEditData] = useState<ResumeData>({ ...data });
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
-  const [showSaveSuccess, setShowSaveSuccess] = useState(false);
+  const [, ] = useState(false); // placeholder to preserve hook order
   const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
   const [showValidationAlert, setShowValidationAlert] = useState(false);
 
@@ -918,22 +918,28 @@ const ResultView = ({ data, onReset, onSave }: ResultViewProps) => {
       setShowValidationAlert(true);
       return;
     }
-    setShowSaveConfirm(true);
+    handleConfirmEditSave();
   };
 
-  const handleConfirmSave = () => {
+  /* Edit-mode save: only update page display, NOT database */
+  const handleConfirmEditSave = () => {
+    onSave(editData); // updates parent resultData for display
+    setIsEditing(false);
+    setInvalidFields(new Set());
+  };
+
+  /* Database save (the real save) */
+  const handleDirectSave = () => {
+    setShowSaveConfirm(true);
+    setEditData({ ...data });
+  };
+
+  const handleConfirmDbSave = () => {
     onSave(editData);
     setIsEditing(false);
     setShowSaveConfirm(false);
     setInvalidFields(new Set());
     setIsSaved(true);
-    setShowSaveSuccess(true);
-  };
-
-  /* Direct save (non-editing mode) */
-  const handleDirectSave = () => {
-    setShowSaveConfirm(true);
-    setEditData({ ...data });
   };
 
   const languageOptions = ['中文', '英文', '台語', '日文', '韓文', '法文', '德文', '西班牙文', '其他'];
@@ -1237,16 +1243,7 @@ const ResultView = ({ data, onReset, onSave }: ResultViewProps) => {
         showCancel
         confirmLabel="確認儲存"
         cancelLabel="取消"
-        onConfirm={handleConfirmSave}
-      />
-
-      <AlertModal
-        open={showSaveSuccess}
-        onClose={() => setShowSaveSuccess(false)}
-        type="success"
-        title="儲存成功"
-        message="您的履歷已成功儲存至資料庫！"
-        confirmLabel="了解"
+        onConfirm={handleConfirmDbSave}
       />
     </motion.div>
   );
