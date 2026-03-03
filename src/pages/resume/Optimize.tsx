@@ -151,6 +151,8 @@ const Optimize = () => {
   const [showSuggestionsDrawer, setShowSuggestionsDrawer] = useState(false);
   const [editPhase, setEditPhase] = useState<'view' | 'edit'>('view');
   const [isEditSaved, setIsEditSaved] = useState(false);
+  const [isTemplateSaved, setIsTemplateSaved] = useState(false);
+  const [showTemplateSaveConfirm, setShowTemplateSaveConfirm] = useState(false);
 
   // Check access conditions
   useEffect(() => {
@@ -281,8 +283,14 @@ const Optimize = () => {
     setEditedOriginalData(mockOriginalResumeData);
     setEditPhase('view');
     setIsEditSaved(false);
+    setIsTemplateSaved(false);
     setShowSuggestionsDrawer(false);
     clearOptimizeState();
+  };
+
+  const confirmTemplateSave = () => {
+    setIsTemplateSaved(true);
+    setShowTemplateSaveConfirm(false);
   };
 
   const handleBackToTemplates = () => {
@@ -320,6 +328,19 @@ const Optimize = () => {
           cancelLabel="取消"
           showCancel
           onConfirm={confirmSave}
+        />
+
+        {/* Template Save Confirmation */}
+        <AlertModal
+          open={showTemplateSaveConfirm}
+          onClose={() => setShowTemplateSaveConfirm(false)}
+          type="warning"
+          title="確認儲存履歷"
+          message="儲存後將無法再更改模板與配色，確定要儲存嗎？"
+          confirmLabel="確認儲存"
+          cancelLabel="取消"
+          showCancel
+          onConfirm={confirmTemplateSave}
         />
 
         {/* Header */}
@@ -428,6 +449,8 @@ const Optimize = () => {
                   onBackToTemplates={handleBackToTemplates}
                   onReset={handleReset}
                   onThemeChange={setSelectedThemeIndex}
+                  isTemplateSaved={isTemplateSaved}
+                  onSaveTemplate={() => setShowTemplateSaveConfirm(true)}
                 />
               )}
             </AnimatePresence>
@@ -909,6 +932,8 @@ const ResultPhase = ({
   onBackToTemplates,
   onReset,
   onThemeChange,
+  isTemplateSaved,
+  onSaveTemplate,
 }: {
   resumeData: ResumeData;
   selectedTemplate: string;
@@ -919,6 +944,8 @@ const ResultPhase = ({
   onBackToTemplates: () => void;
   onReset: () => void;
   onThemeChange: (index: number) => void;
+  isTemplateSaved: boolean;
+  onSaveTemplate: () => void;
 }) => {
   const template = templates.find(t => t.id === selectedTemplate);
   const themes = TEMPLATE_THEMES[selectedTemplate] || TEMPLATE_THEMES.corporate;
@@ -932,6 +959,13 @@ const ResultPhase = ({
       exit={{ opacity: 0, y: -20 }}
       className="space-y-6"
     >
+      {isTemplateSaved && (
+        <div className="flex items-center gap-3 p-4 rounded-lg border border-green-500/30 bg-green-500/5">
+          <Check className="h-5 w-5 text-green-600 shrink-0" />
+          <p className="text-sm text-green-700 dark:text-green-400">履歷已儲存，模板與配色不可再更改</p>
+        </div>
+      )}
+
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-3">
           <div
@@ -946,14 +980,16 @@ const ResultPhase = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">配色：</span>
-          <ThemeSwatchSelector
-            themes={themes}
-            selectedIndex={selectedThemeIndex}
-            onChange={onThemeChange}
-          />
-        </div>
+        {!isTemplateSaved && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">配色：</span>
+            <ThemeSwatchSelector
+              themes={themes}
+              selectedIndex={selectedThemeIndex}
+              onChange={onThemeChange}
+            />
+          </div>
+        )}
       </div>
 
       <Card>
@@ -973,12 +1009,23 @@ const ResultPhase = ({
       </Card>
 
       <div className="flex flex-wrap gap-4">
-        <Button variant="outline" className="gap-2" onClick={onBackToTemplates}>
-          <Palette className="h-4 w-4" />重新選擇樣板
-        </Button>
+        {!isTemplateSaved && (
+          <Button variant="outline" className="gap-2" onClick={onBackToTemplates}>
+            <Palette className="h-4 w-4" />重新選擇樣板
+          </Button>
+        )}
         <Button variant="outline" className="gap-2" onClick={onReset}>
           <RotateCcw className="h-4 w-4" />重新填寫
         </Button>
+        {!isTemplateSaved && (
+          <Button
+            className="gap-2"
+            style={{ backgroundColor: theme.main, color: 'white' }}
+            onClick={onSaveTemplate}
+          >
+            <Save className="h-4 w-4" />儲存履歷
+          </Button>
+        )}
         <Button
           className="flex-1 gap-2 text-white"
           style={{ backgroundColor: theme.main }}
