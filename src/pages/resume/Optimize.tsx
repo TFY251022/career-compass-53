@@ -150,6 +150,7 @@ const Optimize = () => {
   const resumeRef = useRef<HTMLDivElement>(null);
   const [showSuggestionsDrawer, setShowSuggestionsDrawer] = useState(false);
   const [editPhase, setEditPhase] = useState<'view' | 'edit'>('view');
+  const [isEditSaved, setIsEditSaved] = useState(false);
 
   // Check access conditions
   useEffect(() => {
@@ -245,6 +246,7 @@ const Optimize = () => {
   const confirmSave = () => {
     setOriginalData(editedOriginalData);
     setEditPhase('view');
+    setIsEditSaved(true);
     setShowSaveConfirm(false);
   };
 
@@ -278,6 +280,7 @@ const Optimize = () => {
     setSelectedThemeIndex(0);
     setEditedOriginalData(mockOriginalResumeData);
     setEditPhase('view');
+    setIsEditSaved(false);
     setShowSuggestionsDrawer(false);
     clearOptimizeState();
   };
@@ -310,9 +313,9 @@ const Optimize = () => {
         <AlertModal
           open={showSaveConfirm}
           onClose={() => setShowSaveConfirm(false)}
-          type="info"
+          type="warning"
           title="確認儲存變更"
-          message="確定要儲存您編輯的履歷內容嗎？"
+          message="儲存後將無法再次編輯履歷內容，確定要儲存嗎？"
           confirmLabel="確認儲存"
           cancelLabel="取消"
           showCancel
@@ -378,6 +381,7 @@ const Optimize = () => {
                       onGenerate={() => setPhase('templates')}
                       onEdit={handleEnterEditMode}
                       onBack={handleSmartBack}
+                      isEditSaved={isEditSaved}
                     />
                   ) : (
                     <ResumeEditMode
@@ -571,12 +575,14 @@ const SuggestionsPhase = ({
   onGenerate,
   onEdit,
   onBack,
+  isEditSaved,
 }: {
   suggestions: Suggestion[];
   onDownload: () => void;
   onGenerate: () => void;
   onEdit: () => void;
   onBack: () => void;
+  isEditSaved: boolean;
 }) => (
   <motion.div
     key="suggestions"
@@ -590,6 +596,13 @@ const SuggestionsPhase = ({
       返回上一步
     </Button>
 
+    {isEditSaved && (
+      <div className="flex items-center gap-3 p-4 rounded-lg border border-green-500/30 bg-green-500/5">
+        <Check className="h-5 w-5 text-green-600 shrink-0" />
+        <p className="text-sm text-green-700 dark:text-green-400">履歷變更已儲存，內容不可再編輯</p>
+      </div>
+    )}
+
     <Card>
       <CardHeader className="flex flex-row items-start justify-between">
         <div>
@@ -599,10 +612,12 @@ const SuggestionsPhase = ({
           </CardTitle>
           <CardDescription>AI 已分析您的履歷，以下是專業優化建議</CardDescription>
         </div>
-        <Button variant="outline" className="gap-2 shrink-0" onClick={onEdit}>
-          <Edit3 className="h-4 w-4" />
-          編輯履歷
-        </Button>
+        {!isEditSaved && (
+          <Button variant="outline" className="gap-2 shrink-0" onClick={onEdit}>
+            <Edit3 className="h-4 w-4" />
+            編輯履歷
+          </Button>
+        )}
       </CardHeader>
       <CardContent className="space-y-6">
         {suggestions.map((s, i) => (
