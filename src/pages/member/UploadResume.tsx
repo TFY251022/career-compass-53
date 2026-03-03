@@ -866,6 +866,7 @@ const ResultView = ({ data, onReset, onSave }: ResultViewProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [editData, setEditData] = useState<ResumeData>({ ...data });
+  const [resumeTitle, setResumeTitle] = useState('');
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
   const [, ] = useState(false); // placeholder to preserve hook order
   const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
@@ -930,6 +931,12 @@ const ResultView = ({ data, onReset, onSave }: ResultViewProps) => {
 
   /* Database save (the real save) */
   const handleDirectSave = () => {
+    // Validate resume title
+    if (!resumeTitle.trim()) {
+      setInvalidFields(new Set(['resumeTitle']));
+      setShowValidationAlert(true);
+      return;
+    }
     setShowSaveConfirm(true);
     setEditData({ ...data });
   };
@@ -981,6 +988,35 @@ const ResultView = ({ data, onReset, onSave }: ResultViewProps) => {
             <CardTitle className="text-xl">履歷摘要報告</CardTitle>
             <CardDescription>以下是您的履歷資訊摘要</CardDescription>
           </div>
+
+          {/* Resume Title — required field */}
+          <div className={`mt-4 max-w-md mx-auto space-y-1.5 p-3 rounded-lg border transition-all ${
+            invalidFields.has('resumeTitle') ? 'border-destructive shadow-[0_0_8px_hsl(var(--destructive)/0.25)]' : 'border-transparent'
+          }`}>
+            <Label htmlFor="resumeTitle" className="text-sm font-medium">
+              <span className="text-destructive">*</span> 履歷名稱
+            </Label>
+            {isSaved ? (
+              <p className="text-sm bg-background p-3 rounded-lg border">{resumeTitle}</p>
+            ) : (
+              <Input
+                id="resumeTitle"
+                placeholder="例如：2024 前端工程師履歷"
+                value={resumeTitle}
+                onChange={(e) => {
+                  setResumeTitle(e.target.value);
+                  setInvalidFields(prev => {
+                    if (!prev.has('resumeTitle')) return prev;
+                    const next = new Set(prev);
+                    next.delete('resumeTitle');
+                    return next;
+                  });
+                }}
+                className="text-sm"
+              />
+            )}
+          </div>
+
           {/* Edit / Cancel Toggle — hidden after saved */}
           {!isSaved && (
             <div className="absolute right-6 top-6">
