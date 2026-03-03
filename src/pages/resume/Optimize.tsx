@@ -124,7 +124,13 @@ const clearOptimizeState = () => {
 const Optimize = () => {
   const navigate = useNavigate();
   const { isLoggedIn, isResumeUploaded, isPersonalityQuizDone } = useAppState();
-  const { resumes, selectedResumeId, setSelectedResumeId } = useResumes();
+  const { resumes } = useResumes();
+
+  // Auto-select the latest resume
+  const latestResume = useMemo(() => {
+    if (resumes.length === 0) return null;
+    return [...resumes].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
+  }, [resumes]);
 
   // Restore persisted state if available
   const persisted = useMemo(() => loadOptimizeState(), []);
@@ -346,10 +352,8 @@ const Optimize = () => {
                 <InitialPhase
                   originalData={originalData}
                   onStartOptimize={handleStartOptimize}
-                  resumes={resumes}
-                  selectedResumeId={selectedResumeId}
-                  onResumeChange={setSelectedResumeId}
-                  formatDate={formatDate}
+                  latestResumeName={latestResume?.name ?? ''}
+                  latestResumeDate={latestResume ? formatDate(latestResume.updatedAt) : ''}
                 />
               )}
 
@@ -465,17 +469,13 @@ const ThemeSwatchSelector = ({
 const InitialPhase = ({
   originalData,
   onStartOptimize,
-  resumes,
-  selectedResumeId,
-  onResumeChange,
-  formatDate,
+  latestResumeName,
+  latestResumeDate,
 }: {
   originalData: OriginalResumeData;
   onStartOptimize: () => void;
-  resumes: { id: number; name: string; updatedAt: string; content: string }[];
-  selectedResumeId: number | null;
-  onResumeChange: (id: number | null) => void;
-  formatDate: (d: string) => string;
+  latestResumeName: string;
+  latestResumeDate: string;
 }) => (
   <motion.div
     key="initial"
@@ -484,39 +484,16 @@ const InitialPhase = ({
     exit={{ opacity: 0, y: -20 }}
     className="space-y-6"
   >
-    {/* Resume Version Selector */}
-    <Card className="border-primary/30 shadow-[0_0_12px_rgba(141,73,3,0.1)]">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
-          <FileText className="h-5 w-5 text-primary" />
-          選擇履歷版本
-        </CardTitle>
-        <CardDescription className="text-xs">
-          請選擇要優化的履歷版本，系統將根據該版本進行 AI 分析
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Select
-          value={selectedResumeId?.toString() ?? ''}
-          onValueChange={(val) => onResumeChange(parseInt(val, 10))}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="請選擇履歷" />
-          </SelectTrigger>
-          <SelectContent>
-            {resumes.map((r) => (
-              <SelectItem key={r.id} value={r.id.toString()}>
-                <span className="flex items-center gap-2">
-                  <FileText className="h-3.5 w-3.5 text-primary shrink-0" />
-                  <span className="truncate">{r.name}</span>
-                  <span className="text-muted-foreground text-xs shrink-0">_{formatDate(r.updatedAt)}</span>
-                </span>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </CardContent>
-    </Card>
+    {/* Latest Resume Info Banner */}
+    {latestResumeName && (
+      <div className="flex items-center gap-3 p-4 rounded-lg border border-primary/30 bg-primary/5">
+        <FileText className="h-5 w-5 text-primary shrink-0" />
+        <p className="text-sm">
+          將使用您最新上傳的履歷 <span className="font-semibold text-foreground">「{latestResumeName}」</span>
+          <span className="text-muted-foreground ml-1">（更新於 {latestResumeDate}）</span> 進行優化
+        </p>
+      </div>
+    )}
 
     {/* Original Resume Data Display */}
     <Card>
@@ -557,7 +534,7 @@ const InitialPhase = ({
     </Card>
 
     <div className="flex justify-center">
-      <Button size="lg" className="gradient-primary gap-2" onClick={onStartOptimize} disabled={!selectedResumeId}>
+      <Button size="lg" className="gradient-primary gap-2" onClick={onStartOptimize}>
         <Sparkles className="h-5 w-5" />
         開始優化
       </Button>
