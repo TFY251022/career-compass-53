@@ -822,6 +822,7 @@ const EditableField = ({
 
 const ResultView = ({ data, onReset, onSave }: ResultViewProps) => {
   const navigate = useNavigate();
+  const { isPersonalityTestDone, isPersonalityQuizDone } = useAppState();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [editData, setEditData] = useState<ResumeData>({ ...data });
@@ -1187,7 +1188,9 @@ const ResultView = ({ data, onReset, onSave }: ResultViewProps) => {
         >
           <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 shrink-0" />
           <p className="text-sm text-green-800 dark:text-green-200">
-            履歷已成功儲存！您可以繼續填寫職涯問卷以獲得更精準的推薦。
+            履歷已成功儲存！{!isPersonalityTestDone || !isPersonalityQuizDone
+              ? '您可以繼續填寫問卷以獲得更精準的推薦。'
+              : '您可以開始進行履歷優化。'}
           </p>
         </motion.div>
       )}
@@ -1204,9 +1207,19 @@ const ResultView = ({ data, onReset, onSave }: ResultViewProps) => {
           <Button variant="outline" onClick={onReset} className="flex-1">
             重新上傳 / 填寫
           </Button>
-          <Button onClick={() => navigate('/member/survey/personality')} className="flex-1 gradient-primary">
-            填寫職涯問卷
-          </Button>
+          {!isPersonalityTestDone ? (
+            <Button onClick={() => navigate('/member/survey/personality-test')} className="flex-1 gradient-primary">
+              填寫人格特質問卷
+            </Button>
+          ) : !isPersonalityQuizDone ? (
+            <Button onClick={() => navigate('/member/survey/personality')} className="flex-1 gradient-primary">
+              填寫職涯問卷
+            </Button>
+          ) : (
+            <Button onClick={() => navigate('/resume/optimize')} className="flex-1 gradient-primary">
+              開始履歷優化
+            </Button>
+          )}
         </div>
       ) : (
         <div className="flex flex-col sm:flex-row gap-3">
