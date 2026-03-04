@@ -27,6 +27,7 @@ const DIMENSION_FULL_LABELS: Record<string, string> = {
 
 const PersonalityTestResult = ({ result, onReset }: Props) => {
   const navigate = useNavigate();
+  const { isPersonalityQuizDone, isResumeUploaded } = useAppState();
   const { scaledScores, archetypes } = result;
   const primaryArchetype = archetypes[0];
   const secondaryArchetypes = archetypes.slice(1);
