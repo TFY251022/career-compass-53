@@ -217,14 +217,34 @@ const PersonalityTestResult = ({ result, onReset }: Props) => {
 
       {/* Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Button
-          onClick={() => navigate('/analysis/skills')}
-          className="h-12 text-white transition-colors duration-500"
-          style={{ backgroundColor: accentColor }}
-        >
-          <BarChart3 className="h-4 w-4 mr-2" />
-          查看職能圖譜
-        </Button>
+        {!isPersonalityQuizDone ? (
+          <Button
+            onClick={() => navigate('/member/survey/personality')}
+            className="h-12 text-white transition-colors duration-500"
+            style={{ backgroundColor: accentColor }}
+          >
+            <ClipboardList className="h-4 w-4 mr-2" />
+            填寫職涯問卷
+          </Button>
+        ) : !isResumeUploaded ? (
+          <Button
+            onClick={() => navigate('/member/upload-resume')}
+            className="h-12 text-white transition-colors duration-500"
+            style={{ backgroundColor: accentColor }}
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            前往上傳履歷
+          </Button>
+        ) : (
+          <Button
+            onClick={() => navigate('/analysis/skills')}
+            className="h-12 text-white transition-colors duration-500"
+            style={{ backgroundColor: accentColor }}
+          >
+            <BarChart3 className="h-4 w-4 mr-2" />
+            查看職能圖譜
+          </Button>
+        )}
         <Button
           variant="outline"
           onClick={onReset}
