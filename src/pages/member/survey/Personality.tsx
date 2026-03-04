@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Brain, BarChart3, RefreshCw, ArrowLeft, ArrowRight, Zap, BookOpen } from 'lucide-react';
+import { Brain, BarChart3, RefreshCw, ArrowLeft, ArrowRight, Zap, BookOpen, Sparkles, Upload } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
