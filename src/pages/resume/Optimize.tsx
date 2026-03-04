@@ -19,7 +19,7 @@ import RightDrawer from '@/components/panels/RightDrawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { OriginalResumeData, ResumeData, Suggestion } from '@/types/resume';
 import { mockOriginalResumeData, mockResumeData, mockSuggestions } from '@/mocks/resumes';
-
+import logoCat from '@/assets/logocat.png';
 type Phase = 'initial' | 'analyzing' | 'suggestions' | 'templates' | 'generating' | 'result';
 
 interface ThemeColors {
@@ -123,7 +123,7 @@ const clearOptimizeState = () => {
 
 const Optimize = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, isResumeUploaded, isPersonalityQuizDone } = useAppState();
+  const { isLoggedIn, isResumeUploaded, isPersonalityQuizDone, avatarUrl } = useAppState();
   const { resumes } = useResumes();
 
   // Auto-select the latest resume
@@ -451,6 +451,7 @@ const Optimize = () => {
                   onThemeChange={setSelectedThemeIndex}
                   isTemplateSaved={isTemplateSaved}
                   onSaveTemplate={() => setShowTemplateSaveConfirm(true)}
+                  avatarUrl={avatarUrl}
                 />
               )}
             </AnimatePresence>
@@ -934,6 +935,7 @@ const ResultPhase = ({
   onThemeChange,
   isTemplateSaved,
   onSaveTemplate,
+  avatarUrl,
 }: {
   resumeData: ResumeData;
   selectedTemplate: string;
@@ -946,6 +948,7 @@ const ResultPhase = ({
   onThemeChange: (index: number) => void;
   isTemplateSaved: boolean;
   onSaveTemplate: () => void;
+  avatarUrl: string | null;
 }) => {
   const template = templates.find(t => t.id === selectedTemplate);
   const themes = TEMPLATE_THEMES[selectedTemplate] || TEMPLATE_THEMES.corporate;
@@ -999,10 +1002,10 @@ const ResultPhase = ({
               <CorporateTemplate data={resumeData} theme={theme} />
             )}
             {selectedTemplate === 'modern' && (
-              <ModernTemplate data={resumeData} theme={theme} />
+              <ModernTemplate data={resumeData} theme={theme} avatarUrl={avatarUrl} />
             )}
             {selectedTemplate === 'creative' && (
-              <CreativeTemplate data={resumeData} theme={theme} />
+              <CreativeTemplate data={resumeData} theme={theme} avatarUrl={avatarUrl} />
             )}
           </div>
         </CardContent>
@@ -1115,11 +1118,14 @@ const CorporateTemplate = ({
 const ModernTemplate = ({
   data,
   theme,
+  avatarUrl,
 }: {
   data: ResumeData;
   theme: ThemeColors;
+  avatarUrl: string | null;
 }) => {
   const skills = data.core_skills.split(',').map(s => s.trim());
+  const avatarSrc = avatarUrl || logoCat;
 
   return (
     <div className="grid md:grid-cols-[1fr_2.5fr] gap-6">
@@ -1130,10 +1136,10 @@ const ModernTemplate = ({
         style={{ backgroundColor: `${theme.main}10` }}
       >
         <div
-          className="h-32 w-32 mx-auto rounded-full flex items-center justify-center"
-          style={{ backgroundColor: theme.main }}
+          className="h-32 w-32 mx-auto rounded-full flex items-center justify-center overflow-hidden border-2"
+          style={{ borderColor: theme.main }}
         >
-          <span className="text-4xl font-bold text-white">{data.name.charAt(0)}</span>
+          <img src={avatarSrc} alt={data.name} className="h-full w-full object-cover" />
         </div>
 
         <div className="space-y-2 text-sm">
@@ -1258,10 +1264,15 @@ const ModernTemplate = ({
 const CreativeTemplate = ({
   data,
   theme,
+  avatarUrl,
 }: {
   data: ResumeData;
   theme: ThemeColors;
-}) => (
+  avatarUrl: string | null;
+}) => {
+  const avatarSrc = avatarUrl || logoCat;
+
+  return (
   <div className="relative">
     <div
       className="absolute inset-0 rounded-lg opacity-10"
@@ -1276,13 +1287,8 @@ const CreativeTemplate = ({
             className="h-36 w-36 rounded-full p-1"
             style={{ backgroundColor: theme.main }}
           >
-            <div className="h-full w-full rounded-full bg-white flex items-center justify-center">
-              <span
-                className="text-5xl font-bold"
-                style={{ color: theme.main }}
-              >
-                {data.name.charAt(0)}
-              </span>
+            <div className="h-full w-full rounded-full overflow-hidden">
+              <img src={avatarSrc} alt={data.name} className="h-full w-full object-cover" />
             </div>
           </div>
           <div
@@ -1378,7 +1384,8 @@ const CreativeTemplate = ({
       )}
     </div>
   </div>
-);
+  );
+};
 
 // Template Section Helper with Color
 const TemplateSectionWithColor = ({
