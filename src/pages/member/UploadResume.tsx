@@ -822,6 +822,7 @@ const EditableField = ({
 
 const ResultView = ({ data, onReset, onSave }: ResultViewProps) => {
   const navigate = useNavigate();
+  const { isPersonalityTestDone, isPersonalityQuizDone } = useAppState();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [editData, setEditData] = useState<ResumeData>({ ...data });
