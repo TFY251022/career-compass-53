@@ -1,4 +1,4 @@
-import { BarChart3, RefreshCw, Zap, Battery, Target } from 'lucide-react';
+import { BarChart3, RefreshCw, Zap, Battery, Target, Upload, ClipboardList } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
