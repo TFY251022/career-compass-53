@@ -1,13 +1,22 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { UserPlus } from 'lucide-react';
 import AuthModal from '@/components/auth/AuthModal';
+import { useAppState } from '@/contexts/AppContext';
 
 const RegisterForm = () => {
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const { setIsLoggedIn } = useAppState();
+  const navigate = useNavigate();
+
+  const handleRegister = () => {
+    setIsLoggedIn(true);
+    navigate('/');
+  };
 
   return (
     <>
@@ -43,7 +52,7 @@ const RegisterForm = () => {
               <Label htmlFor="confirmPassword">確認密碼</Label>
               <Input id="confirmPassword" type="password" placeholder="請再次輸入密碼" />
             </div>
-            <Button className="w-full gradient-primary">註冊</Button>
+            <Button className="w-full gradient-primary" onClick={handleRegister}>註冊</Button>
             <p className="text-center text-sm text-muted-foreground">
               已有帳號？{' '}
               <button
