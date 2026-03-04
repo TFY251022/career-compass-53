@@ -1072,6 +1072,13 @@ const ResultPhase = ({
         </CardContent>
       </Card>
 
+      {!isTemplateSaved && (
+        <div className="flex items-center gap-3 p-4 rounded-lg border border-amber-500/30 bg-amber-500/5">
+          <Save className="h-5 w-5 text-amber-600 shrink-0" />
+          <p className="text-sm text-amber-700 dark:text-amber-400">請先儲存履歷後才可下載 PDF 檔案</p>
+        </div>
+      )}
+
       <div className="flex flex-wrap gap-4">
         {!isTemplateSaved && (
           <Button variant="outline" className="gap-2" onClick={onBackToTemplates}>
@@ -1094,7 +1101,7 @@ const ResultPhase = ({
           className="flex-1 gap-2 text-white"
           style={{ backgroundColor: theme.main }}
           onClick={onDownload}
-          disabled={isDownloading}
+          disabled={isDownloading || !isTemplateSaved}
         >
           <Download className="h-4 w-4" />
           {isDownloading ? '生成中...' : '下載履歷'}
