@@ -213,16 +213,70 @@ const Optimize = () => {
       clone.style.width = '794px'; // A4 width at 96dpi
       clone.style.padding = '0';
       clone.style.margin = '0';
-      clone.style.position = 'absolute';
-      clone.style.left = '-9999px';
+      clone.style.position = 'fixed';
+      clone.style.left = '0';
       clone.style.top = '0';
+      clone.style.zIndex = '-9999';
+      clone.style.opacity = '1';
+      clone.style.visibility = 'visible';
       clone.style.backgroundColor = '#ffffff';
       clone.style.fontFamily = "'Noto Sans TC', 'Microsoft JhengHei', sans-serif";
+      clone.style.color = '#222222';
+
+      // Copy all CSS custom properties from :root to the clone so hsl(var(--...)) works
+      const rootStyles = getComputedStyle(document.documentElement);
+      const cssVars: string[] = [];
+      for (let i = 0; i < rootStyles.length; i++) {
+        const prop = rootStyles[i];
+        if (prop.startsWith('--')) {
+          cssVars.push(`${prop}: ${rootStyles.getPropertyValue(prop)};`);
+        }
+      }
+      clone.setAttribute('style', clone.getAttribute('style') + ';' + cssVars.join(''));
+
+      // Inline all computed styles for every element to avoid CSS variable resolution issues
+      const inlineComputedStyles = (source: Element, target: Element) => {
+        const sourceChildren = source.children;
+        const targetChildren = target.children;
+        for (let i = 0; i < sourceChildren.length && i < targetChildren.length; i++) {
+          const srcEl = sourceChildren[i] as HTMLElement;
+          const tgtEl = targetChildren[i] as HTMLElement;
+          if (srcEl && tgtEl) {
+            const computed = getComputedStyle(srcEl);
+            tgtEl.style.color = computed.color;
+            tgtEl.style.backgroundColor = computed.backgroundColor;
+            tgtEl.style.borderColor = computed.borderColor;
+            tgtEl.style.fontSize = computed.fontSize;
+            tgtEl.style.fontWeight = computed.fontWeight;
+            tgtEl.style.lineHeight = computed.lineHeight;
+            tgtEl.style.padding = computed.padding;
+            tgtEl.style.margin = computed.margin;
+            tgtEl.style.display = computed.display;
+            tgtEl.style.flexDirection = computed.flexDirection;
+            tgtEl.style.justifyContent = computed.justifyContent;
+            tgtEl.style.alignItems = computed.alignItems;
+            tgtEl.style.gap = computed.gap;
+            tgtEl.style.gridTemplateColumns = computed.gridTemplateColumns;
+            tgtEl.style.textAlign = computed.textAlign;
+            tgtEl.style.borderRadius = computed.borderRadius;
+            tgtEl.style.boxShadow = computed.boxShadow;
+            tgtEl.style.background = computed.background;
+            tgtEl.style.width = computed.width;
+            tgtEl.style.maxWidth = computed.maxWidth;
+            tgtEl.style.minHeight = computed.minHeight;
+            tgtEl.style.overflow = computed.overflow;
+            // Recurse into children
+            inlineComputedStyles(srcEl, tgtEl);
+          }
+        }
+      };
+
+      // First append to get computed styles, then inline them
+      document.body.appendChild(clone);
 
       // Force responsive grid layouts to desktop view in clone
       clone.querySelectorAll('[class*="md\\:grid-cols"]').forEach((el) => {
         const htmlEl = el as HTMLElement;
-        // Extract md:grid-cols value from class and apply directly
         const classes = htmlEl.className;
         const mdMatch = classes.match(/md:grid-cols-\[([^\]]+)\]/);
         if (mdMatch) {
@@ -251,6 +305,9 @@ const Optimize = () => {
         (el as HTMLElement).style.justifyContent = 'flex-start';
       });
 
+      // Inline computed styles from the original element to the clone
+      inlineComputedStyles(element, clone);
+
       // Ensure images load in clone
       const images = clone.querySelectorAll('img');
       await Promise.all(
@@ -263,8 +320,6 @@ const Optimize = () => {
             })
         )
       );
-
-      document.body.appendChild(clone);
 
       const sections = clone.querySelectorAll('[data-pdf-section]');
       sections.forEach((section) => {
