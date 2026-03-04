@@ -208,7 +208,65 @@ const Optimize = () => {
       const themes = TEMPLATE_THEMES[selectedTemplate] || TEMPLATE_THEMES.corporate;
       const theme = themes[selectedThemeIndex] || themes[0];
 
-      const sections = element.querySelectorAll('[data-pdf-section]');
+      // Clone the element and render at fixed A4-width to match screen layout
+      const clone = element.cloneNode(true) as HTMLElement;
+      clone.style.width = '794px'; // A4 width at 96dpi
+      clone.style.padding = '0';
+      clone.style.margin = '0';
+      clone.style.position = 'absolute';
+      clone.style.left = '-9999px';
+      clone.style.top = '0';
+      clone.style.backgroundColor = '#ffffff';
+      clone.style.fontFamily = "'Noto Sans TC', 'Microsoft JhengHei', sans-serif";
+
+      // Force responsive grid layouts to desktop view in clone
+      clone.querySelectorAll('[class*="md\\:grid-cols"]').forEach((el) => {
+        const htmlEl = el as HTMLElement;
+        // Extract md:grid-cols value from class and apply directly
+        const classes = htmlEl.className;
+        const mdMatch = classes.match(/md:grid-cols-\[([^\]]+)\]/);
+        if (mdMatch) {
+          htmlEl.style.display = 'grid';
+          htmlEl.style.gridTemplateColumns = mdMatch[1];
+        }
+        const mdSimple = classes.match(/md:grid-cols-(\d+)/);
+        if (mdSimple) {
+          htmlEl.style.display = 'grid';
+          htmlEl.style.gridTemplateColumns = `repeat(${mdSimple[1]}, minmax(0, 1fr))`;
+        }
+      });
+
+      // Force md:flex-row
+      clone.querySelectorAll('[class*="md\\:flex-row"]').forEach((el) => {
+        (el as HTMLElement).style.flexDirection = 'row';
+      });
+
+      // Force md:text-left
+      clone.querySelectorAll('[class*="md\\:text-left"]').forEach((el) => {
+        (el as HTMLElement).style.textAlign = 'left';
+      });
+
+      // Force md:justify-start
+      clone.querySelectorAll('[class*="md\\:justify-start"]').forEach((el) => {
+        (el as HTMLElement).style.justifyContent = 'flex-start';
+      });
+
+      // Ensure images load in clone
+      const images = clone.querySelectorAll('img');
+      await Promise.all(
+        Array.from(images).map(
+          (img) =>
+            new Promise<void>((resolve) => {
+              if (img.complete) return resolve();
+              img.onload = () => resolve();
+              img.onerror = () => resolve();
+            })
+        )
+      );
+
+      document.body.appendChild(clone);
+
+      const sections = clone.querySelectorAll('[data-pdf-section]');
       sections.forEach((section) => {
         (section as HTMLElement).style.pageBreakInside = 'avoid';
         (section as HTMLElement).style.breakInside = 'avoid';
@@ -223,6 +281,8 @@ const Optimize = () => {
           useCORS: true,
           letterRendering: true,
           logging: false,
+          width: 794,
+          windowWidth: 794,
         },
         jsPDF: {
           unit: 'mm' as const,
@@ -237,7 +297,8 @@ const Optimize = () => {
         },
       };
 
-      await html2pdf().set(opt).from(element).save();
+      await html2pdf().set(opt).from(clone).save();
+      document.body.removeChild(clone);
     } catch (error) {
       console.error('PDF generation failed:', error);
     } finally {
