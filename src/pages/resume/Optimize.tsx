@@ -17,8 +17,10 @@ import { templateThumbnailComponents } from '@/components/resume/TemplateThumbna
 import html2pdf from 'html2pdf.js';
 import RightDrawer from '@/components/panels/RightDrawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import type { OriginalResumeData, ResumeData, Suggestion } from '@/types/resume';
-import { mockOriginalResumeData, mockResumeData, mockSuggestions } from '@/mocks/resumes';
+import type { OriginalResumeData, ResumeData, Suggestion, ResumeDiagnosticResult } from '@/types/resume';
+import { mockOriginalResumeData, mockResumeData, mockSuggestions, mockDiagnosticResult } from '@/mocks/resumes';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import logoCat from '@/assets/logocat.png';
 type Phase = 'initial' | 'analyzing' | 'suggestions' | 'templates' | 'generating' | 'result';
 
