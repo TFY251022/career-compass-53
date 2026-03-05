@@ -463,11 +463,13 @@ const Optimize = () => {
                   {editPhase === 'view' ? (
                     <SuggestionsPhase
                       suggestions={suggestions}
+                      diagnosticResult={diagnosticResult}
                       onDownload={handleDownloadSuggestions}
                       onGenerate={() => setPhase('templates')}
                       onEdit={handleEnterEditMode}
                       onBack={handleSmartBack}
                       isEditSaved={isEditSaved}
+                    />
                     />
                   ) : (
                     <ResumeEditMode
