@@ -474,6 +474,7 @@ const Optimize = () => {
                     <ResumeEditMode
                       originalData={editedOriginalData}
                       suggestions={suggestions}
+                      diagnosticResult={diagnosticResult}
                       onChange={setEditedOriginalData}
                       onSave={() => setShowSaveConfirm(true)}
                       onCancel={handleExitEditMode}
