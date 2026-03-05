@@ -750,38 +750,24 @@ const SuggestionsPhase = ({
         </div>
       )}
 
-      {/* ── 1. 核心定位與 ATS 風險監測 ── */}
+      {/* ── 1. 核心定位 ── */}
       {diagnosticResult && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <Card className="border-primary/20 shadow-md">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="h-5 w-5 text-primary" />
-                核心定位與 ATS 風險監測
+                核心定位分析
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Candidate positioning */}
-              <div className="space-y-4">
-                <div className="p-4 rounded-lg bg-primary/5 border border-primary/15">
-                  <h4 className="text-sm font-semibold text-primary mb-2">候選人定位</h4>
-                  <p className="text-sm leading-relaxed">{diagnosticResult.candidate_positioning}</p>
-                </div>
-                <div className="p-4 rounded-lg bg-muted/40 border border-border">
-                  <h4 className="text-sm font-semibold text-foreground mb-2">目標職位落差摘要</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{diagnosticResult.target_role_gap_summary}</p>
-                </div>
+            <CardContent className="space-y-4">
+              <div className="p-4 rounded-lg bg-primary/5 border border-primary/15">
+                <h4 className="text-sm font-semibold text-primary mb-2">候選人定位</h4>
+                <p className="text-sm leading-relaxed">{diagnosticResult.candidate_positioning}</p>
               </div>
-
-              <Separator />
-
-              {/* ATS Risk Meter */}
-              <div>
-                <h4 className="text-sm font-semibold mb-4 flex items-center gap-2">
-                  <Gauge className="h-4 w-4 text-primary" />
-                  ATS 風險量表
-                </h4>
-                <ATSRiskMeter level={diagnosticResult.ats_risk_level} prediction={diagnosticResult.screening_outcome_prediction} />
+              <div className="p-4 rounded-lg bg-muted/40 border border-border">
+                <h4 className="text-sm font-semibold text-foreground mb-2">目標職位落差摘要</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">{diagnosticResult.target_role_gap_summary}</p>
               </div>
             </CardContent>
           </Card>
