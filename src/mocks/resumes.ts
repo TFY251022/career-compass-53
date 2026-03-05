@@ -1,4 +1,4 @@
-import type { ResumeItem, OriginalResumeData, ResumeData, Suggestion } from '@/types/resume';
+import type { ResumeItem, OriginalResumeData, ResumeData, Suggestion, ResumeDiagnosticResult } from '@/types/resume';
 
 // TODO: Replace with API call
 export const MOCK_RESUMES: ResumeItem[] = [
