@@ -179,7 +179,8 @@ const Optimize = () => {
     setPhase('analyzing');
     // TODO: Replace with API call
     await new Promise(resolve => setTimeout(resolve, 3000));
-    setSuggestions(mockSuggestions);
+    setDiagnosticResult(mockDiagnosticResult);
+    setSuggestions(mockDiagnosticResult.suggestions);
     setPhase('suggestions');
     saveOptimizeState({ phase: 'suggestions', suggestions: mockSuggestions, selectedTemplate: '', selectedThemeIndex: 0, resumeData, originalData });
   };
