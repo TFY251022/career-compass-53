@@ -880,6 +880,7 @@ const SuggestionsPhase = ({
 const ResumeEditMode = ({
   originalData,
   suggestions,
+  diagnosticResult,
   onChange,
   onSave,
   onCancel,
@@ -889,6 +890,7 @@ const ResumeEditMode = ({
 }: {
   originalData: OriginalResumeData;
   suggestions: Suggestion[];
+  diagnosticResult: ResumeDiagnosticResult | null;
   onChange: (data: OriginalResumeData) => void;
   onSave: () => void;
   onCancel: () => void;
