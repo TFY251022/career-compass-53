@@ -470,7 +470,6 @@ const Optimize = () => {
                       onBack={handleSmartBack}
                       isEditSaved={isEditSaved}
                     />
-                    />
                   ) : (
                     <ResumeEditMode
                       originalData={editedOriginalData}
