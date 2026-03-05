@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Download, Edit3, Save, RotateCcw, Palette, ChevronRight, Briefcase, GraduationCap, Mail, Phone, Globe, Award, Languages, User, Star, Sparkles, Check, ChevronLeft, BookOpen, ArrowLeft, Loader2, Linkedin, FolderOpen, Code, MapPin, ShieldCheck, ExternalLink, MoreHorizontal, CheckCircle, AlertTriangle, Target, Gauge, ArrowRight, ListChecks } from 'lucide-react';
+import { FileText, Download, Edit3, Save, RotateCcw, Palette, ChevronRight, Briefcase, GraduationCap, Mail, Phone, Globe, Award, Languages, User, Star, Sparkles, Check, ChevronLeft, BookOpen, ArrowLeft, Loader2, Linkedin, FolderOpen, Code, MapPin, ShieldCheck, ExternalLink, MoreHorizontal, CheckCircle, AlertTriangle, Target, ArrowRight, ListChecks } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,7 +20,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import type { OriginalResumeData, ResumeData, Suggestion, ResumeDiagnosticResult } from '@/types/resume';
 import { mockOriginalResumeData, mockResumeData, mockSuggestions, mockDiagnosticResult } from '@/mocks/resumes';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+
 import logoCat from '@/assets/logocat.png';
 type Phase = 'initial' | 'analyzing' | 'suggestions' | 'templates' | 'generating' | 'result';
 
@@ -658,52 +658,6 @@ const ResumeField = ({
   </div>
 );
 
-// ATS Risk Meter Component
-const ATSRiskMeter = ({ level, prediction }: { level: string; prediction: string }) => {
-  const riskConfig = {
-    '低': { color: '#22c55e', rotation: -60, label: '低風險', bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700' },
-    '中': { color: '#f59e0b', rotation: 0, label: '中風險', bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700' },
-    '高': { color: '#ef4444', rotation: 60, label: '高風險', bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700' },
-  };
-  const config = riskConfig[level as keyof typeof riskConfig] || riskConfig['中'];
-
-  return (
-    <div className="flex flex-col sm:flex-row items-center gap-6">
-      {/* Semi-circle gauge */}
-      <div className="relative w-48 h-28 shrink-0">
-        <svg viewBox="0 0 200 110" className="w-full h-full">
-          {/* Background arc */}
-          <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="hsl(var(--muted))" strokeWidth="16" strokeLinecap="round" />
-          {/* Green segment */}
-          <path d="M 20 100 A 80 80 0 0 1 66 32" fill="none" stroke="#22c55e" strokeWidth="16" strokeLinecap="round" opacity={level === '低' ? 1 : 0.25} />
-          {/* Yellow segment */}
-          <path d="M 72 28 A 80 80 0 0 1 128 28" fill="none" stroke="#f59e0b" strokeWidth="16" strokeLinecap="round" opacity={level === '中' ? 1 : 0.25} />
-          {/* Red segment */}
-          <path d="M 134 32 A 80 80 0 0 1 180 100" fill="none" stroke="#ef4444" strokeWidth="16" strokeLinecap="round" opacity={level === '高' ? 1 : 0.25} />
-          {/* Needle */}
-          <line
-            x1="100" y1="100"
-            x2={100 + 55 * Math.cos((config.rotation - 90) * Math.PI / 180)}
-            y2={100 + 55 * Math.sin((config.rotation - 90) * Math.PI / 180)}
-            stroke="hsl(var(--foreground))" strokeWidth="3" strokeLinecap="round"
-          />
-          <circle cx="100" cy="100" r="6" fill="hsl(var(--foreground))" />
-        </svg>
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1">
-          <span className="text-sm font-bold" style={{ color: config.color }}>{config.label}</span>
-        </div>
-      </div>
-      {/* Prediction text */}
-      <div className={`flex-1 p-4 rounded-lg border ${config.bg} ${config.border}`}>
-        <div className="flex items-center gap-2 mb-2">
-          <AlertTriangle className={`h-4 w-4 ${config.text}`} />
-          <span className={`text-sm font-semibold ${config.text}`}>ATS 篩選結果預測</span>
-        </div>
-        <p className="text-sm text-foreground/80 leading-relaxed">{prediction}</p>
-      </div>
-    </div>
-  );
-};
 
 // Suggestions Phase Component
 const SuggestionsPhase = ({
@@ -738,10 +692,18 @@ const SuggestionsPhase = ({
       exit={{ opacity: 0, y: -20 }}
       className="space-y-6"
     >
-      <Button variant="ghost" className="gap-2 -ml-2" onClick={onBack}>
-        <ChevronLeft className="h-4 w-4" />
-        返回上一步
-      </Button>
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" className="gap-2 -ml-2" onClick={onBack}>
+          <ChevronLeft className="h-4 w-4" />
+          返回上一步
+        </Button>
+        {!isEditSaved && (
+          <Button variant="outline" className="gap-2" onClick={onEdit}>
+            <Edit3 className="h-4 w-4" />
+            編輯履歷
+          </Button>
+        )}
+      </div>
 
       {isEditSaved && (
         <div className="flex items-center gap-3 p-4 rounded-lg border border-green-500/30 bg-green-500/5">
@@ -750,38 +712,24 @@ const SuggestionsPhase = ({
         </div>
       )}
 
-      {/* ── 1. 核心定位與 ATS 風險監測 ── */}
+      {/* ── 1. 核心定位 ── */}
       {diagnosticResult && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <Card className="border-primary/20 shadow-md">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="h-5 w-5 text-primary" />
-                核心定位與 ATS 風險監測
+                核心定位分析
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Candidate positioning */}
-              <div className="space-y-4">
-                <div className="p-4 rounded-lg bg-primary/5 border border-primary/15">
-                  <h4 className="text-sm font-semibold text-primary mb-2">候選人定位</h4>
-                  <p className="text-sm leading-relaxed">{diagnosticResult.candidate_positioning}</p>
-                </div>
-                <div className="p-4 rounded-lg bg-muted/40 border border-border">
-                  <h4 className="text-sm font-semibold text-foreground mb-2">目標職位落差摘要</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{diagnosticResult.target_role_gap_summary}</p>
-                </div>
+            <CardContent className="space-y-4">
+              <div className="p-4 rounded-lg bg-primary/5 border border-primary/15">
+                <h4 className="text-sm font-semibold text-primary mb-2">候選人定位</h4>
+                <p className="text-sm leading-relaxed">{diagnosticResult.candidate_positioning}</p>
               </div>
-
-              <Separator />
-
-              {/* ATS Risk Meter */}
-              <div>
-                <h4 className="text-sm font-semibold mb-4 flex items-center gap-2">
-                  <Gauge className="h-4 w-4 text-primary" />
-                  ATS 風險量表
-                </h4>
-                <ATSRiskMeter level={diagnosticResult.ats_risk_level} prediction={diagnosticResult.screening_outcome_prediction} />
+              <div className="p-4 rounded-lg bg-muted/40 border border-border">
+                <h4 className="text-sm font-semibold text-foreground mb-2">目標職位落差摘要</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">{diagnosticResult.target_role_gap_summary}</p>
               </div>
             </CardContent>
           </Card>
@@ -912,50 +860,6 @@ const SuggestionsPhase = ({
         </motion.div>
       )}
 
-      {/* ── 5. Original Suggestions (section-level before/after) ── */}
-      <Card>
-        <CardHeader className="flex flex-row items-start justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" />
-              逐項優化對照
-            </CardTitle>
-            <CardDescription>各區塊原文與建議優化的對比</CardDescription>
-          </div>
-          {!isEditSaved && (
-            <Button variant="outline" className="gap-2 shrink-0" onClick={onEdit}>
-              <Edit3 className="h-4 w-4" />
-              編輯履歷
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {suggestions.map((s, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 + i * 0.1 }}
-              className="space-y-3"
-            >
-              <h4 className="font-medium text-primary flex items-center gap-2">
-                <ChevronRight className="h-4 w-4" />
-                {s.section}
-              </h4>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="p-4 bg-muted/30 rounded-lg border border-transparent">
-                  <p className="text-xs text-muted-foreground mb-2">原始內容</p>
-                  <p className="text-sm">{s.original}</p>
-                </div>
-                <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
-                  <p className="text-xs text-primary mb-2">優化建議</p>
-                  <p className="text-sm">{s.optimized}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </CardContent>
-      </Card>
 
       <div className="flex gap-4">
         <Button variant="outline" className="flex-1 gap-2" onClick={onDownload}>
