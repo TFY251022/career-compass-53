@@ -464,6 +464,7 @@ const Optimize = () => {
                     <SuggestionsPhase
                       suggestions={suggestions}
                       diagnosticResult={diagnosticResult}
+                      originalData={originalData}
                       onDownload={handleDownloadSuggestions}
                       onGenerate={() => setPhase('templates')}
                       onEdit={handleEnterEditMode}
