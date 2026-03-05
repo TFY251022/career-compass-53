@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Download, Edit3, Save, RotateCcw, Palette, ChevronRight, Briefcase, GraduationCap, Mail, Phone, Globe, Award, Languages, User, Star, Sparkles, Check, ChevronLeft, BookOpen, ArrowLeft, Loader2, Linkedin, FolderOpen, Code, MapPin, ShieldCheck, ExternalLink, MoreHorizontal } from 'lucide-react';
+import { FileText, Download, Edit3, Save, RotateCcw, Palette, ChevronRight, Briefcase, GraduationCap, Mail, Phone, Globe, Award, Languages, User, Star, Sparkles, Check, ChevronLeft, BookOpen, ArrowLeft, Loader2, Linkedin, FolderOpen, Code, MapPin, ShieldCheck, ExternalLink, MoreHorizontal, CheckCircle, AlertTriangle, Target, Gauge, ArrowRight, ListChecks } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,8 +17,10 @@ import { templateThumbnailComponents } from '@/components/resume/TemplateThumbna
 import html2pdf from 'html2pdf.js';
 import RightDrawer from '@/components/panels/RightDrawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import type { OriginalResumeData, ResumeData, Suggestion } from '@/types/resume';
-import { mockOriginalResumeData, mockResumeData, mockSuggestions } from '@/mocks/resumes';
+import type { OriginalResumeData, ResumeData, Suggestion, ResumeDiagnosticResult } from '@/types/resume';
+import { mockOriginalResumeData, mockResumeData, mockSuggestions, mockDiagnosticResult } from '@/mocks/resumes';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import logoCat from '@/assets/logocat.png';
 type Phase = 'initial' | 'analyzing' | 'suggestions' | 'templates' | 'generating' | 'result';
 
@@ -141,6 +143,7 @@ const Optimize = () => {
   const [editedOriginalData, setEditedOriginalData] = useState<OriginalResumeData>(canRestore ? persisted!.originalData : mockOriginalResumeData);
   const [resumeData, setResumeData] = useState<ResumeData>(canRestore ? persisted!.resumeData : mockResumeData);
   const [suggestions, setSuggestions] = useState<Suggestion[]>(canRestore ? persisted!.suggestions : []);
+  const [diagnosticResult, setDiagnosticResult] = useState<ResumeDiagnosticResult | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<string>(canRestore ? persisted!.selectedTemplate : '');
   const [selectedThemeIndex, setSelectedThemeIndex] = useState<number>(canRestore ? persisted!.selectedThemeIndex : 0);
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
@@ -176,7 +179,8 @@ const Optimize = () => {
     setPhase('analyzing');
     // TODO: Replace with API call
     await new Promise(resolve => setTimeout(resolve, 3000));
-    setSuggestions(mockSuggestions);
+    setDiagnosticResult(mockDiagnosticResult);
+    setSuggestions(mockDiagnosticResult.suggestions);
     setPhase('suggestions');
     saveOptimizeState({ phase: 'suggestions', suggestions: mockSuggestions, selectedTemplate: '', selectedThemeIndex: 0, resumeData, originalData });
   };
@@ -459,6 +463,7 @@ const Optimize = () => {
                   {editPhase === 'view' ? (
                     <SuggestionsPhase
                       suggestions={suggestions}
+                      diagnosticResult={diagnosticResult}
                       onDownload={handleDownloadSuggestions}
                       onGenerate={() => setPhase('templates')}
                       onEdit={handleEnterEditMode}
@@ -653,9 +658,57 @@ const ResumeField = ({
   </div>
 );
 
+// ATS Risk Meter Component
+const ATSRiskMeter = ({ level, prediction }: { level: string; prediction: string }) => {
+  const riskConfig = {
+    '低': { color: '#22c55e', rotation: -60, label: '低風險', bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700' },
+    '中': { color: '#f59e0b', rotation: 0, label: '中風險', bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700' },
+    '高': { color: '#ef4444', rotation: 60, label: '高風險', bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700' },
+  };
+  const config = riskConfig[level as keyof typeof riskConfig] || riskConfig['中'];
+
+  return (
+    <div className="flex flex-col sm:flex-row items-center gap-6">
+      {/* Semi-circle gauge */}
+      <div className="relative w-48 h-28 shrink-0">
+        <svg viewBox="0 0 200 110" className="w-full h-full">
+          {/* Background arc */}
+          <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="hsl(var(--muted))" strokeWidth="16" strokeLinecap="round" />
+          {/* Green segment */}
+          <path d="M 20 100 A 80 80 0 0 1 66 32" fill="none" stroke="#22c55e" strokeWidth="16" strokeLinecap="round" opacity={level === '低' ? 1 : 0.25} />
+          {/* Yellow segment */}
+          <path d="M 72 28 A 80 80 0 0 1 128 28" fill="none" stroke="#f59e0b" strokeWidth="16" strokeLinecap="round" opacity={level === '中' ? 1 : 0.25} />
+          {/* Red segment */}
+          <path d="M 134 32 A 80 80 0 0 1 180 100" fill="none" stroke="#ef4444" strokeWidth="16" strokeLinecap="round" opacity={level === '高' ? 1 : 0.25} />
+          {/* Needle */}
+          <line
+            x1="100" y1="100"
+            x2={100 + 55 * Math.cos((config.rotation - 90) * Math.PI / 180)}
+            y2={100 + 55 * Math.sin((config.rotation - 90) * Math.PI / 180)}
+            stroke="hsl(var(--foreground))" strokeWidth="3" strokeLinecap="round"
+          />
+          <circle cx="100" cy="100" r="6" fill="hsl(var(--foreground))" />
+        </svg>
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1">
+          <span className="text-sm font-bold" style={{ color: config.color }}>{config.label}</span>
+        </div>
+      </div>
+      {/* Prediction text */}
+      <div className={`flex-1 p-4 rounded-lg border ${config.bg} ${config.border}`}>
+        <div className="flex items-center gap-2 mb-2">
+          <AlertTriangle className={`h-4 w-4 ${config.text}`} />
+          <span className={`text-sm font-semibold ${config.text}`}>ATS 篩選結果預測</span>
+        </div>
+        <p className="text-sm text-foreground/80 leading-relaxed">{prediction}</p>
+      </div>
+    </div>
+  );
+};
+
 // Suggestions Phase Component
 const SuggestionsPhase = ({
   suggestions,
+  diagnosticResult,
   onDownload,
   onGenerate,
   onEdit,
@@ -663,87 +716,260 @@ const SuggestionsPhase = ({
   isEditSaved,
 }: {
   suggestions: Suggestion[];
+  diagnosticResult: ResumeDiagnosticResult | null;
   onDownload: () => void;
   onGenerate: () => void;
   onEdit: () => void;
   onBack: () => void;
   isEditSaved: boolean;
-}) => (
-  <motion.div
-    key="suggestions"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -20 }}
-    className="space-y-6"
-  >
-    <Button variant="ghost" className="gap-2 -ml-2" onClick={onBack}>
-      <ChevronLeft className="h-4 w-4" />
-      返回上一步
-    </Button>
+}) => {
+  const severityColors: Record<string, string> = {
+    '嚴重扣分': 'bg-red-100 text-red-800 border-red-200',
+    '明顯扣分': 'bg-amber-100 text-amber-800 border-amber-200',
+    '中度扣分': 'bg-orange-100 text-orange-800 border-orange-200',
+    '輕微扣分': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  };
 
-    {isEditSaved && (
-      <div className="flex items-center gap-3 p-4 rounded-lg border border-green-500/30 bg-green-500/5">
-        <Check className="h-5 w-5 text-green-600 shrink-0" />
-        <p className="text-sm text-green-700 dark:text-green-400">履歷變更已儲存，內容不可再編輯</p>
-      </div>
-    )}
+  return (
+    <motion.div
+      key="suggestions"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="space-y-6"
+    >
+      <Button variant="ghost" className="gap-2 -ml-2" onClick={onBack}>
+        <ChevronLeft className="h-4 w-4" />
+        返回上一步
+      </Button>
 
-    <Card>
-      <CardHeader className="flex flex-row items-start justify-between">
-        <div>
-          <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            履歷優化建議
-          </CardTitle>
-          <CardDescription>AI 已分析您的履歷，以下是專業優化建議</CardDescription>
+      {isEditSaved && (
+        <div className="flex items-center gap-3 p-4 rounded-lg border border-green-500/30 bg-green-500/5">
+          <Check className="h-5 w-5 text-green-600 shrink-0" />
+          <p className="text-sm text-green-700 dark:text-green-400">履歷變更已儲存，內容不可再編輯</p>
         </div>
-        {!isEditSaved && (
-          <Button variant="outline" className="gap-2 shrink-0" onClick={onEdit}>
-            <Edit3 className="h-4 w-4" />
-            編輯履歷
-          </Button>
-        )}
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {suggestions.map((s, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="space-y-3"
-          >
-            <h4 className="font-medium text-primary flex items-center gap-2">
-              <ChevronRight className="h-4 w-4" />
-              {s.section}
-            </h4>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="p-4 bg-muted/30 rounded-lg border border-transparent">
-                <p className="text-xs text-muted-foreground mb-2">原始內容</p>
-                <p className="text-sm">{s.original}</p>
-              </div>
-              <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
-                <p className="text-xs text-primary mb-2">優化建議</p>
-                <p className="text-sm">{s.optimized}</p>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </CardContent>
-    </Card>
+      )}
 
-    <div className="flex gap-4">
-      <Button variant="outline" className="flex-1 gap-2" onClick={onDownload}>
-        <Download className="h-4 w-4" />
-        下載建議報告
-      </Button>
-      <Button className="flex-1 gradient-primary gap-2" onClick={onGenerate}>
-        <Palette className="h-4 w-4" />
-        生成優化履歷
-      </Button>
-    </div>
-  </motion.div>
-);
+      {/* ── 1. 核心定位與 ATS 風險監測 ── */}
+      {diagnosticResult && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <Card className="border-primary/20 shadow-md">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5 text-primary" />
+                核心定位與 ATS 風險監測
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Candidate positioning */}
+              <div className="space-y-4">
+                <div className="p-4 rounded-lg bg-primary/5 border border-primary/15">
+                  <h4 className="text-sm font-semibold text-primary mb-2">候選人定位</h4>
+                  <p className="text-sm leading-relaxed">{diagnosticResult.candidate_positioning}</p>
+                </div>
+                <div className="p-4 rounded-lg bg-muted/40 border border-border">
+                  <h4 className="text-sm font-semibold text-foreground mb-2">目標職位落差摘要</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{diagnosticResult.target_role_gap_summary}</p>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* ATS Risk Meter */}
+              <div>
+                <h4 className="text-sm font-semibold mb-4 flex items-center gap-2">
+                  <Gauge className="h-4 w-4 text-primary" />
+                  ATS 風險量表
+                </h4>
+                <ATSRiskMeter level={diagnosticResult.ats_risk_level} prediction={diagnosticResult.screening_outcome_prediction} />
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+
+      {/* ── 2. 優劣勢對比分析 ── */}
+      {diagnosticResult && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <div className="grid md:grid-cols-2 gap-4">
+            {/* Strengths */}
+            <Card className="border-green-200/60">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2 text-green-700">
+                  <CheckCircle className="h-5 w-5" />
+                  整體優勢
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {diagnosticResult.overall_strengths.map((s, i) => (
+                  <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-green-50/60">
+                    <CheckCircle className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
+                    <p className="text-sm leading-relaxed">{s}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Weaknesses */}
+            <Card className="border-primary/20">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2 text-primary">
+                  <AlertTriangle className="h-5 w-5" />
+                  待改善項目
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {diagnosticResult.overall_weaknesses.map((w, i) => (
+                  <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-primary/5">
+                    <AlertTriangle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                    <p className="text-sm leading-relaxed">{w}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </motion.div>
+      )}
+
+      {/* ── 3. 關鍵問題診斷 ── */}
+      {diagnosticResult && diagnosticResult.critical_issues.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-primary" />
+                關鍵問題診斷
+              </CardTitle>
+              <CardDescription>針對履歷各區塊的深度分析與改善方向</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              {diagnosticResult.critical_issues.map((issue, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -15 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 + i * 0.08 }}
+                  className="rounded-lg border border-border overflow-hidden"
+                >
+                  {/* Issue header */}
+                  <div className="flex items-center gap-3 px-4 py-3 bg-muted/30 border-b border-border">
+                    <span className="font-medium text-sm">{issue.section}</span>
+                    <Badge className={`text-xs border ${severityColors[issue.severity] || 'bg-muted text-muted-foreground'}`}>
+                      {issue.severity}
+                    </Badge>
+                  </div>
+
+                  <div className="p-4 space-y-4">
+                    {/* Original text */}
+                    <div className="p-3 rounded-md bg-muted/40 border border-border/60">
+                      <p className="text-xs text-muted-foreground mb-1 font-medium">原文內容</p>
+                      <p className="text-sm text-foreground/80 leading-relaxed">{issue.original_text}</p>
+                    </div>
+
+                    {/* Issue reason */}
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1 font-medium">診斷分析</p>
+                      <p className="text-sm leading-relaxed">{issue.issue_reason}</p>
+                    </div>
+
+                    {/* Improvement direction */}
+                    <div className="p-3 rounded-md bg-primary/5 border border-primary/15">
+                      <p className="text-xs text-primary mb-1 font-semibold">優化方向</p>
+                      <p className="text-sm leading-relaxed font-medium text-primary">{issue.improvement_direction}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+
+      {/* ── 4. 後續行動計畫 ── */}
+      {diagnosticResult && diagnosticResult.recommended_next_actions.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+          <Card className="bg-[#fbf1e8]/40 border-primary/15">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ListChecks className="h-5 w-5 text-primary" />
+                後續行動計畫
+              </CardTitle>
+              <CardDescription>根據診斷結果，建議您依序完成以下事項</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {diagnosticResult.recommended_next_actions.map((action, i) => (
+                  <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-background/80 border border-border/50">
+                    <div className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">
+                      {i + 1}
+                    </div>
+                    <p className="text-sm leading-relaxed">{action}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+
+      {/* ── 5. Original Suggestions (section-level before/after) ── */}
+      <Card>
+        <CardHeader className="flex flex-row items-start justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              逐項優化對照
+            </CardTitle>
+            <CardDescription>各區塊原文與建議優化的對比</CardDescription>
+          </div>
+          {!isEditSaved && (
+            <Button variant="outline" className="gap-2 shrink-0" onClick={onEdit}>
+              <Edit3 className="h-4 w-4" />
+              編輯履歷
+            </Button>
+          )}
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {suggestions.map((s, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 + i * 0.1 }}
+              className="space-y-3"
+            >
+              <h4 className="font-medium text-primary flex items-center gap-2">
+                <ChevronRight className="h-4 w-4" />
+                {s.section}
+              </h4>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="p-4 bg-muted/30 rounded-lg border border-transparent">
+                  <p className="text-xs text-muted-foreground mb-2">原始內容</p>
+                  <p className="text-sm">{s.original}</p>
+                </div>
+                <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
+                  <p className="text-xs text-primary mb-2">優化建議</p>
+                  <p className="text-sm">{s.optimized}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </CardContent>
+      </Card>
+
+      <div className="flex gap-4">
+        <Button variant="outline" className="flex-1 gap-2" onClick={onDownload}>
+          <Download className="h-4 w-4" />
+          下載建議報告
+        </Button>
+        <Button className="flex-1 gradient-primary gap-2" onClick={onGenerate}>
+          <Palette className="h-4 w-4" />
+          生成優化履歷
+        </Button>
+      </div>
+    </motion.div>
+  );
+};
 
 // Resume Edit Mode Component - uses ORIGINAL fields
 const ResumeEditMode = ({
