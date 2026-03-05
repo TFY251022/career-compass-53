@@ -738,10 +738,18 @@ const SuggestionsPhase = ({
       exit={{ opacity: 0, y: -20 }}
       className="space-y-6"
     >
-      <Button variant="ghost" className="gap-2 -ml-2" onClick={onBack}>
-        <ChevronLeft className="h-4 w-4" />
-        返回上一步
-      </Button>
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" className="gap-2 -ml-2" onClick={onBack}>
+          <ChevronLeft className="h-4 w-4" />
+          返回上一步
+        </Button>
+        {!isEditSaved && (
+          <Button variant="outline" className="gap-2" onClick={onEdit}>
+            <Edit3 className="h-4 w-4" />
+            編輯履歷
+          </Button>
+        )}
+      </div>
 
       {isEditSaved && (
         <div className="flex items-center gap-3 p-4 rounded-lg border border-green-500/30 bg-green-500/5">
