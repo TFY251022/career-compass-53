@@ -658,52 +658,6 @@ const ResumeField = ({
   </div>
 );
 
-// ATS Risk Meter Component
-const ATSRiskMeter = ({ level, prediction }: { level: string; prediction: string }) => {
-  const riskConfig = {
-    '低': { color: '#22c55e', rotation: -60, label: '低風險', bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700' },
-    '中': { color: '#f59e0b', rotation: 0, label: '中風險', bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700' },
-    '高': { color: '#ef4444', rotation: 60, label: '高風險', bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700' },
-  };
-  const config = riskConfig[level as keyof typeof riskConfig] || riskConfig['中'];
-
-  return (
-    <div className="flex flex-col sm:flex-row items-center gap-6">
-      {/* Semi-circle gauge */}
-      <div className="relative w-48 h-28 shrink-0">
-        <svg viewBox="0 0 200 110" className="w-full h-full">
-          {/* Background arc */}
-          <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="hsl(var(--muted))" strokeWidth="16" strokeLinecap="round" />
-          {/* Green segment */}
-          <path d="M 20 100 A 80 80 0 0 1 66 32" fill="none" stroke="#22c55e" strokeWidth="16" strokeLinecap="round" opacity={level === '低' ? 1 : 0.25} />
-          {/* Yellow segment */}
-          <path d="M 72 28 A 80 80 0 0 1 128 28" fill="none" stroke="#f59e0b" strokeWidth="16" strokeLinecap="round" opacity={level === '中' ? 1 : 0.25} />
-          {/* Red segment */}
-          <path d="M 134 32 A 80 80 0 0 1 180 100" fill="none" stroke="#ef4444" strokeWidth="16" strokeLinecap="round" opacity={level === '高' ? 1 : 0.25} />
-          {/* Needle */}
-          <line
-            x1="100" y1="100"
-            x2={100 + 55 * Math.cos((config.rotation - 90) * Math.PI / 180)}
-            y2={100 + 55 * Math.sin((config.rotation - 90) * Math.PI / 180)}
-            stroke="hsl(var(--foreground))" strokeWidth="3" strokeLinecap="round"
-          />
-          <circle cx="100" cy="100" r="6" fill="hsl(var(--foreground))" />
-        </svg>
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1">
-          <span className="text-sm font-bold" style={{ color: config.color }}>{config.label}</span>
-        </div>
-      </div>
-      {/* Prediction text */}
-      <div className={`flex-1 p-4 rounded-lg border ${config.bg} ${config.border}`}>
-        <div className="flex items-center gap-2 mb-2">
-          <AlertTriangle className={`h-4 w-4 ${config.text}`} />
-          <span className={`text-sm font-semibold ${config.text}`}>ATS 篩選結果預測</span>
-        </div>
-        <p className="text-sm text-foreground/80 leading-relaxed">{prediction}</p>
-      </div>
-    </div>
-  );
-};
 
 // Suggestions Phase Component
 const SuggestionsPhase = ({
