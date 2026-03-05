@@ -464,6 +464,7 @@ const Optimize = () => {
                     <SuggestionsPhase
                       suggestions={suggestions}
                       diagnosticResult={diagnosticResult}
+                      originalData={originalData}
                       onDownload={handleDownloadSuggestions}
                       onGenerate={() => setPhase('templates')}
                       onEdit={handleEnterEditMode}
@@ -474,6 +475,7 @@ const Optimize = () => {
                     <ResumeEditMode
                       originalData={editedOriginalData}
                       suggestions={suggestions}
+                      diagnosticResult={diagnosticResult}
                       onChange={setEditedOriginalData}
                       onSave={() => setShowSaveConfirm(true)}
                       onCancel={handleExitEditMode}
@@ -663,6 +665,7 @@ const ResumeField = ({
 const SuggestionsPhase = ({
   suggestions,
   diagnosticResult,
+  originalData,
   onDownload,
   onGenerate,
   onEdit,
@@ -671,6 +674,7 @@ const SuggestionsPhase = ({
 }: {
   suggestions: Suggestion[];
   diagnosticResult: ResumeDiagnosticResult | null;
+  originalData: OriginalResumeData;
   onDownload: () => void;
   onGenerate: () => void;
   onEdit: () => void;
@@ -706,10 +710,51 @@ const SuggestionsPhase = ({
       </div>
 
       {isEditSaved && (
-        <div className="flex items-center gap-3 p-4 rounded-lg border border-green-500/30 bg-green-500/5">
-          <Check className="h-5 w-5 text-green-600 shrink-0" />
-          <p className="text-sm text-green-700 dark:text-green-400">履歷變更已儲存，內容不可再編輯</p>
-        </div>
+        <>
+          <div className="flex items-center gap-3 p-4 rounded-lg border border-green-500/30 bg-green-500/5">
+            <Check className="h-5 w-5 text-green-600 shrink-0" />
+            <p className="text-sm text-green-700 dark:text-green-400">履歷變更已儲存，內容不可再編輯</p>
+          </div>
+
+          {/* Updated Resume Preview */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  修改後的履歷內容
+                </CardTitle>
+                <CardDescription>以下為您儲存後的最新履歷資料</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Basic Info */}
+                <div className="flex items-start gap-6">
+                  <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center shrink-0">
+                    <User className="h-10 w-10 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <h3 className="text-xl font-bold">{originalData.name}</h3>
+                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1"><Mail className="h-4 w-4" />{originalData.email}</span>
+                      <span className="flex items-center gap-1"><Phone className="h-4 w-4" />{originalData.phone}</span>
+                      {originalData.address && <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{originalData.address}</span>}
+                    </div>
+                  </div>
+                </div>
+                {/* Resume Fields */}
+                <div className="grid gap-3">
+                  {originalResumeFields
+                    .filter((f) => f.key !== 'name' && f.key !== 'phone' && f.key !== 'email' && f.key !== 'address')
+                    .map((field) => {
+                      const val = originalData[field.key as keyof OriginalResumeData];
+                      if (field.optional && !val) return null;
+                      return <ResumeField key={field.key} icon={field.icon} label={field.label} value={val} optional={field.optional} />;
+                    })}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </>
       )}
 
       {/* ── 1. 核心定位 ── */}
@@ -879,6 +924,7 @@ const SuggestionsPhase = ({
 const ResumeEditMode = ({
   originalData,
   suggestions,
+  diagnosticResult,
   onChange,
   onSave,
   onCancel,
@@ -888,6 +934,7 @@ const ResumeEditMode = ({
 }: {
   originalData: OriginalResumeData;
   suggestions: Suggestion[];
+  diagnosticResult: ResumeDiagnosticResult | null;
   onChange: (data: OriginalResumeData) => void;
   onSave: () => void;
   onCancel: () => void;
@@ -984,24 +1031,109 @@ const ResumeEditMode = ({
       >
         <ScrollArea className="h-full pr-4">
           <div className="space-y-6">
-            {suggestions.map((s, i) => (
-              <div key={i} className="space-y-3 pb-4 border-b border-border last:border-0">
-                <h4 className="font-medium text-primary flex items-center gap-2">
-                  <ChevronRight className="h-4 w-4" />
-                  {s.section}
-                </h4>
-                <div className="space-y-3">
-                  <div className="p-3 bg-muted/50 rounded-lg">
-                    <p className="text-xs text-muted-foreground mb-1">原始內容</p>
-                    <p className="text-sm">{s.original}</p>
+            {/* ── 核心定位 ── */}
+            {diagnosticResult && (
+              <div className="space-y-3">
+                <div className="p-3 rounded-lg bg-primary/5 border border-primary/15">
+                  <h4 className="text-xs font-semibold text-primary mb-1.5">候選人定位</h4>
+                  <p className="text-sm leading-relaxed">{diagnosticResult.candidate_positioning}</p>
+                </div>
+                <div className="p-3 rounded-lg bg-muted/40 border border-border">
+                  <h4 className="text-xs font-semibold text-foreground mb-1.5">目標職位落差摘要</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{diagnosticResult.target_role_gap_summary}</p>
+                </div>
+              </div>
+            )}
+
+            {/* ── 優劣勢 ── */}
+            {diagnosticResult && (
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-sm font-semibold text-green-700 flex items-center gap-1.5 mb-2">
+                    <CheckCircle className="h-4 w-4" />整體優勢
+                  </h4>
+                  <div className="space-y-2">
+                    {diagnosticResult.overall_strengths.map((s, i) => (
+                      <div key={i} className="flex items-start gap-2 p-2 rounded-md bg-green-50/60">
+                        <CheckCircle className="h-3.5 w-3.5 text-green-600 shrink-0 mt-0.5" />
+                        <p className="text-xs leading-relaxed">{s}</p>
+                      </div>
+                    ))}
                   </div>
-                  <div className="p-3 bg-primary/5 rounded-lg border border-primary/20">
-                    <p className="text-xs text-primary mb-1">優化建議</p>
-                    <p className="text-sm">{s.optimized}</p>
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold text-primary flex items-center gap-1.5 mb-2">
+                    <AlertTriangle className="h-4 w-4" />待改善項目
+                  </h4>
+                  <div className="space-y-2">
+                    {diagnosticResult.overall_weaknesses.map((w, i) => (
+                      <div key={i} className="flex items-start gap-2 p-2 rounded-md bg-primary/5">
+                        <AlertTriangle className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                        <p className="text-xs leading-relaxed">{w}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
-            ))}
+            )}
+
+            {/* ── 關鍵問題診斷 ── */}
+            {diagnosticResult && diagnosticResult.critical_issues.length > 0 && (
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold flex items-center gap-1.5">
+                  <Sparkles className="h-4 w-4 text-primary" />關鍵問題診斷
+                </h4>
+                {diagnosticResult.critical_issues.map((issue, i) => {
+                  const severityColors: Record<string, string> = {
+                    '嚴重扣分': 'bg-red-100 text-red-800 border-red-200',
+                    '明顯扣分': 'bg-amber-100 text-amber-800 border-amber-200',
+                    '中度扣分': 'bg-orange-100 text-orange-800 border-orange-200',
+                    '輕微扣分': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+                  };
+                  return (
+                    <div key={i} className="rounded-lg border border-border overflow-hidden">
+                      <div className="flex items-center gap-2 px-3 py-2 bg-muted/30 border-b border-border">
+                        <span className="font-medium text-xs">{issue.section}</span>
+                        <Badge className={`text-[10px] border ${severityColors[issue.severity] || 'bg-muted text-muted-foreground'}`}>
+                          {issue.severity}
+                        </Badge>
+                      </div>
+                      <div className="p-3 space-y-2.5">
+                        <div className="p-2 rounded-md bg-muted/40 border border-border/60">
+                          <p className="text-[10px] text-muted-foreground mb-0.5 font-medium">原文內容</p>
+                          <p className="text-xs text-foreground/80 leading-relaxed">{issue.original_text}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-muted-foreground mb-0.5 font-medium">診斷分析</p>
+                          <p className="text-xs leading-relaxed">{issue.issue_reason}</p>
+                        </div>
+                        <div className="p-2 rounded-md bg-primary/5 border border-primary/15">
+                          <p className="text-[10px] text-primary mb-0.5 font-semibold">優化方向</p>
+                          <p className="text-xs leading-relaxed font-medium text-primary">{issue.improvement_direction}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* ── 行動計畫 ── */}
+            {diagnosticResult && diagnosticResult.recommended_next_actions.length > 0 && (
+              <div className="space-y-2 p-3 rounded-lg bg-[#fbf1e8]/40 border border-primary/15">
+                <h4 className="text-sm font-semibold flex items-center gap-1.5">
+                  <ListChecks className="h-4 w-4 text-primary" />後續行動計畫
+                </h4>
+                {diagnosticResult.recommended_next_actions.map((action, i) => (
+                  <div key={i} className="flex items-start gap-2 p-2 rounded-md bg-background/80 border border-border/50">
+                    <div className="h-5 w-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-[10px] font-bold mt-0.5">
+                      {i + 1}
+                    </div>
+                    <p className="text-xs leading-relaxed">{action}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </ScrollArea>
       </RightDrawer>
