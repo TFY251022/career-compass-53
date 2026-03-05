@@ -906,50 +906,6 @@ const SuggestionsPhase = ({
         </motion.div>
       )}
 
-      {/* ── 5. Original Suggestions (section-level before/after) ── */}
-      <Card>
-        <CardHeader className="flex flex-row items-start justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" />
-              逐項優化對照
-            </CardTitle>
-            <CardDescription>各區塊原文與建議優化的對比</CardDescription>
-          </div>
-          {!isEditSaved && (
-            <Button variant="outline" className="gap-2 shrink-0" onClick={onEdit}>
-              <Edit3 className="h-4 w-4" />
-              編輯履歷
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {suggestions.map((s, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 + i * 0.1 }}
-              className="space-y-3"
-            >
-              <h4 className="font-medium text-primary flex items-center gap-2">
-                <ChevronRight className="h-4 w-4" />
-                {s.section}
-              </h4>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="p-4 bg-muted/30 rounded-lg border border-transparent">
-                  <p className="text-xs text-muted-foreground mb-2">原始內容</p>
-                  <p className="text-sm">{s.original}</p>
-                </div>
-                <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
-                  <p className="text-xs text-primary mb-2">優化建議</p>
-                  <p className="text-sm">{s.optimized}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </CardContent>
-      </Card>
 
       <div className="flex gap-4">
         <Button variant="outline" className="flex-1 gap-2" onClick={onDownload}>
