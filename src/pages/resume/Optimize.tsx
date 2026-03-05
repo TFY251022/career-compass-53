@@ -665,6 +665,7 @@ const ResumeField = ({
 const SuggestionsPhase = ({
   suggestions,
   diagnosticResult,
+  originalData,
   onDownload,
   onGenerate,
   onEdit,
@@ -673,6 +674,7 @@ const SuggestionsPhase = ({
 }: {
   suggestions: Suggestion[];
   diagnosticResult: ResumeDiagnosticResult | null;
+  originalData: OriginalResumeData;
   onDownload: () => void;
   onGenerate: () => void;
   onEdit: () => void;
@@ -708,10 +710,51 @@ const SuggestionsPhase = ({
       </div>
 
       {isEditSaved && (
-        <div className="flex items-center gap-3 p-4 rounded-lg border border-green-500/30 bg-green-500/5">
-          <Check className="h-5 w-5 text-green-600 shrink-0" />
-          <p className="text-sm text-green-700 dark:text-green-400">履歷變更已儲存，內容不可再編輯</p>
-        </div>
+        <>
+          <div className="flex items-center gap-3 p-4 rounded-lg border border-green-500/30 bg-green-500/5">
+            <Check className="h-5 w-5 text-green-600 shrink-0" />
+            <p className="text-sm text-green-700 dark:text-green-400">履歷變更已儲存，內容不可再編輯</p>
+          </div>
+
+          {/* Updated Resume Preview */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  修改後的履歷內容
+                </CardTitle>
+                <CardDescription>以下為您儲存後的最新履歷資料</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Basic Info */}
+                <div className="flex items-start gap-6">
+                  <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center shrink-0">
+                    <User className="h-10 w-10 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <h3 className="text-xl font-bold">{originalData.name}</h3>
+                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1"><Mail className="h-4 w-4" />{originalData.email}</span>
+                      <span className="flex items-center gap-1"><Phone className="h-4 w-4" />{originalData.phone}</span>
+                      {originalData.address && <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{originalData.address}</span>}
+                    </div>
+                  </div>
+                </div>
+                {/* Resume Fields */}
+                <div className="grid gap-3">
+                  {originalResumeFields
+                    .filter((f) => f.key !== 'name' && f.key !== 'phone' && f.key !== 'email' && f.key !== 'address')
+                    .map((field) => {
+                      const val = originalData[field.key as keyof OriginalResumeData];
+                      if (field.optional && !val) return null;
+                      return <ResumeField key={field.key} icon={field.icon} label={field.label} value={val} optional={field.optional} />;
+                    })}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </>
       )}
 
       {/* ── 1. 核心定位 ── */}
