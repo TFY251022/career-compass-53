@@ -208,120 +208,7 @@ const Optimize = () => {
       const themes = TEMPLATE_THEMES[selectedTemplate] || TEMPLATE_THEMES.corporate;
       const theme = themes[selectedThemeIndex] || themes[0];
 
-      // Clone the element and render at fixed A4-width to match screen layout
-      const clone = element.cloneNode(true) as HTMLElement;
-      clone.style.width = '794px'; // A4 width at 96dpi
-      clone.style.padding = '0';
-      clone.style.margin = '0';
-      clone.style.position = 'fixed';
-      clone.style.left = '0';
-      clone.style.top = '0';
-      clone.style.zIndex = '-9999';
-      clone.style.opacity = '1';
-      clone.style.visibility = 'visible';
-      clone.style.backgroundColor = '#ffffff';
-      clone.style.fontFamily = "'Noto Sans TC', 'Microsoft JhengHei', sans-serif";
-      clone.style.color = '#222222';
-
-      // Copy all CSS custom properties from :root to the clone so hsl(var(--...)) works
-      const rootStyles = getComputedStyle(document.documentElement);
-      const cssVars: string[] = [];
-      for (let i = 0; i < rootStyles.length; i++) {
-        const prop = rootStyles[i];
-        if (prop.startsWith('--')) {
-          cssVars.push(`${prop}: ${rootStyles.getPropertyValue(prop)};`);
-        }
-      }
-      clone.setAttribute('style', clone.getAttribute('style') + ';' + cssVars.join(''));
-
-      // Inline all computed styles for every element to avoid CSS variable resolution issues
-      const inlineComputedStyles = (source: Element, target: Element) => {
-        const sourceChildren = source.children;
-        const targetChildren = target.children;
-        for (let i = 0; i < sourceChildren.length && i < targetChildren.length; i++) {
-          const srcEl = sourceChildren[i] as HTMLElement;
-          const tgtEl = targetChildren[i] as HTMLElement;
-          if (srcEl && tgtEl) {
-            const computed = getComputedStyle(srcEl);
-            tgtEl.style.color = computed.color;
-            tgtEl.style.backgroundColor = computed.backgroundColor;
-            tgtEl.style.borderColor = computed.borderColor;
-            tgtEl.style.fontSize = computed.fontSize;
-            tgtEl.style.fontWeight = computed.fontWeight;
-            tgtEl.style.lineHeight = computed.lineHeight;
-            tgtEl.style.padding = computed.padding;
-            tgtEl.style.margin = computed.margin;
-            tgtEl.style.display = computed.display;
-            tgtEl.style.flexDirection = computed.flexDirection;
-            tgtEl.style.justifyContent = computed.justifyContent;
-            tgtEl.style.alignItems = computed.alignItems;
-            tgtEl.style.gap = computed.gap;
-            tgtEl.style.gridTemplateColumns = computed.gridTemplateColumns;
-            tgtEl.style.textAlign = computed.textAlign;
-            tgtEl.style.borderRadius = computed.borderRadius;
-            tgtEl.style.boxShadow = computed.boxShadow;
-            tgtEl.style.background = computed.background;
-            tgtEl.style.width = computed.width;
-            tgtEl.style.maxWidth = computed.maxWidth;
-            tgtEl.style.minHeight = computed.minHeight;
-            tgtEl.style.overflow = computed.overflow;
-            // Recurse into children
-            inlineComputedStyles(srcEl, tgtEl);
-          }
-        }
-      };
-
-      // First append to get computed styles, then inline them
-      document.body.appendChild(clone);
-
-      // Force responsive grid layouts to desktop view in clone
-      clone.querySelectorAll('[class*="md\\:grid-cols"]').forEach((el) => {
-        const htmlEl = el as HTMLElement;
-        const classes = htmlEl.className;
-        const mdMatch = classes.match(/md:grid-cols-\[([^\]]+)\]/);
-        if (mdMatch) {
-          htmlEl.style.display = 'grid';
-          htmlEl.style.gridTemplateColumns = mdMatch[1];
-        }
-        const mdSimple = classes.match(/md:grid-cols-(\d+)/);
-        if (mdSimple) {
-          htmlEl.style.display = 'grid';
-          htmlEl.style.gridTemplateColumns = `repeat(${mdSimple[1]}, minmax(0, 1fr))`;
-        }
-      });
-
-      // Force md:flex-row
-      clone.querySelectorAll('[class*="md\\:flex-row"]').forEach((el) => {
-        (el as HTMLElement).style.flexDirection = 'row';
-      });
-
-      // Force md:text-left
-      clone.querySelectorAll('[class*="md\\:text-left"]').forEach((el) => {
-        (el as HTMLElement).style.textAlign = 'left';
-      });
-
-      // Force md:justify-start
-      clone.querySelectorAll('[class*="md\\:justify-start"]').forEach((el) => {
-        (el as HTMLElement).style.justifyContent = 'flex-start';
-      });
-
-      // Inline computed styles from the original element to the clone
-      inlineComputedStyles(element, clone);
-
-      // Ensure images load in clone
-      const images = clone.querySelectorAll('img');
-      await Promise.all(
-        Array.from(images).map(
-          (img) =>
-            new Promise<void>((resolve) => {
-              if (img.complete) return resolve();
-              img.onload = () => resolve();
-              img.onerror = () => resolve();
-            })
-        )
-      );
-
-      const sections = clone.querySelectorAll('[data-pdf-section]');
+      const sections = element.querySelectorAll('[data-pdf-section]');
       sections.forEach((section) => {
         (section as HTMLElement).style.pageBreakInside = 'avoid';
         (section as HTMLElement).style.breakInside = 'avoid';
@@ -336,8 +223,6 @@ const Optimize = () => {
           useCORS: true,
           letterRendering: true,
           logging: false,
-          width: 794,
-          windowWidth: 794,
         },
         jsPDF: {
           unit: 'mm' as const,
@@ -352,8 +237,7 @@ const Optimize = () => {
         },
       };
 
-      await html2pdf().set(opt).from(clone).save();
-      document.body.removeChild(clone);
+      await html2pdf().set(opt).from(element).save();
     } catch (error) {
       console.error('PDF generation failed:', error);
     } finally {
@@ -1127,13 +1011,6 @@ const ResultPhase = ({
         </CardContent>
       </Card>
 
-      {!isTemplateSaved && (
-        <div className="flex items-center gap-3 p-4 rounded-lg border border-amber-500/30 bg-amber-500/5">
-          <Save className="h-5 w-5 text-amber-600 shrink-0" />
-          <p className="text-sm text-amber-700 dark:text-amber-400">請先儲存履歷後才可下載 PDF 檔案</p>
-        </div>
-      )}
-
       <div className="flex flex-wrap gap-4">
         {!isTemplateSaved && (
           <Button variant="outline" className="gap-2" onClick={onBackToTemplates}>
@@ -1156,7 +1033,7 @@ const ResultPhase = ({
           className="flex-1 gap-2 text-white"
           style={{ backgroundColor: theme.main }}
           onClick={onDownload}
-          disabled={isDownloading || !isTemplateSaved}
+          disabled={isDownloading}
         >
           <Download className="h-4 w-4" />
           {isDownloading ? '生成中...' : '下載履歷'}
