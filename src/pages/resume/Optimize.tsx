@@ -757,152 +757,147 @@ const SuggestionsPhase = ({
         </>
       )}
 
-      {/* ── 1. 核心定位 ── */}
-      {diagnosticResult && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card className="border-primary/20 shadow-md">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="h-5 w-5 text-primary" />
-                核心定位分析
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="p-4 rounded-lg bg-primary/5 border border-primary/15">
-                <h4 className="text-sm font-semibold text-primary mb-2">候選人定位</h4>
-                <p className="text-sm leading-relaxed">{diagnosticResult.candidate_positioning}</p>
+      {/* ── Diagnostic sections only shown before edit save ── */}
+      {!isEditSaved && (
+        <>
+          {/* ── 1. 核心定位 ── */}
+          {diagnosticResult && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+              <Card className="border-primary/20 shadow-md">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="h-5 w-5 text-primary" />
+                    核心定位分析
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="p-4 rounded-lg bg-primary/5 border border-primary/15">
+                    <h4 className="text-sm font-semibold text-primary mb-2">候選人定位</h4>
+                    <p className="text-sm leading-relaxed">{diagnosticResult.candidate_positioning}</p>
+                  </div>
+                  <div className="p-4 rounded-lg bg-muted/40 border border-border">
+                    <h4 className="text-sm font-semibold text-foreground mb-2">目標職位落差摘要</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{diagnosticResult.target_role_gap_summary}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* ── 2. 優劣勢對比分析 ── */}
+          {diagnosticResult && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+              <div className="grid md:grid-cols-2 gap-4">
+                <Card className="border-green-200/60">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base flex items-center gap-2 text-green-700">
+                      <CheckCircle className="h-5 w-5" />
+                      整體優勢
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {diagnosticResult.overall_strengths.map((s, i) => (
+                      <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-green-50/60">
+                        <CheckCircle className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
+                        <p className="text-sm leading-relaxed">{s}</p>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+                <Card className="border-primary/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base flex items-center gap-2 text-primary">
+                      <AlertTriangle className="h-5 w-5" />
+                      待改善項目
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {diagnosticResult.overall_weaknesses.map((w, i) => (
+                      <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-primary/5">
+                        <AlertTriangle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                        <p className="text-sm leading-relaxed">{w}</p>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
               </div>
-              <div className="p-4 rounded-lg bg-muted/40 border border-border">
-                <h4 className="text-sm font-semibold text-foreground mb-2">目標職位落差摘要</h4>
-                <p className="text-sm text-muted-foreground leading-relaxed">{diagnosticResult.target_role_gap_summary}</p>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
+            </motion.div>
+          )}
 
-      {/* ── 2. 優劣勢對比分析 ── */}
-      {diagnosticResult && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <div className="grid md:grid-cols-2 gap-4">
-            {/* Strengths */}
-            <Card className="border-green-200/60">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2 text-green-700">
-                  <CheckCircle className="h-5 w-5" />
-                  整體優勢
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {diagnosticResult.overall_strengths.map((s, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-green-50/60">
-                    <CheckCircle className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
-                    <p className="text-sm leading-relaxed">{s}</p>
+          {/* ── 3. 關鍵問題診斷 ── */}
+          {diagnosticResult && diagnosticResult.critical_issues.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-primary" />
+                    關鍵問題診斷
+                  </CardTitle>
+                  <CardDescription>針對履歷各區塊的深度分析與改善方向</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-5">
+                  {diagnosticResult.critical_issues.map((issue, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -15 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + i * 0.08 }}
+                      className="rounded-lg border border-border overflow-hidden"
+                    >
+                      <div className="flex items-center gap-3 px-4 py-3 bg-muted/30 border-b border-border">
+                        <span className="font-medium text-sm">{issue.section}</span>
+                        <Badge className={`text-xs border ${severityColors[issue.severity] || 'bg-muted text-muted-foreground'}`}>
+                          {issue.severity}
+                        </Badge>
+                      </div>
+                      <div className="p-4 space-y-4">
+                        <div className="p-3 rounded-md bg-muted/40 border border-border/60">
+                          <p className="text-xs text-muted-foreground mb-1 font-medium">原文內容</p>
+                          <p className="text-sm text-foreground/80 leading-relaxed">{issue.original_text}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1 font-medium">診斷分析</p>
+                          <p className="text-sm leading-relaxed">{issue.issue_reason}</p>
+                        </div>
+                        <div className="p-3 rounded-md bg-primary/5 border border-primary/15">
+                          <p className="text-xs text-primary mb-1 font-semibold">優化方向</p>
+                          <p className="text-sm leading-relaxed font-medium text-primary">{issue.improvement_direction}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* ── 4. 後續行動計畫 ── */}
+          {diagnosticResult && diagnosticResult.recommended_next_actions.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+              <Card className="bg-[#fbf1e8]/40 border-primary/15">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <ListChecks className="h-5 w-5 text-primary" />
+                    後續行動計畫
+                  </CardTitle>
+                  <CardDescription>根據診斷結果，建議您依序完成以下事項</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {diagnosticResult.recommended_next_actions.map((action, i) => (
+                      <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-background/80 border border-border/50">
+                        <div className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">
+                          {i + 1}
+                        </div>
+                        <p className="text-sm leading-relaxed">{action}</p>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Weaknesses */}
-            <Card className="border-primary/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2 text-primary">
-                  <AlertTriangle className="h-5 w-5" />
-                  待改善項目
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {diagnosticResult.overall_weaknesses.map((w, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-primary/5">
-                    <AlertTriangle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                    <p className="text-sm leading-relaxed">{w}</p>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
-        </motion.div>
-      )}
-
-      {/* ── 3. 關鍵問題診斷 ── */}
-      {diagnosticResult && diagnosticResult.critical_issues.length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-primary" />
-                關鍵問題診斷
-              </CardTitle>
-              <CardDescription>針對履歷各區塊的深度分析與改善方向</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              {diagnosticResult.critical_issues.map((issue, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -15 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 + i * 0.08 }}
-                  className="rounded-lg border border-border overflow-hidden"
-                >
-                  {/* Issue header */}
-                  <div className="flex items-center gap-3 px-4 py-3 bg-muted/30 border-b border-border">
-                    <span className="font-medium text-sm">{issue.section}</span>
-                    <Badge className={`text-xs border ${severityColors[issue.severity] || 'bg-muted text-muted-foreground'}`}>
-                      {issue.severity}
-                    </Badge>
-                  </div>
-
-                  <div className="p-4 space-y-4">
-                    {/* Original text */}
-                    <div className="p-3 rounded-md bg-muted/40 border border-border/60">
-                      <p className="text-xs text-muted-foreground mb-1 font-medium">原文內容</p>
-                      <p className="text-sm text-foreground/80 leading-relaxed">{issue.original_text}</p>
-                    </div>
-
-                    {/* Issue reason */}
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1 font-medium">診斷分析</p>
-                      <p className="text-sm leading-relaxed">{issue.issue_reason}</p>
-                    </div>
-
-                    {/* Improvement direction */}
-                    <div className="p-3 rounded-md bg-primary/5 border border-primary/15">
-                      <p className="text-xs text-primary mb-1 font-semibold">優化方向</p>
-                      <p className="text-sm leading-relaxed font-medium text-primary">{issue.improvement_direction}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
-
-      {/* ── 4. 後續行動計畫 ── */}
-      {diagnosticResult && diagnosticResult.recommended_next_actions.length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-          <Card className="bg-[#fbf1e8]/40 border-primary/15">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ListChecks className="h-5 w-5 text-primary" />
-                後續行動計畫
-              </CardTitle>
-              <CardDescription>根據診斷結果，建議您依序完成以下事項</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {diagnosticResult.recommended_next_actions.map((action, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-background/80 border border-border/50">
-                    <div className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">
-                      {i + 1}
-                    </div>
-                    <p className="text-sm leading-relaxed">{action}</p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+        </>
       )}
 
 
