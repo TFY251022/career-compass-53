@@ -1,27 +1,25 @@
 import { mockDelay } from './apiClient';
+import apiClient from './apiClient';
 import { MOCK_RESUMES, mockOriginalResumeData, mockResumeData, mockSuggestions } from '@/mocks/resumes';
+import { isMockMode } from '@/config/mockMode';
 import type { ResumeItem, OriginalResumeData, ResumeData, Suggestion } from '@/types/resume';
 
-// TODO: Replace with API call – GET /resumes
 export async function getResumes(): Promise<ResumeItem[]> {
-  await mockDelay();
-  return MOCK_RESUMES;
+  if (isMockMode()) { await mockDelay(); return MOCK_RESUMES; }
+  return apiClient.get<ResumeItem[]>('/resumes');
 }
 
-// TODO: Replace with API call – GET /resumes/:id/original
 export async function getOriginalResumeData(): Promise<OriginalResumeData> {
-  await mockDelay();
-  return mockOriginalResumeData;
+  if (isMockMode()) { await mockDelay(); return mockOriginalResumeData; }
+  return apiClient.get<OriginalResumeData>('/resumes/original');
 }
 
-// TODO: Replace with API call – POST /resumes/:id/optimize
 export async function getOptimizedResumeData(): Promise<ResumeData> {
-  await mockDelay();
-  return mockResumeData;
+  if (isMockMode()) { await mockDelay(); return mockResumeData; }
+  return apiClient.post<ResumeData>('/resumes/optimize', {});
 }
 
-// TODO: Replace with API call – GET /resumes/:id/suggestions
 export async function getResumeSuggestions(): Promise<Suggestion[]> {
-  await mockDelay();
-  return mockSuggestions;
+  if (isMockMode()) { await mockDelay(); return mockSuggestions; }
+  return apiClient.get<Suggestion[]>('/resumes/suggestions');
 }

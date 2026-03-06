@@ -1,21 +1,20 @@
 import { mockDelay } from './apiClient';
+import apiClient from './apiClient';
 import { mockUserId, mockProfile } from '@/mocks/member';
+import { isMockMode } from '@/config/mockMode';
 import type { UserProfile } from '@/types/member';
 
-// TODO: Replace with API call – GET /members/me
 export async function getMyProfile(): Promise<UserProfile> {
-  await mockDelay();
-  return mockProfile;
+  if (isMockMode()) { await mockDelay(); return mockProfile; }
+  return apiClient.get<UserProfile>('/members/me');
 }
 
-// TODO: Replace with API call – GET /members/me/id
 export async function getMyUserId(): Promise<string> {
-  await mockDelay();
-  return mockUserId;
+  if (isMockMode()) { await mockDelay(); return mockUserId; }
+  return apiClient.get<string>('/members/me/id');
 }
 
-// TODO: Replace with API call – PUT /members/me
 export async function updateProfile(data: Partial<UserProfile>): Promise<UserProfile> {
-  await mockDelay();
-  return { ...mockProfile, ...data };
+  if (isMockMode()) { await mockDelay(); return { ...mockProfile, ...data }; }
+  return apiClient.put<UserProfile>('/members/me', data);
 }
