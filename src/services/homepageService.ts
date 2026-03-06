@@ -1,15 +1,15 @@
 import { mockDelay } from './apiClient';
+import apiClient from './apiClient';
 import { heroStats, news } from '@/mocks/homepage';
+import { isMockMode } from '@/config/mockMode';
 import type { HeroStat, NewsItem } from '@/types/homepage';
 
-// TODO: Replace with API call – GET /homepage/stats
 export async function getHeroStats(): Promise<HeroStat[]> {
-  await mockDelay();
-  return heroStats;
+  if (isMockMode()) { await mockDelay(); return heroStats; }
+  return apiClient.get<HeroStat[]>('/homepage/stats');
 }
 
-// TODO: Replace with API call – GET /homepage/news
 export async function getNews(): Promise<NewsItem[]> {
-  await mockDelay();
-  return news;
+  if (isMockMode()) { await mockDelay(); return news; }
+  return apiClient.get<NewsItem[]>('/homepage/news');
 }

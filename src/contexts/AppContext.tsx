@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { isMockMode, setMockMode as _setMockMode } from '@/config/mockMode';
 
 interface AppState {
   isLoggedIn: boolean;
@@ -7,12 +8,14 @@ interface AppState {
   isJobPreferenceQuizDone: boolean;
   isPersonalityTestDone: boolean;
   avatarUrl: string | null;
+  useMockData: boolean;
   setIsLoggedIn: (value: boolean) => void;
   setIsResumeUploaded: (value: boolean) => void;
   setIsPersonalityQuizDone: (value: boolean) => void;
   setIsJobPreferenceQuizDone: (value: boolean) => void;
   setIsPersonalityTestDone: (value: boolean) => void;
   setAvatarUrl: (value: string | null) => void;
+  setUseMockData: (value: boolean) => void;
 }
 
 const APP_STATE_KEY = 'app-global-state';
@@ -57,6 +60,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [isJobPreferenceQuizDone, _setIsJobPreferenceQuizDone] = useState(initial.isJobPreferenceQuizDone);
   const [isPersonalityTestDone, _setIsPersonalityTestDone] = useState(initial.isPersonalityTestDone);
   const [avatarUrl, _setAvatarUrl] = useState(initial.avatarUrl);
+  const [useMockData, _setUseMockData] = useState(isMockMode);
 
   // Each setter atomically merges its flag into localStorage,
   // preventing race conditions where one useEffect overwrites another flag.
@@ -90,6 +94,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     persistFlag({ avatarUrl: value });
   }, []);
 
+  const setUseMockData = useCallback((value: boolean) => {
+    _setUseMockData(value);
+    _setMockMode(value);
+  }, []);
+
   return (
     <AppContext.Provider
       value={{
@@ -99,12 +108,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         isJobPreferenceQuizDone,
         isPersonalityTestDone,
         avatarUrl,
+        useMockData,
         setIsLoggedIn,
         setIsResumeUploaded,
         setIsPersonalityQuizDone,
         setIsJobPreferenceQuizDone,
         setIsPersonalityTestDone,
         setAvatarUrl,
+        setUseMockData,
       }}
     >
       {children}
