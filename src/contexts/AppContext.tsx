@@ -60,6 +60,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [isJobPreferenceQuizDone, _setIsJobPreferenceQuizDone] = useState(initial.isJobPreferenceQuizDone);
   const [isPersonalityTestDone, _setIsPersonalityTestDone] = useState(initial.isPersonalityTestDone);
   const [avatarUrl, _setAvatarUrl] = useState(initial.avatarUrl);
+  const [useMockData, _setUseMockData] = useState(isMockMode);
 
   // Each setter atomically merges its flag into localStorage,
   // preventing race conditions where one useEffect overwrites another flag.
