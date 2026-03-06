@@ -3,7 +3,7 @@ import { useAppState } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Settings, X, ChevronUp, ChevronDown, Unlock } from 'lucide-react';
+import { Settings, X, ChevronUp, ChevronDown, Unlock, Database, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const DevStateToggles = forwardRef<HTMLDivElement>((_, ref) => {
