@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
 interface AppState {
   isLoggedIn: boolean;
@@ -41,29 +41,54 @@ const loadFlags = (): PersistedFlags => {
   };
 };
 
+/** Atomically merge a partial update into persisted flags */
+const persistFlag = (partial: Partial<PersistedFlags>) => {
+  const current = loadFlags();
+  localStorage.setItem(APP_STATE_KEY, JSON.stringify({ ...current, ...partial }));
+};
+
 const AppContext = createContext<AppState | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const initial = loadFlags();
-  const [isLoggedIn, setIsLoggedIn] = useState(initial.isLoggedIn);
-  const [isResumeUploaded, setIsResumeUploaded] = useState(initial.isResumeUploaded);
-  const [isPersonalityQuizDone, setIsPersonalityQuizDone] = useState(initial.isPersonalityQuizDone);
-  const [isJobPreferenceQuizDone, setIsJobPreferenceQuizDone] = useState(initial.isJobPreferenceQuizDone);
-  const [isPersonalityTestDone, setIsPersonalityTestDone] = useState(initial.isPersonalityTestDone);
-  const [avatarUrl, setAvatarUrl] = useState(initial.avatarUrl);
+  const [isLoggedIn, _setIsLoggedIn] = useState(initial.isLoggedIn);
+  const [isResumeUploaded, _setIsResumeUploaded] = useState(initial.isResumeUploaded);
+  const [isPersonalityQuizDone, _setIsPersonalityQuizDone] = useState(initial.isPersonalityQuizDone);
+  const [isJobPreferenceQuizDone, _setIsJobPreferenceQuizDone] = useState(initial.isJobPreferenceQuizDone);
+  const [isPersonalityTestDone, _setIsPersonalityTestDone] = useState(initial.isPersonalityTestDone);
+  const [avatarUrl, _setAvatarUrl] = useState(initial.avatarUrl);
 
-  // Persist flags whenever they change
-  useEffect(() => {
-    const flags: PersistedFlags = {
-      isLoggedIn,
-      isResumeUploaded,
-      isPersonalityQuizDone,
-      isJobPreferenceQuizDone,
-      isPersonalityTestDone,
-      avatarUrl,
-    };
-    localStorage.setItem(APP_STATE_KEY, JSON.stringify(flags));
-  }, [isLoggedIn, isResumeUploaded, isPersonalityQuizDone, isJobPreferenceQuizDone, isPersonalityTestDone, avatarUrl]);
+  // Each setter atomically merges its flag into localStorage,
+  // preventing race conditions where one useEffect overwrites another flag.
+  const setIsLoggedIn = useCallback((value: boolean) => {
+    _setIsLoggedIn(value);
+    persistFlag({ isLoggedIn: value });
+  }, []);
+
+  const setIsResumeUploaded = useCallback((value: boolean) => {
+    _setIsResumeUploaded(value);
+    persistFlag({ isResumeUploaded: value });
+  }, []);
+
+  const setIsPersonalityQuizDone = useCallback((value: boolean) => {
+    _setIsPersonalityQuizDone(value);
+    persistFlag({ isPersonalityQuizDone: value });
+  }, []);
+
+  const setIsJobPreferenceQuizDone = useCallback((value: boolean) => {
+    _setIsJobPreferenceQuizDone(value);
+    persistFlag({ isJobPreferenceQuizDone: value });
+  }, []);
+
+  const setIsPersonalityTestDone = useCallback((value: boolean) => {
+    _setIsPersonalityTestDone(value);
+    persistFlag({ isPersonalityTestDone: value });
+  }, []);
+
+  const setAvatarUrl = useCallback((value: string | null) => {
+    _setAvatarUrl(value);
+    persistFlag({ avatarUrl: value });
+  }, []);
 
   return (
     <AppContext.Provider
