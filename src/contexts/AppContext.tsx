@@ -94,6 +94,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     persistFlag({ avatarUrl: value });
   }, []);
 
+  const setUseMockData = useCallback((value: boolean) => {
+    _setUseMockData(value);
+    _setMockMode(value);
+  }, []);
+
   return (
     <AppContext.Provider
       value={{
@@ -103,12 +108,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         isJobPreferenceQuizDone,
         isPersonalityTestDone,
         avatarUrl,
+        useMockData,
         setIsLoggedIn,
         setIsResumeUploaded,
         setIsPersonalityQuizDone,
         setIsJobPreferenceQuizDone,
         setIsPersonalityTestDone,
         setAvatarUrl,
+        setUseMockData,
       }}
     >
       {children}
