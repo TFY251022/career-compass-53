@@ -11,6 +11,7 @@ export interface JobData {
 
 /** Backend recommendation API response per job */
 export interface RecommendedJob {
+  job_id: string;
   job_title: string;
   company_name: string;
   industry: string;
@@ -21,6 +22,12 @@ export interface RecommendedJob {
   strengths: string;
   weaknesses: string;
   interview_tips: string;
+}
+
+/** Full detail for a recommended job (includes description & requirements) */
+export interface RecommendedJobDetail extends RecommendedJob {
+  job_description: string;
+  requirements: string[];
 }
 
 export interface JobDetailData {
