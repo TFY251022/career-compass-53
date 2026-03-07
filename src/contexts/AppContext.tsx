@@ -1,15 +1,27 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { isMockMode, setMockMode as _setMockMode } from '@/config/mockMode';
+import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from "react";
+import { isMockMode, setMockMode as _setMockMode } from "@/config/mockMode";
 
-interface AppState {
+// --- Types ---
+export interface UserData {
+  user_id: number;
+  email: string;
+  [key: string]: any;
+}
+
+interface PersistedFlags {
   isLoggedIn: boolean;
+  user: UserData | null;
   isResumeUploaded: boolean;
   isPersonalityQuizDone: boolean;
   isJobPreferenceQuizDone: boolean;
   isPersonalityTestDone: boolean;
   avatarUrl: string | null;
+}
+
+interface AppState extends PersistedFlags {
   useMockData: boolean;
   setIsLoggedIn: (value: boolean) => void;
+  setUser: (user: UserData | null) => void;
   setIsResumeUploaded: (value: boolean) => void;
   setIsPersonalityQuizDone: (value: boolean) => void;
   setIsJobPreferenceQuizDone: (value: boolean) => void;
@@ -18,43 +30,44 @@ interface AppState {
   setUseMockData: (value: boolean) => void;
 }
 
-const APP_STATE_KEY = 'app-global-state';
-
-interface PersistedFlags {
-  isLoggedIn: boolean;
-  isResumeUploaded: boolean;
-  isPersonalityQuizDone: boolean;
-  isJobPreferenceQuizDone: boolean;
-  isPersonalityTestDone: boolean;
-  avatarUrl: string | null;
-}
+// --- Helpers ---
+const APP_STATE_KEY = "app-global-state";
 
 const loadFlags = (): PersistedFlags => {
+  if (typeof window === "undefined") return getDefaultFlags();
   try {
     const saved = localStorage.getItem(APP_STATE_KEY);
-    if (saved) return JSON.parse(saved);
-  } catch {}
-  return {
-    isLoggedIn: false,
-    isResumeUploaded: false,
-    isPersonalityQuizDone: false,
-    isJobPreferenceQuizDone: false,
-    isPersonalityTestDone: false,
-    avatarUrl: null,
-  };
+    return saved ? JSON.parse(saved) : getDefaultFlags();
+  } catch {
+    return getDefaultFlags();
+  }
 };
 
-/** Atomically merge a partial update into persisted flags */
+const getDefaultFlags = (): PersistedFlags => ({
+  isLoggedIn: false,
+  user: null,
+  isResumeUploaded: false,
+  isPersonalityQuizDone: false,
+  isJobPreferenceQuizDone: false,
+  isPersonalityTestDone: false,
+  avatarUrl: null,
+});
+
+/** 原子化更新 localStorage，避免覆蓋掉其他欄位 */
 const persistFlag = (partial: Partial<PersistedFlags>) => {
   const current = loadFlags();
   localStorage.setItem(APP_STATE_KEY, JSON.stringify({ ...current, ...partial }));
 };
 
+// --- Context ---
 const AppContext = createContext<AppState | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const initial = loadFlags();
+
+  // State
   const [isLoggedIn, _setIsLoggedIn] = useState(initial.isLoggedIn);
+  const [user, _setUser] = useState<UserData | null>(initial.user);
   const [isResumeUploaded, _setIsResumeUploaded] = useState(initial.isResumeUploaded);
   const [isPersonalityQuizDone, _setIsPersonalityQuizDone] = useState(initial.isPersonalityQuizDone);
   const [isJobPreferenceQuizDone, _setIsJobPreferenceQuizDone] = useState(initial.isJobPreferenceQuizDone);
@@ -62,11 +75,15 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [avatarUrl, _setAvatarUrl] = useState(initial.avatarUrl);
   const [useMockData, _setUseMockData] = useState(isMockMode);
 
-  // Each setter atomically merges its flag into localStorage,
-  // preventing race conditions where one useEffect overwrites another flag.
+  // Setters with Persistence
   const setIsLoggedIn = useCallback((value: boolean) => {
     _setIsLoggedIn(value);
     persistFlag({ isLoggedIn: value });
+  }, []);
+
+  const setUser = useCallback((value: UserData | null) => {
+    _setUser(value);
+    persistFlag({ user: value });
   }, []);
 
   const setIsResumeUploaded = useCallback((value: boolean) => {
@@ -103,6 +120,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     <AppContext.Provider
       value={{
         isLoggedIn,
+        user,
         isResumeUploaded,
         isPersonalityQuizDone,
         isJobPreferenceQuizDone,
@@ -110,6 +128,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         avatarUrl,
         useMockData,
         setIsLoggedIn,
+        setUser,
         setIsResumeUploaded,
         setIsPersonalityQuizDone,
         setIsJobPreferenceQuizDone,
@@ -126,7 +145,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 export const useAppState = () => {
   const context = useContext(AppContext);
   if (!context) {
-    throw new Error('useAppState must be used within an AppProvider');
+    throw new Error("useAppState must be used within an AppProvider");
   }
   return context;
 };
