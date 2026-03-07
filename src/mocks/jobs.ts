@@ -214,6 +214,7 @@ export const ICON_NAME_MAP: Record<string, string> = {
 export const generateMockRecommendedJobs = (page: number): RecommendedJob[] => {
   const base: RecommendedJob[] = [
     {
+      job_id: 'rec-1',
       job_title: 'Senior Backend Engineer - Python',
       company_name: '塔台智能網絡股份有限公司',
       industry: '資訊科技',
@@ -226,6 +227,7 @@ export const generateMockRecommendedJobs = (page: number): RecommendedJob[] => {
       interview_tips: '建議候選人在面試前深入了解 AWS 和 Docker 的最新技術趨勢，並準備一些實際應用案例。',
     },
     {
+      job_id: 'rec-2',
       job_title: '全端工程師',
       company_name: '數位創新科技有限公司',
       industry: '軟體服務',
@@ -238,6 +240,7 @@ export const generateMockRecommendedJobs = (page: number): RecommendedJob[] => {
       interview_tips: '建議準備全端架構設計案例，展示前後端整合經驗。',
     },
     {
+      job_id: 'rec-3',
       job_title: 'DevOps Engineer',
       company_name: '雲端架構顧問公司',
       industry: '雲端服務',
@@ -250,6 +253,7 @@ export const generateMockRecommendedJobs = (page: number): RecommendedJob[] => {
       interview_tips: '建議深入了解 Kubernetes 集群管理和 Terraform IaC 最佳實踐。',
     },
     {
+      job_id: 'rec-4',
       job_title: '資深前端工程師',
       company_name: '互動體驗設計公司',
       industry: '數位媒體',
@@ -262,6 +266,7 @@ export const generateMockRecommendedJobs = (page: number): RecommendedJob[] => {
       interview_tips: '建議展示 React 效能優化與使用者體驗設計的實務案例。',
     },
     {
+      job_id: 'rec-5',
       job_title: 'AI 應用工程師',
       company_name: '智慧數據分析股份有限公司',
       industry: '人工智慧',
