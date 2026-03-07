@@ -1,12 +1,7 @@
 import { useState, useEffect } from "react";
 import {
-  MapPin,
-  Building2,
-  Banknote,
-  ExternalLink,
   ChevronLeft,
   ChevronRight,
-  Briefcase,
   Star,
   Heart,
   RefreshCw,
@@ -14,17 +9,16 @@ import {
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppState } from "@/contexts/AppContext";
 import { AILoadingSpinner } from "@/components/loading/LoadingStates";
 import EmbeddedPreferenceSurvey from "@/components/survey/EmbeddedPreferenceSurvey";
 import ResumeSelector from "@/components/survey/ResumeSelector";
 import AlertModal from "@/components/modals/AlertModal";
-import icon104 from "@/assets/104-icon.png";
-import type { JobData } from "@/types/job";
-import { generateMockJobs } from "@/mocks/jobs";
+import RecommendationJobCard from "@/components/jobs/RecommendationJobCard";
+import type { RecommendedJob } from "@/types/job";
+import { getRecommendedJobs } from "@/services/jobService";
 
 // Job Card Skeleton
 const JobCardSkeleton = () => (
@@ -35,70 +29,18 @@ const JobCardSkeleton = () => (
           <Skeleton className="h-6 w-3/4" />
           <Skeleton className="h-4 w-1/2" />
         </div>
-        <Skeleton className="h-8 w-8 rounded-full flex-shrink-0" />
+        <Skeleton className="h-8 w-16 rounded-lg flex-shrink-0" />
       </div>
     </CardHeader>
     <CardContent className="space-y-4">
       <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-5/6" />
       <div className="flex flex-wrap gap-2">
         <Skeleton className="h-6 w-20 rounded-full" />
         <Skeleton className="h-6 w-24 rounded-full" />
-        <Skeleton className="h-6 w-16 rounded-full" />
       </div>
       <div className="flex gap-3 pt-2">
         <Skeleton className="h-9 w-24" />
-        <Skeleton className="h-9 w-24" />
-      </div>
-    </CardContent>
-  </Card>
-);
-
-const JobCard = ({ job }: { job: JobData }) => (
-  <Card className="overflow-hidden hover:shadow-medium hover:-translate-y-1 transition-all duration-300 group border-border hover:border-primary/30 hover:shadow-[0_8px_30px_rgba(141,73,3,0.12)]">
-    <CardHeader className="pb-3">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors truncate">
-            {job.title}
-          </h3>
-          <div className="flex items-center gap-2 mt-1 text-muted-foreground">
-            <Building2 className="h-4 w-4 flex-shrink-0" />
-            <span className="text-sm truncate">{job.company}</span>
-          </div>
-        </div>
-        <div className="flex-shrink-0">
-          <img src={icon104} alt="104人力銀行" className="h-8 w-8 rounded-full shadow-sm" />
-        </div>
-      </div>
-    </CardHeader>
-    <CardContent className="space-y-4">
-      <p className="text-muted-foreground text-sm line-clamp-2">{job.description}</p>
-      <div className="flex flex-wrap gap-2">
-        <Badge variant="secondary" className="flex items-center gap-1">
-          <MapPin className="h-3 w-3" />
-          {job.city}
-        </Badge>
-        <Badge variant="secondary" className="flex items-center gap-1">
-          <Banknote className="h-3 w-3" />
-          {job.salary}
-        </Badge>
-        <Badge variant="outline" className="flex items-center gap-1">
-          <Briefcase className="h-3 w-3" />
-          {job.industry}
-        </Badge>
-      </div>
-      <div className="flex gap-3 pt-2">
-        <Link to={`/jobs/${job.id}`}>
-          <Button size="sm" className="gap-1">
-            查看詳細
-          </Button>
-        </Link>
-        <a href={job.externalUrl} target="_blank" rel="noopener noreferrer">
-          <Button size="sm" variant="outline" className="gap-1">
-            立即投遞
-            <ExternalLink className="h-3 w-3" />
-          </Button>
-        </a>
       </div>
     </CardContent>
   </Card>
@@ -111,32 +53,30 @@ const Recommendations = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { isJobPreferenceQuizDone, setIsJobPreferenceQuizDone } = useAppState();
 
-  // Determine initial stage
   const [stage, setStage] = useState<Stage>(isJobPreferenceQuizDone ? "results" : "survey");
   const [showRefillAlert, setShowRefillAlert] = useState(false);
 
-  // Results state
   const urlPage = parseInt(searchParams.get("page") || "1", 10);
   const initialPage = isNaN(urlPage) || urlPage < 1 ? 1 : urlPage;
   const [isLoading, setIsLoading] = useState(false);
-  const [jobs, setJobs] = useState<JobData[]>([]);
+  const [jobs, setJobs] = useState<RecommendedJob[]>([]);
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [totalPages] = useState(5);
 
-  // Sync stage when global state changes externally
   useEffect(() => {
     if (isJobPreferenceQuizDone && stage === "survey") {
       setStage("results");
     }
   }, [isJobPreferenceQuizDone]);
 
-  // Load jobs
-  const loadJobs = (page: number) => {
+  const loadJobs = async (page: number) => {
     setIsLoading(true);
-    setTimeout(() => {
-      setJobs(generateMockJobs(page));
+    try {
+      const data = await getRecommendedJobs(page);
+      setJobs(data);
+    } finally {
       setIsLoading(false);
-    }, 1200);
+    }
   };
 
   useEffect(() => {
@@ -145,7 +85,6 @@ const Recommendations = () => {
     }
   }, [currentPage, stage]);
 
-  // Sync URL params
   useEffect(() => {
     const urlPageParam = parseInt(searchParams.get("page") || "1", 10);
     const validPage = isNaN(urlPageParam) || urlPageParam < 1 ? 1 : Math.min(urlPageParam, totalPages);
@@ -161,11 +100,9 @@ const Recommendations = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Survey complete → loading → results
   const handleSurveyComplete = () => {
     setStage("loading");
     window.scrollTo({ top: 0, behavior: "smooth" });
-
     setTimeout(() => {
       setIsJobPreferenceQuizDone(true);
       setStage("results");
@@ -175,7 +112,6 @@ const Recommendations = () => {
     }, 1800);
   };
 
-  // Refill flow
   const handleRefillConfirm = () => {
     setShowRefillAlert(false);
     setIsJobPreferenceQuizDone(false);
@@ -252,7 +188,6 @@ const Recommendations = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              {/* Header */}
               <div className="text-center mb-12">
                 <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-6">
                   <Star className="h-8 w-8 text-primary" />
@@ -263,7 +198,6 @@ const Recommendations = () => {
                 </p>
               </div>
 
-              {/* Refill Button */}
               <div className="max-w-4xl mx-auto mb-6">
                 <Button variant="outline" size="sm" className="gap-2" onClick={() => setShowRefillAlert(true)}>
                   <RefreshCw className="h-4 w-4" />
@@ -271,7 +205,6 @@ const Recommendations = () => {
                 </Button>
               </div>
 
-              {/* Job List */}
               <div className="max-w-4xl mx-auto">
                 <AnimatePresence mode="wait">
                   {isLoading ? (
@@ -296,12 +229,12 @@ const Recommendations = () => {
                     >
                       {jobs.map((job, index) => (
                         <motion.div
-                          key={job.id}
+                          key={`${job.job_title}-${job.company_name}-${index}`}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.05 }}
                         >
-                          <JobCard job={job} />
+                          <RecommendationJobCard job={job} />
                         </motion.div>
                       ))}
                     </motion.div>
@@ -363,7 +296,6 @@ const Recommendations = () => {
         </AnimatePresence>
       </div>
 
-      {/* Refill Confirmation Alert */}
       <AlertModal
         open={showRefillAlert}
         onClose={() => setShowRefillAlert(false)}
