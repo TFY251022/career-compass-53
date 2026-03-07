@@ -1,8 +1,8 @@
 import { mockDelay } from './apiClient';
 import apiClient from './apiClient';
-import { generateMockJobs, getMockJobDetail, mockCoverLetter, JOB_CATEGORIES } from '@/mocks/jobs';
+import { generateMockJobs, getMockJobDetail, mockCoverLetter, JOB_CATEGORIES, generateMockRecommendedJobs } from '@/mocks/jobs';
 import { isMockMode } from '@/config/mockMode';
-import type { JobData, JobDetailData, JobCategory } from '@/types/job';
+import type { JobData, JobDetailData, JobCategory, RecommendedJob } from '@/types/job';
 
 export async function getJobs(page = 1): Promise<JobData[]> {
   if (isMockMode()) { await mockDelay(); return generateMockJobs(page); }
@@ -22,4 +22,9 @@ export async function generateCoverLetter(jobTitle?: string, company?: string): 
 export async function getJobCategories(): Promise<JobCategory[]> {
   if (isMockMode()) { await mockDelay(); return JOB_CATEGORIES; }
   return apiClient.get<JobCategory[]>('/jobs/categories');
+}
+
+export async function getRecommendedJobs(page = 1): Promise<RecommendedJob[]> {
+  if (isMockMode()) { await mockDelay(); return generateMockRecommendedJobs(page); }
+  return apiClient.get<RecommendedJob[]>('/jobs/recommendations', { params: { page: String(page) } });
 }

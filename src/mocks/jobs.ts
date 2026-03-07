@@ -1,4 +1,4 @@
-import type { JobData, JobDetailData, JobCategory } from '@/types/job';
+import type { JobData, JobDetailData, JobCategory, RecommendedJob } from '@/types/job';
 
 // TODO: Replace with API call
 export const generateMockJobs = (page: number): JobData[] => {
@@ -208,4 +208,76 @@ export const ICON_NAME_MAP: Record<string, string> = {
   'Linux 系統管理': 'linux',
   'CI/CD Pipeline': 'Jenkins',
   '資安基礎': 'security',
+};
+
+/** Mock recommended jobs matching backend API shape */
+export const generateMockRecommendedJobs = (page: number): RecommendedJob[] => {
+  const base: RecommendedJob[] = [
+    {
+      job_title: 'Senior Backend Engineer - Python',
+      company_name: '塔台智能網絡股份有限公司',
+      industry: '資訊科技',
+      full_address: '台北市南港區園區街3之2號9樓',
+      source_url: 'https://www.104.com.tw/job/8n0gu?jobsource=joblist_list',
+      final_score: 79.8,
+      recommendation_reason: '此職缺強調 Python 後端開發能力，並需要在 AWS 和 Docker 上有豐富經驗。候選人在 D3 (DevOps) 和 D5 (Quality) 上的高分顯示其具備相關經驗，契合度高。',
+      strengths: '候選人在 D3 (DevOps) 和 D6 (Soft Skills) 上的高分顯示了他在系統部署和團隊合作方面的強項，這對於優化現有架構和團隊溝通至關重要。',
+      weaknesses: '候選人在 D1 (Frontend) 和 D4 (AI/Data) 的分數較低，可能在前端技術和數據處理上缺乏經驗。',
+      interview_tips: '建議候選人在面試前深入了解 AWS 和 Docker 的最新技術趨勢，並準備一些實際應用案例。',
+    },
+    {
+      job_title: '全端工程師',
+      company_name: '數位創新科技有限公司',
+      industry: '軟體服務',
+      full_address: '新北市板橋區中山路一段100號',
+      source_url: 'https://www.104.com.tw/job/example2',
+      final_score: 85.2,
+      recommendation_reason: '該職位需要前後端開發能力（D1）及後端開發能力（D2），候選人的全端經驗完美匹配。D5 (Quality) 分數也顯示其具備優良的工程品質意識。',
+      strengths: '候選人在 D2 (Backend) 與 D5 (Quality) 表現突出，展現了紮實的後端架構能力與對程式碼品質的高標準。',
+      weaknesses: '候選人在 D4 (AI/Data) 方面得分偏低，在資料處理與AI應用上可能需要額外學習。',
+      interview_tips: '建議準備全端架構設計案例，展示前後端整合經驗。',
+    },
+    {
+      job_title: 'DevOps Engineer',
+      company_name: '雲端架構顧問公司',
+      industry: '雲端服務',
+      full_address: '台中市西屯區台灣大道三段99號',
+      source_url: 'https://www.104.com.tw/job/example3',
+      final_score: 72.5,
+      recommendation_reason: '此職位專注於 D3 (DevOps) 領域，需要 Kubernetes 和 Terraform 經驗。候選人在運維部署（D3）方面有較強背景。',
+      strengths: '候選人在 D3 (DevOps) 上的表現出色，具備 CI/CD 與容器化部署的豐富經驗。',
+      weaknesses: '候選人的 D1 (Frontend) 和 D6 (Soft Skills) 分數有提升空間。',
+      interview_tips: '建議深入了解 Kubernetes 集群管理和 Terraform IaC 最佳實踐。',
+    },
+    {
+      job_title: '資深前端工程師',
+      company_name: '互動體驗設計公司',
+      industry: '數位媒體',
+      full_address: '高雄市前鎮區成功二路88號',
+      source_url: 'https://www.104.com.tw/job/example4',
+      final_score: 68.3,
+      recommendation_reason: '職缺要求精通 React 與 TypeScript，屬於 D1 (Frontend) 核心領域。候選人雖在前端開發（D1）得分中等，但 D6 (Soft Skills) 和 D5 (Quality) 高分彌補了差距。',
+      strengths: '候選人在 D6 (Soft Skills) 表現卓越，具備良好的溝通與協作能力，適合跨團隊合作。',
+      weaknesses: '候選人在前端開發（D1）的專精度不如後端開發（D2），可能需要更多前端框架的深度學習。',
+      interview_tips: '建議展示 React 效能優化與使用者體驗設計的實務案例。',
+    },
+    {
+      job_title: 'AI 應用工程師',
+      company_name: '智慧數據分析股份有限公司',
+      industry: '人工智慧',
+      full_address: '新竹市東區光復路二段101號',
+      source_url: 'https://www.104.com.tw/job/example5',
+      final_score: 61.7,
+      recommendation_reason: '此職位聚焦 D4 (AI/Data) 領域，要求 LLM 與 NLP 經驗。候選人在 D4 (AI/Data) 分數偏低，但 D2 (Backend) 的強項可支撐模型部署工作。',
+      strengths: '候選人的 D2 (Backend) 和 D3 (DevOps) 能力可協助 AI 模型的工程化部署與 MLOps 流程建設。',
+      weaknesses: '候選人在 D4 (AI/Data) 的核心 AI 技能不足，需補強機器學習與深度學習基礎。',
+      interview_tips: '建議了解 LLM 與 RAG 架構的基本原理，並準備後端系統支撐 AI 應用的案例。',
+    },
+  ];
+
+  // For pagination simulation: shift scores slightly per page
+  return base.map((job, idx) => ({
+    ...job,
+    final_score: Math.max(50, Math.min(99, job.final_score - (page - 1) * 3 + idx)),
+  }));
 };
