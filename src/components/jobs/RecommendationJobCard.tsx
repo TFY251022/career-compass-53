@@ -1,8 +1,10 @@
+import { useNavigate } from "react-router-dom";
 import {
   MapPin,
   Building2,
   ExternalLink,
   Briefcase,
+  FileSearch,
 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +21,7 @@ const getScoreColor = (score: number) => {
 };
 
 const RecommendationJobCard = ({ job }: { job: RecommendedJob }) => {
+  const navigate = useNavigate();
   const city = extractCity(job.full_address);
   const reason = cleanDimensionText(job.recommendation_reason);
 
@@ -79,6 +82,15 @@ const RecommendationJobCard = ({ job }: { job: RecommendedJob }) => {
 
         {/* Action buttons */}
         <div className="flex gap-3 pt-2">
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1"
+            onClick={() => navigate(`/jobs/${job.job_id}`)}
+          >
+            <FileSearch className="h-3 w-3" />
+            查看詳細
+          </Button>
           <a
             href={job.source_url}
             target="_blank"
