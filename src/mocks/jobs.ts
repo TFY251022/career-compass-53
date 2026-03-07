@@ -286,3 +286,35 @@ export const generateMockRecommendedJobs = (page: number): RecommendedJob[] => {
     final_score: Math.max(50, Math.min(99, job.final_score - (page - 1) * 3 + idx)),
   }));
 };
+
+/** Mock detail data for a recommended job */
+export const getMockRecommendedJobDetail = (id: string): RecommendedJobDetail => {
+  const allJobs = generateMockRecommendedJobs(1);
+  const found = allJobs.find(j => j.job_id === id);
+
+  const base = found ?? allJobs[0];
+
+  return {
+    ...base,
+    job_description: `加入我們，參與和改進以下領域的應用開發：
+
+SaaS 平台：
+打造一個高度可靠的雲端平台，具有強大的服務水準協議 (SLA)。優化現有架構，實現自動化部署，以確保系統性能的最佳表現。
+
+AWS 雲端和本地基礎架構：
+我們的系統主要部署在 AWS Lightsail 上，我們正在尋求您的專業知識，以利用微服務架構，使其能夠兼容將軟體部署到客戶的本地伺服器上。
+
+產品擴展專案和內部工具：
+參與客戶管理系統、郵件傳送系統、系統穩定性監控工具和客服回報系統的開發。這些改進旨在提升我們客戶的整體產品體驗。`,
+    requirements: [
+      '三年以上後端開發經驗，精通 Python',
+      '精通 Python 後端框架，如 Flask、FastAPI 或 Django。熟悉 Gunicorn/Uvicorn 程序管理',
+      '熟悉 AWS Lightsail、VPC 架構，以及各種 AWS 服務，包括 EC2、S3、KMS 等',
+      '精通 Docker，包括使用 Docker-Compose 進行環境開發和部署的經驗',
+      '具備配置 Nginx 作為代理伺服器和負載平衡器的能力',
+      '專業的 Postgres 資料庫知識，能夠使用 Python SQLAlchemy 進行 ORM 操作',
+      '熟練運用 MemCache 資料庫 Redis，能夠緩存高負載計算的結果',
+      '具備使用 Celery 執行非同步任務和設計任務工作流程的實務經驗',
+    ],
+  };
+};
