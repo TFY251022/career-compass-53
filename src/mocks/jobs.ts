@@ -1,4 +1,4 @@
-import type { JobData, JobDetailData, JobCategory } from '@/types/job';
+import type { JobData, JobDetailData, JobCategory, RecommendedJob } from '@/types/job';
 
 // TODO: Replace with API call
 export const generateMockJobs = (page: number): JobData[] => {
