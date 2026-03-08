@@ -1028,7 +1028,7 @@ const Skills = () => {
                           <item.icon className="h-5 w-5" style={{ color: item.accent }} />
                           <span className="font-semibold text-foreground">{item.label}</span>
                         </div>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{item.text}</p>
+                        <p className="text-sm text-muted-foreground leading-[1.85] tracking-wide">{item.text}</p>
                       </CardContent>
                     </Card>
                   </motion.div>
