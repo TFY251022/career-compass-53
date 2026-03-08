@@ -95,24 +95,6 @@ const DevStateToggles = forwardRef<HTMLDivElement>((_, ref) => {
         {/* Content */}
         {!isMinimized && (
           <div className="p-4 space-y-4">
-            {/* Mock Mode Toggle */}
-            <div className="flex items-center justify-between p-2 rounded-lg border border-primary/20 bg-primary/5">
-              <div className="flex items-center gap-2">
-                {useMockData ? (
-                  <Database className="h-4 w-4 text-amber-500" />
-                ) : (
-                  <Globe className="h-4 w-4 text-emerald-500" />
-                )}
-                <Label className="text-xs font-semibold">
-                  {useMockData ? 'Mocks 模式' : 'API 模式'}
-                </Label>
-              </div>
-              <Switch
-                checked={useMockData}
-                onCheckedChange={setUseMockData}
-              />
-            </div>
-
             {/* Toggles */}
             <div className="space-y-3">
               {toggles.map((toggle) => (
