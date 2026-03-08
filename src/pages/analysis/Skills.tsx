@@ -996,7 +996,11 @@ const Skills = () => {
                         <div className="flex items-center gap-2 mb-2">
                           <span className="font-bold text-lg text-primary">核心落差</span>
                         </div>
-                        <p className="text-base text-[#502D03] leading-[1.85] tracking-wide font-medium">{swot.gap}</p>
+                        <div className="space-y-2">
+                          {splitIntoParagraphs(swot.gap).map((p, i) => (
+                            <p key={i} className="text-base text-[#502D03] leading-[1.85] tracking-wide font-medium">{p}</p>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </CardContent>
