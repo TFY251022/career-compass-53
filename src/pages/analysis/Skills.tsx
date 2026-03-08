@@ -266,7 +266,11 @@ const Skills = () => {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-foreground/80 leading-[1.85] tracking-wide">{strategy.overall_strategy}</p>
+                      <div className="space-y-2">
+                        {splitIntoParagraphs(strategy.overall_strategy).map((p, i) => (
+                          <p key={i} className="text-sm text-foreground/80 leading-[1.85] tracking-wide">{p}</p>
+                        ))}
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -353,15 +357,21 @@ const Skills = () => {
                             </div>
 
                             {/* Description */}
-                            <p className="text-sm text-muted-foreground mb-3 flex-grow leading-[1.8]">{resource.description}</p>
+                            <div className="text-sm text-muted-foreground mb-3 flex-grow space-y-2">
+                              {splitIntoParagraphs(resource.description).map((p, i) => (
+                                <p key={i} className="leading-[1.8]">{p}</p>
+                              ))}
+                            </div>
 
                             {/* Strategy reason */}
                             {resource.strategy_reason && (
                               <div className="bg-[#fbf1e8] rounded-md p-3 mb-3">
-                                <p className="text-xs text-[#502D03] leading-[1.8]">
+                                <div className="text-xs text-[#502D03] leading-[1.8] space-y-1">
                                   <span className="font-semibold">策略原因：</span>
-                                  {resource.strategy_reason}
-                                </p>
+                                  {splitIntoParagraphs(resource.strategy_reason).map((p, i) => (
+                                    <p key={i}>{p}</p>
+                                  ))}
+                                </div>
                               </div>
                             )}
 
@@ -514,9 +524,12 @@ const Skills = () => {
                           <Card className="bg-white hover:shadow-medium transition-shadow">
                             <CardContent className="pt-4 pb-4 space-y-2">
                               <h3 className="font-semibold text-foreground tracking-tight">{phase.phase_name}</h3>
-                              <p className="text-sm text-muted-foreground leading-[1.8]">
-                                <span className="font-medium text-foreground">目標：</span>{phase.goal}
-                              </p>
+                              <div className="text-sm text-muted-foreground leading-[1.8] space-y-1.5">
+                                <span className="font-medium text-foreground">目標：</span>
+                                {splitIntoParagraphs(phase.goal).map((p, i) => (
+                                  <p key={i}>{p}</p>
+                                ))}
+                              </div>
                               <div>
                                 <span className="text-sm font-medium text-foreground">任務：</span>
                                 <ul className="mt-1.5 space-y-1.5">
@@ -547,7 +560,11 @@ const Skills = () => {
                         <FileText className="h-5 w-5 text-[#8d4903] shrink-0 mt-0.5" />
                         <div>
                           <h4 className="font-semibold text-sm text-[#502D03] mb-1">整體履歷影響</h4>
-                          <p className="text-sm text-[#502D03]/80 leading-[1.85] tracking-wide">{project.overall_resume_impact}</p>
+                          <div className="text-sm text-[#502D03]/80 leading-[1.85] tracking-wide space-y-2">
+                            {splitIntoParagraphs(project.overall_resume_impact).map((p, i) => (
+                              <p key={i}>{p}</p>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </CardContent>
