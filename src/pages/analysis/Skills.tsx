@@ -524,8 +524,12 @@ const Skills = () => {
                           <Card className="bg-white hover:shadow-medium transition-shadow">
                             <CardContent className="pt-4 pb-4 space-y-2">
                               <h3 className="font-semibold text-foreground tracking-tight">{phase.phase_name}</h3>
-                              <p className="text-sm text-muted-foreground leading-[1.8]">
-                                <span className="font-medium text-foreground">目標：</span>{phase.goal}
+                              <div className="text-sm text-muted-foreground leading-[1.8] space-y-1.5">
+                                <span className="font-medium text-foreground">目標：</span>
+                                {splitIntoParagraphs(phase.goal).map((p, i) => (
+                                  <p key={i}>{p}</p>
+                                ))}
+                              </div>
                               </p>
                               <div>
                                 <span className="text-sm font-medium text-foreground">任務：</span>
