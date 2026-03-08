@@ -1,21 +1,13 @@
 import { useState } from 'react';
-import { FileText, Download, Trash2, Eye, Sparkles, Edit3, Upload } from 'lucide-react';
+import { FileText, Download, Trash2, Eye, Upload } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import RightDrawer from '@/components/panels/RightDrawer';
 import { motion } from 'framer-motion';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import { useResumes, type ResumeItem } from '@/contexts/ResumeContext';
 import { ResumeTemplateRenderer } from '@/components/resume/ResumeTemplates';
-import type { ResumeVersion } from '@/types/resume';
-
-const VERSION_LABELS: Record<ResumeVersion, { label: string; icon: React.ReactNode; color: string }> = {
-  'original': { label: '原版', icon: <Upload className="h-3 w-3" />, color: 'bg-muted text-muted-foreground' },
-  'user-edited': { label: '自行修改', icon: <Edit3 className="h-3 w-3" />, color: 'bg-amber-100 text-amber-800' },
-  'site-optimized': { label: '網站優化', icon: <Sparkles className="h-3 w-3" />, color: 'bg-primary/10 text-primary' },
-};
 
 const MyResumes = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
