@@ -11,7 +11,7 @@ import JobDetailContent from '@/components/jobs/detail/JobDetailContent';
 import JobDetailUserAnalysis from '@/components/jobs/detail/JobDetailUserAnalysis';
 import JobDetailSkeleton from '@/components/jobs/detail/JobDetailSkeleton';
 import type { RecommendedJobDetail } from '@/types/job';
-import { getJobDetail, generateCoverLetter } from '@/services/jobService';
+import { getJobDetail, generateCoverLetter, type CoverLetterResult } from '@/services/jobService';
 import {
   ChevronLeft,
   Copy,
@@ -33,7 +33,7 @@ const JobDetail = () => {
   // Cover letter drawer
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [letterContent, setLetterContent] = useState<{ subject: string; body: string } | null>(null);
+  const [letterContent, setLetterContent] = useState<CoverLetterResult | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
@@ -62,7 +62,8 @@ const JobDetail = () => {
 
   const handleCopyContent = async () => {
     if (!letterContent) return;
-    const fullContent = `主旨：${letterContent.subject}\n\n${letterContent.body}`;
+    const sig = [letterContent.author && `此致，${letterContent.author}`, letterContent.email, letterContent.portfolio].filter(Boolean).join('\n');
+    const fullContent = `${letterContent.subject}\n\n${letterContent.body}${sig ? `\n\n${sig}` : ''}`;
     await navigator.clipboard.writeText(fullContent);
     setIsCopied(true);
     toast.success('已複製到剪貼簿');
@@ -72,8 +73,8 @@ const JobDetail = () => {
   const handleDownload = async () => {
     if (!letterContent) return;
     setIsDownloading(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const fullContent = `主旨：${letterContent.subject}\n\n${letterContent.body}`;
+    const sig = [letterContent.author && `此致，${letterContent.author}`, letterContent.email, letterContent.portfolio].filter(Boolean).join('\n');
+    const fullContent = `${letterContent.subject}\n\n${letterContent.body}${sig ? `\n\n${sig}` : ''}`;
     const blob = new Blob([fullContent], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -170,16 +171,44 @@ const JobDetail = () => {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-4"
+              className="space-y-5"
             >
-              <div className="bg-muted/50 rounded-lg p-4 border">
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">主旨</label>
-                <p className="mt-1 font-medium">{letterContent.subject}</p>
+              {/* Subject / Title */}
+              <div className="rounded-xl p-5 border" style={{ backgroundColor: '#fbf1e8' }}>
+                <p className="text-lg font-bold text-[#502D03] leading-snug tracking-tight">
+                  {letterContent.subject}
+                </p>
               </div>
-              <div className="bg-muted/30 rounded-lg p-4 border">
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">內容</label>
-                <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">{letterContent.body}</p>
+
+              {/* Body */}
+              <div className="rounded-xl p-5 border bg-card">
+                <p className="whitespace-pre-wrap text-sm leading-[1.9] tracking-wide text-foreground/85">
+                  {letterContent.body}
+                </p>
               </div>
+
+              {/* Signature / Contact */}
+              {(letterContent.author || letterContent.email || letterContent.portfolio) && (
+                <div className="rounded-xl p-4 border bg-muted/30 space-y-1">
+                  {letterContent.author && (
+                    <p className="text-sm font-semibold text-foreground">此致，{letterContent.author}</p>
+                  )}
+                  {letterContent.email && (
+                    <p className="text-xs text-muted-foreground">{letterContent.email}</p>
+                  )}
+                  {letterContent.portfolio && (
+                    <a
+                      href={letterContent.portfolio}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-[#8d4903] hover:underline break-all"
+                    >
+                      {letterContent.portfolio}
+                    </a>
+                  )}
+                </div>
+              )}
+
               <Button variant="outline" className="w-full gap-2" onClick={handleCopyContent}>
                 {isCopied ? (
                   <><CheckCircle2 className="h-4 w-4 text-primary" />已複製</>
