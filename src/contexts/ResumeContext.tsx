@@ -9,6 +9,7 @@ interface ResumeState {
   resumes: ResumeItem[];
   selectedResumeId: number | null;
   setSelectedResumeId: (id: number | null) => void;
+  removeResume: (id: number) => void;
 }
 
 const STORAGE_KEY = 'selectedResumeId';
