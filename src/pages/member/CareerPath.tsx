@@ -277,45 +277,11 @@ const CareerPath = () => {
           {drawerLoading ? (
             <DrawerContentSkeleton />
           ) : selectedReport && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 md:space-y-6">
-              <div>
-                <h4 className="font-medium mb-1.5 md:mb-2 text-sm md:text-base">分析摘要</h4>
-                <p className="text-muted-foreground text-xs md:text-sm">{selectedReport.summary}</p>
-              </div>
-              <div>
-                <h4 className="font-medium mb-2 md:mb-3 flex items-center gap-1.5 md:gap-2 text-sm md:text-base">
-                  <Star className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary" />
-                  優勢亮點
-                </h4>
-                <div className="flex flex-wrap gap-1.5 md:gap-2">
-                  {selectedReport.strengths.map((item, idx) => (
-                    <span key={idx} className="px-2.5 py-1 md:px-3 md:py-1.5 bg-primary/10 text-primary rounded-full text-xs md:text-sm">{item}</span>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h4 className="font-medium mb-2 md:mb-3 text-sm md:text-base">待加強項目</h4>
-                <ul className="space-y-1.5 md:space-y-2">
-                  {selectedReport.improvements.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground">
-                      <span className="h-1.5 w-1.5 rounded-full bg-destructive/60 mt-1.5 md:mt-2 shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-medium mb-2 md:mb-3 text-sm md:text-base">發展建議</h4>
-                <ul className="space-y-1.5 md:space-y-2">
-                  {selectedReport.recommendations.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground">
-                      <span className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 md:mt-2 shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </motion.div>
+            selectedReport.type === 'optimize' && selectedReport.rawOptimize ? (
+              <OptimizeReportPreview data={selectedReport.rawOptimize} />
+            ) : selectedReport.type === 'skills' && selectedReport.rawSkills ? (
+              <SkillsReportPreview data={selectedReport.rawSkills} />
+            ) : null
           )}
         </RightDrawer>
       </div>
