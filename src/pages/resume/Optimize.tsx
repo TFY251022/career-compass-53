@@ -85,6 +85,7 @@ interface PersistedOptimizeState {
   selectedThemeIndex: number;
   resumeData: ResumeData;
   originalData: OriginalResumeData;
+  diagnosticResult?: ResumeDiagnosticResult;
 }
 
 const loadOptimizeState = (): PersistedOptimizeState | null => {
@@ -123,7 +124,7 @@ const Optimize = () => {
   const [editedOriginalData, setEditedOriginalData] = useState<OriginalResumeData>(canRestore ? persisted!.originalData : mockOriginalResumeData);
   const [resumeData, setResumeData] = useState<ResumeData>(canRestore ? persisted!.resumeData : mockResumeData);
   const [suggestions, setSuggestions] = useState<Suggestion[]>(canRestore ? persisted!.suggestions : []);
-  const [diagnosticResult, setDiagnosticResult] = useState<ResumeDiagnosticResult | null>(null);
+  const [diagnosticResult, setDiagnosticResult] = useState<ResumeDiagnosticResult | null>(canRestore ? persisted!.diagnosticResult ?? null : null);
   const [selectedTemplate, setSelectedTemplate] = useState<string>(canRestore ? persisted!.selectedTemplate : '');
   const [selectedThemeIndex, setSelectedThemeIndex] = useState<number>(canRestore ? persisted!.selectedThemeIndex : 0);
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
@@ -162,7 +163,7 @@ const Optimize = () => {
     setDiagnosticResult(mockDiagnosticResult);
     setSuggestions(mockDiagnosticResult.suggestions);
     setPhase('suggestions');
-    saveOptimizeState({ phase: 'suggestions', suggestions: mockSuggestions, selectedTemplate: '', selectedThemeIndex: 0, resumeData, originalData });
+    saveOptimizeState({ phase: 'suggestions', suggestions: mockSuggestions, selectedTemplate: '', selectedThemeIndex: 0, resumeData, originalData, diagnosticResult: mockDiagnosticResult });
   };
 
   const handleSelectTemplate = async (templateId: string) => {
@@ -171,7 +172,7 @@ const Optimize = () => {
     setPhase('generating');
     await new Promise(resolve => setTimeout(resolve, 2500));
     setPhase('result');
-    saveOptimizeState({ phase: 'result', suggestions, selectedTemplate: templateId, selectedThemeIndex: 0, resumeData, originalData });
+    saveOptimizeState({ phase: 'result', suggestions, selectedTemplate: templateId, selectedThemeIndex: 0, resumeData, originalData, diagnosticResult: diagnosticResult ?? undefined });
   };
 
   const handleDownloadSuggestions = async () => {

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Map, ChevronRight, Star, FileText, Calendar } from 'lucide-react';
+import { Map, ChevronRight, Star, FileText, Calendar, BarChart3, FileEdit, Inbox } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -9,10 +9,78 @@ import CareerLadder from '@/components/career-path/CareerLadder';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
-import type { AnalysisHistoryItem } from '@/types/analysis';
-import { analysisHistory } from '@/mocks/analysis';
 import { useResumes } from '@/contexts/ResumeContext';
 import { parseExperiencesFromResume } from '@/utils/resumeExperienceParser';
+import { parseSWOT } from '@/types/analysis';
+import type { AnalysisResult } from '@/types/analysis';
+import type { ResumeDiagnosticResult } from '@/types/resume';
+
+/** Unified report item for the history list */
+interface CareerReport {
+  id: string;
+  type: 'optimize' | 'skills';
+  date: string;
+  title: string;
+  summary: string;
+  strengths: string[];
+  improvements: string[];
+  recommendations: string[];
+}
+
+/** Read persisted reports from localStorage */
+function loadCareerReports(): CareerReport[] {
+  const reports: CareerReport[] = [];
+
+  // 1. Resume Optimization report
+  try {
+    const raw = localStorage.getItem('resume-optimize-state');
+    if (raw) {
+      const state = JSON.parse(raw);
+      // The diagnostic result may be stored alongside, or we derive from suggestions
+      const diag: ResumeDiagnosticResult | undefined = state.diagnosticResult;
+      if (diag) {
+        reports.push({
+          id: 'optimize',
+          type: 'optimize',
+          date: new Date().toISOString().slice(0, 10),
+          title: '履歷優化建議報告',
+          summary: diag.candidate_positioning?.slice(0, 80) + '...',
+          strengths: diag.overall_strengths || [],
+          improvements: diag.overall_weaknesses || [],
+          recommendations: diag.recommended_next_actions || [],
+        });
+      }
+    }
+  } catch {}
+
+  // 2. Skills Analysis report
+  try {
+    const done = localStorage.getItem('skills-analysis-done');
+    const raw = localStorage.getItem('skills-analysis-result');
+    if (done === 'true' && raw) {
+      const result: AnalysisResult = JSON.parse(raw);
+      const swot = result.gap_analysis?.target_position?.gap_description
+        ? parseSWOT(result.gap_analysis.target_position.gap_description)
+        : null;
+      reports.push({
+        id: 'skills',
+        type: 'skills',
+        date: result.report_metadata?.timestamp?.slice(0, 10) || new Date().toISOString().slice(0, 10),
+        title: '職能圖譜分析報告',
+        summary: result.preliminary_summary?.personal_summary?.slice(0, 80) + '...',
+        strengths: swot?.strengths ? [swot.strengths] : [],
+        improvements: swot?.weaknesses ? [swot.weaknesses] : [],
+        recommendations: [
+          result.gap_analysis?.action_plan?.short_term,
+          result.gap_analysis?.action_plan?.mid_term,
+          result.gap_analysis?.action_plan?.long_term,
+        ].filter(Boolean) as string[],
+      });
+    }
+  } catch {}
+
+  return reports;
+}
 
 const AnalysisListSkeleton = () => (
   <div className="space-y-3 md:space-y-4">
@@ -50,7 +118,7 @@ const DrawerContentSkeleton = () => (
 const CareerPath = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedAnalysis, setSelectedAnalysis] = useState<typeof analysisHistory[0] | null>(null);
+  const [selectedReport, setSelectedReport] = useState<CareerReport | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [drawerLoading, setDrawerLoading] = useState(false);
   const isMobile = useIsMobile();
@@ -63,32 +131,35 @@ const CareerPath = () => {
     return parseExperiencesFromResume(sorted[0]);
   }, [resumes]);
 
+  // Load real reports from localStorage
+  const reports = useMemo(() => loadCareerReports(), []);
+
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1200);
     return () => clearTimeout(timer);
   }, []);
 
-  const handleAnalysisClick = (analysis: typeof analysisHistory[0]) => {
+  const handleReportClick = (report: CareerReport) => {
     setDrawerLoading(true);
-    setSelectedAnalysis(analysis);
+    setSelectedReport(report);
     setDrawerOpen(true);
     setTimeout(() => setDrawerLoading(false), 800);
   };
 
   const handleDownload = async () => {
-    if (!selectedAnalysis) return;
+    if (!selectedReport) return;
     setIsDownloading(true);
     try {
       const { exportHtmlToPdf, buildCareerAnalysisHtml } = await import('@/utils/pdfExport');
       await exportHtmlToPdf({
-        filename: `${selectedAnalysis.title}.pdf`,
+        filename: `${selectedReport.title}.pdf`,
         htmlContent: buildCareerAnalysisHtml({
-          title: selectedAnalysis.title,
-          date: selectedAnalysis.date,
-          summary: selectedAnalysis.summary,
-          strengths: selectedAnalysis.content.strengths,
-          improvements: selectedAnalysis.content.improvements,
-          recommendations: selectedAnalysis.content.recommendations,
+          title: selectedReport.title,
+          date: selectedReport.date,
+          summary: selectedReport.summary,
+          strengths: selectedReport.strengths,
+          improvements: selectedReport.improvements,
+          recommendations: selectedReport.recommendations,
         }),
       });
     } finally {
@@ -134,6 +205,12 @@ const CareerPath = () => {
                 <CardContent>
                   {isLoading ? (
                     <AnalysisListSkeleton />
+                  ) : reports.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-10 text-center">
+                      <Inbox className="h-10 w-10 text-muted-foreground/40 mb-3" />
+                      <p className="text-sm text-muted-foreground">尚無分析紀錄</p>
+                      <p className="text-xs text-muted-foreground/60 mt-1">完成「履歷優化」或「職能圖譜」分析後，報告將自動出現在這裡</p>
+                    </div>
                   ) : (
                     <motion.div
                       initial={{ opacity: 0 }}
@@ -141,23 +218,27 @@ const CareerPath = () => {
                       transition={{ duration: 0.5, delay: 0.2 }}
                       className="space-y-3 md:space-y-4"
                     >
-                      {analysisHistory.map((analysis, index) => (
+                      {reports.map((report, index) => (
                         <motion.div
-                          key={analysis.id}
+                          key={report.id}
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.1 }}
                           className="p-3 md:p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer group"
-                          onClick={() => handleAnalysisClick(analysis)}
+                          onClick={() => handleReportClick(report)}
                         >
                           <div className="flex items-start justify-between">
                             <div className="space-y-0.5 md:space-y-1 flex-1 min-w-0">
                               <div className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-muted-foreground">
-                                <Calendar className="h-3.5 w-3.5 md:h-4 md:w-4 shrink-0" />
-                                {analysis.date}
+                                {report.type === 'optimize' ? (
+                                  <FileEdit className="h-3.5 w-3.5 md:h-4 md:w-4 shrink-0 text-primary" />
+                                ) : (
+                                  <BarChart3 className="h-3.5 w-3.5 md:h-4 md:w-4 shrink-0 text-primary" />
+                                )}
+                                {report.date}
                               </div>
-                              <h4 className="font-semibold text-sm md:text-base truncate">{analysis.title}</h4>
-                              <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">{analysis.summary}</p>
+                              <h4 className="font-semibold text-sm md:text-base truncate">{report.title}</h4>
+                              <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">{report.summary}</p>
                             </div>
                             <ChevronRight className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground group-hover:text-primary transition-colors mt-1 shrink-0 ml-2" />
                           </div>
@@ -175,19 +256,19 @@ const CareerPath = () => {
         <RightDrawer
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
-          title={selectedAnalysis?.title || ''}
-          subtitle={selectedAnalysis?.date || ''}
+          title={selectedReport?.title || ''}
+          subtitle={selectedReport?.date || ''}
           showDownload
           onDownload={handleDownload}
           isDownloading={isDownloading}
         >
           {drawerLoading ? (
             <DrawerContentSkeleton />
-          ) : selectedAnalysis && (
+          ) : selectedReport && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 md:space-y-6">
               <div>
                 <h4 className="font-medium mb-1.5 md:mb-2 text-sm md:text-base">分析摘要</h4>
-                <p className="text-muted-foreground text-xs md:text-sm">{selectedAnalysis.summary}</p>
+                <p className="text-muted-foreground text-xs md:text-sm">{selectedReport.summary}</p>
               </div>
               <div>
                 <h4 className="font-medium mb-2 md:mb-3 flex items-center gap-1.5 md:gap-2 text-sm md:text-base">
@@ -195,7 +276,7 @@ const CareerPath = () => {
                   優勢亮點
                 </h4>
                 <div className="flex flex-wrap gap-1.5 md:gap-2">
-                  {selectedAnalysis.content.strengths.map((item, idx) => (
+                  {selectedReport.strengths.map((item, idx) => (
                     <span key={idx} className="px-2.5 py-1 md:px-3 md:py-1.5 bg-primary/10 text-primary rounded-full text-xs md:text-sm">{item}</span>
                   ))}
                 </div>
@@ -203,9 +284,9 @@ const CareerPath = () => {
               <div>
                 <h4 className="font-medium mb-2 md:mb-3 text-sm md:text-base">待加強項目</h4>
                 <ul className="space-y-1.5 md:space-y-2">
-                  {selectedAnalysis.content.improvements.map((item, idx) => (
+                  {selectedReport.improvements.map((item, idx) => (
                     <li key={idx} className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground">
-                      <span className="h-1.5 w-1.5 rounded-full bg-amber-500 mt-1.5 md:mt-2 shrink-0" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-destructive/60 mt-1.5 md:mt-2 shrink-0" />
                       {item}
                     </li>
                   ))}
@@ -214,7 +295,7 @@ const CareerPath = () => {
               <div>
                 <h4 className="font-medium mb-2 md:mb-3 text-sm md:text-base">發展建議</h4>
                 <ul className="space-y-1.5 md:space-y-2">
-                  {selectedAnalysis.content.recommendations.map((item, idx) => (
+                  {selectedReport.recommendations.map((item, idx) => (
                     <li key={idx} className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground">
                       <span className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 md:mt-2 shrink-0" />
                       {item}
