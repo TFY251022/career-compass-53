@@ -998,7 +998,7 @@ const Skills = () => {
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <BookOpen className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-xl font-bold">職涯行動計畫</h2>
+              <h2 className="text-xl font-bold tracking-tight">職涯行動計畫</h2>
             </div>
 
             <div className="relative">
