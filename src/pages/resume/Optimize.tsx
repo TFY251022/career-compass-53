@@ -918,7 +918,11 @@ const SuggestionsPhase = ({
                         <div className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">
                           {i + 1}
                         </div>
-                        <p className="text-sm leading-relaxed">{action}</p>
+                        <div className="text-sm leading-relaxed space-y-1.5">
+                          {splitIntoParagraphs(action).map((p, j) => (
+                            <p key={j}>{p}</p>
+                          ))}
+                        </div>
                       </div>
                     ))}
                   </div>
