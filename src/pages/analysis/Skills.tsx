@@ -47,6 +47,8 @@ import { mockAnalysisResult } from "@/mocks/analysis";
 
 const ANALYSIS_DONE_KEY = "skills-analysis-done";
 const ANALYSIS_RESULT_KEY = "skills-analysis-result";
+const ANALYSIS_MOCK_VERSION = "v2"; // bump to invalidate cached mock data
+const ANALYSIS_VERSION_KEY = "skills-analysis-version";
 
 const loadingMessages = [
   "正在解析履歷關鍵字...",
