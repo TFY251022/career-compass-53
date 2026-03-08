@@ -741,7 +741,7 @@ const Skills = () => {
               <div className="h-10 w-10 rounded-lg flex items-center justify-center bg-background">
                 <Radar className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-xl font-bold">職能雷達圖</h2>
+              <h2 className="text-xl font-bold tracking-tight">職能雷達圖</h2>
             </div>
             <Card className="transition-all duration-300 hover:shadow-medium">
               <CardContent className="pt-6">
