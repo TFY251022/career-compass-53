@@ -870,7 +870,11 @@ const SuggestionsPhase = ({
                       <div className="p-4 space-y-4">
                         <div className="p-3 rounded-md bg-muted/40 border border-border/60">
                           <p className="text-xs text-muted-foreground mb-1 font-medium">原文內容</p>
-                          <p className="text-sm text-foreground/80 leading-relaxed">{issue.original_text}</p>
+                          <div className="text-sm text-foreground/80 leading-relaxed space-y-1.5">
+                            {splitIntoParagraphs(issue.original_text).map((p, j) => (
+                              <p key={j}>{p}</p>
+                            ))}
+                          </div>
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground mb-1 font-medium">診斷分析</p>
