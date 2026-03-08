@@ -36,15 +36,23 @@ const MyResumes = () => {
   };
 
   const renderPreviewContent = (resume: ResumeItem) => {
-    // Site-optimized: render with template + theme
+    // Site-optimized: render with template + theme, scaled to fit drawer
     if (resume.version === 'site-optimized' && resume.optimizedData && resume.templateId) {
       return (
-        <div className="bg-white p-4 rounded-lg">
-          <ResumeTemplateRenderer
-            templateId={resume.templateId}
-            themeIndex={resume.themeIndex ?? 0}
-            data={resume.optimizedData}
-          />
+        <div className="bg-white rounded-lg overflow-hidden">
+          <div
+            style={{
+              transform: 'scale(0.55)',
+              transformOrigin: 'top left',
+              width: '182%',
+            }}
+          >
+            <ResumeTemplateRenderer
+              templateId={resume.templateId}
+              themeIndex={resume.themeIndex ?? 0}
+              data={resume.optimizedData}
+            />
+          </div>
         </div>
       );
     }
