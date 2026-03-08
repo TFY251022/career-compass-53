@@ -279,50 +279,43 @@ export function buildSideProjectsReportHtml(projects: {
   estimated_duration?: string;
   difficulty_note?: string;
 }[]): string {
-  const projectBlocks = projects.map((p, pIdx) => {
-    const phasesHtml = p.phases.map((ph, i) => `
-      <div style="margin-bottom:16px;page-break-inside:avoid;padding-left:20px;border-left:3px solid #8d4903;">
-        <div style="margin-bottom:4px;">
-          <span style="display:inline-block;background:#8d4903;color:#fff;width:22px;height:22px;border-radius:50%;text-align:center;line-height:22px;font-size:11px;font-weight:700;margin-right:8px;">${i + 1}</span>
-          <strong style="font-size:14px;color:#1F3A5F;">${ph.phase_name}</strong>
-        </div>
-        <p style="margin:4px 0;font-size:13px;line-height:1.85;color:#444;"><strong>目標：</strong>${ph.goal}</p>
-        <ul style="padding-left:18px;margin:4px 0 8px;">
-          ${ph.tasks.map(t => `<li style="font-size:13px;color:#555;line-height:1.85;margin-bottom:4px;">${t}</li>`).join('')}
+  const projectBlocks = projects.map((p) => {
+    const phasesHtml = p.phases.map((ph) => `
+      <div style="margin-bottom:18px;page-break-inside:avoid;padding-left:18px;border-left:3px solid #8d4903;">
+        <strong style="font-size:14px;color:#1F3A5F;display:block;margin-bottom:6px;">${ph.phase_name}</strong>
+        <p style="margin:0 0 6px;font-size:13px;line-height:1.85;color:#444;"><strong>目標：</strong>${ph.goal}</p>
+        <ul style="padding-left:18px;margin:0 0 10px;">
+          ${ph.tasks.map(t => `<li style="font-size:13px;color:#555;line-height:1.85;margin-bottom:5px;">${t}</li>`).join('')}
         </ul>
-        <div style="background:#fbf1e8;padding:8px 12px;border-radius:6px;">
-          <p style="margin:0;font-size:12px;color:#502D03;"><strong>履歷價值：</strong>${ph.resume_value}</p>
+        <div style="background:#fbf1e8;padding:10px 14px;border-radius:6px;">
+          <p style="margin:0;font-size:12px;color:#502D03;line-height:1.8;"><strong>履歷價值：</strong>${ph.resume_value}</p>
         </div>
       </div>
     `).join('');
 
-    const gapTags = p.capability_gaps.map(g => `<span style="display:inline-block;background:#8d490310;border:1px solid #8d490330;color:#502D03;padding:3px 10px;border-radius:10px;font-size:11px;margin-right:5px;margin-bottom:4px;">${g}</span>`).join('');
-    const techTags = p.technologies.map(t => `<span style="display:inline-block;border:1px solid #ccc;color:#555;padding:3px 10px;border-radius:10px;font-size:11px;margin-right:5px;margin-bottom:4px;">${t}</span>`).join('');
+    const gapTags = p.capability_gaps.map(g => `<span style="display:inline-block;background:#8d490310;border:1px solid #8d490330;color:#502D03;padding:4px 12px;border-radius:10px;font-size:12px;margin-right:6px;margin-bottom:5px;">${g}</span>`).join('');
+    const techTags = p.technologies.map(t => `<span style="display:inline-block;border:1px solid #ccc;color:#555;padding:4px 12px;border-radius:10px;font-size:12px;margin-right:6px;margin-bottom:5px;">${t}</span>`).join('');
 
     return `
-      <div style="margin-bottom:32px;page-break-inside:avoid;">
-        <h2 style="font-size:18px;color:#1F3A5F;margin:0 0 6px;">${p.name}${p.name_en ? ` <span style="font-size:13px;color:#888;font-weight:400;">（${p.name_en}）</span>` : ''}</h2>
-        <div style="font-size:12px;color:#888;margin-bottom:12px;">
+      <div style="margin-bottom:36px;page-break-inside:avoid;">
+        <h2 style="font-size:18px;color:#1F3A5F;margin:0 0 8px;">${p.name}${p.name_en ? ` <span style="font-size:13px;color:#888;font-weight:400;">（${p.name_en}）</span>` : ''}</h2>
+        <div style="font-size:13px;color:#888;margin-bottom:14px;">
           難度：<strong style="color:#333;">${p.difficulty_label ?? `${p.difficulty}/5`}</strong>
           ${p.estimated_duration ? ` · 預計開發週期：${p.estimated_duration}` : ''}
           ${p.difficulty_note ? ` · ${p.difficulty_note}` : ''}
         </div>
 
-        <div style="margin-bottom:12px;">
-          <p style="font-size:12px;color:#675143;font-weight:600;margin:0 0 6px;">能力缺口</p>
+        <div style="margin-bottom:14px;">
+          <p style="font-size:13px;color:#675143;font-weight:600;margin:0 0 8px;">能力缺口</p>
           ${gapTags}
         </div>
-        <div style="margin-bottom:16px;">
-          <p style="font-size:12px;color:#675143;font-weight:600;margin:0 0 6px;">技術棧</p>
+        <div style="margin-bottom:18px;">
+          <p style="font-size:13px;color:#675143;font-weight:600;margin:0 0 8px;">技術棧</p>
           ${techTags}
         </div>
 
-        ${h('h3', 'font-size:15px;color:#1F3A5F;margin:0 0 12px;', '項目階段')}
+        ${h('h3', 'font-size:15px;color:#1F3A5F;margin:0 0 14px;', '項目階段')}
         ${phasesHtml}
-
-        <div style="background:linear-gradient(135deg,#fbf1e8,#f5e6d3);padding:14px 18px;border-radius:10px;border:1px solid #8d490320;margin-top:8px;">
-          <p style="margin:0;font-size:13px;color:#502D03;"><strong>整體履歷影響：</strong>${p.overall_resume_impact}</p>
-        </div>
       </div>
     `;
   }).join('');
