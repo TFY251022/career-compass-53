@@ -141,9 +141,9 @@ export function buildSkillsReportHtml(data: {
       <p style="font-weight:600;color:#502D03;margin-bottom:0;line-height:1.85;">${data.personalSummary}</p>
 
       ${sectionTitle('二、職能雷達圖')}
-      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px;">
-        <tr style="background:#f5f0eb;"><th style="text-align:left;padding:6px 10px;">維度</th><th style="text-align:center;padding:6px 10px;">您的分數</th>${data.targetRadarDimensions ? '<th style="text-align:center;padding:6px 10px;">目標基準</th>' : ''}</tr>
-        ${data.radarDimensions.map((d, i) => `<tr style="border-bottom:1px solid #eee;"><td style="padding:6px 10px;">${d.axis}</td><td style="text-align:center;padding:6px 10px;">${d.score} / 5</td>${data.targetRadarDimensions ? `<td style="text-align:center;padding:6px 10px;">${data.targetRadarDimensions[i]?.score ?? '-'} / 5</td>` : ''}</tr>`).join('')}
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px;">
+        <tr style="background:#f5f0eb;"><th style="text-align:left;padding:8px 12px;">維度</th><th style="text-align:center;padding:8px 12px;">您的分數</th>${data.targetRadarDimensions ? '<th style="text-align:center;padding:8px 12px;">目標基準</th>' : ''}</tr>
+        ${data.radarDimensions.map((d, i) => `<tr style="border-bottom:1px solid #eee;"><td style="padding:8px 12px;">${d.axis}</td><td style="text-align:center;padding:8px 12px;">${d.score} / 5</td>${data.targetRadarDimensions ? `<td style="text-align:center;padding:8px 12px;">${data.targetRadarDimensions[i]?.score ?? '-'} / 5</td>` : ''}</tr>`).join('')}
       </table>
 
       ${sectionTitle('三、領航員分析職類')}
