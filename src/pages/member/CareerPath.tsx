@@ -11,6 +11,8 @@ import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import type { AnalysisHistoryItem } from '@/types/analysis';
 import { analysisHistory } from '@/mocks/analysis';
+import { useResumes } from '@/contexts/ResumeContext';
+import { parseExperiencesFromResume } from '@/utils/resumeExperienceParser';
 
 const AnalysisListSkeleton = () => (
   <div className="space-y-3 md:space-y-4">

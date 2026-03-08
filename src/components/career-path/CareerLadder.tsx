@@ -5,7 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { careerTemplates, mockResumeExperiences, mockTargetCareer } from '@/data/careerLadderTemplates';
+import { careerTemplates, mockTargetCareer } from '@/data/careerLadderTemplates';
+import type { ParsedExperience } from '@/utils/resumeExperienceParser';
 
 interface StepData {
   id: number;
