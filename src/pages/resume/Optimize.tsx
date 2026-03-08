@@ -782,7 +782,11 @@ const SuggestionsPhase = ({
                   </div>
                   <div className="p-4 rounded-lg bg-muted/40 border border-border">
                     <h4 className="text-sm font-semibold text-foreground mb-2">目標職位落差摘要</h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{diagnosticResult.target_role_gap_summary}</p>
+                    <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
+                      {splitIntoParagraphs(diagnosticResult.target_role_gap_summary).map((p, i) => (
+                        <p key={i}>{p}</p>
+                      ))}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
