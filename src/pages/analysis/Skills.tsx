@@ -93,8 +93,16 @@ const Skills = () => {
 
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult>(() => {
     try {
-      const saved = localStorage.getItem(ANALYSIS_RESULT_KEY);
-      if (saved) return JSON.parse(saved);
+      const savedVersion = localStorage.getItem(ANALYSIS_VERSION_KEY);
+      if (savedVersion === ANALYSIS_MOCK_VERSION) {
+        const saved = localStorage.getItem(ANALYSIS_RESULT_KEY);
+        if (saved) return JSON.parse(saved);
+      } else {
+        // Version mismatch — clear stale cache
+        localStorage.removeItem(ANALYSIS_RESULT_KEY);
+        localStorage.removeItem(ANALYSIS_DONE_KEY);
+        localStorage.setItem(ANALYSIS_VERSION_KEY, ANALYSIS_MOCK_VERSION);
+      }
     } catch {}
     return mockAnalysisResult;
   });
