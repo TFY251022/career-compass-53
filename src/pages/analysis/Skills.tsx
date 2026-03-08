@@ -504,13 +504,13 @@ const Skills = () => {
                           </div>
                           <Card className="bg-white hover:shadow-medium transition-shadow">
                             <CardContent className="pt-4 pb-4 space-y-2">
-                              <h3 className="font-semibold text-foreground">{phase.phase_name}</h3>
-                              <p className="text-sm text-muted-foreground">
+                              <h3 className="font-semibold text-foreground tracking-tight">{phase.phase_name}</h3>
+                              <p className="text-sm text-muted-foreground leading-[1.8]">
                                 <span className="font-medium text-foreground">目標：</span>{phase.goal}
                               </p>
                               <div>
                                 <span className="text-sm font-medium text-foreground">任務：</span>
-                                <ul className="mt-1 space-y-1">
+                                <ul className="mt-1.5 space-y-1.5">
                                   {phase.tasks.map((task, i) => (
                                     <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
                                       <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#8d4903] shrink-0" />
