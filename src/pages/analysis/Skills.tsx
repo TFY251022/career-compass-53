@@ -44,6 +44,7 @@ import { generateAnalysis } from "@/services/analysisService";
 import type { AnalysisResult } from "@/types/analysis";
 import { parseSWOT } from "@/types/analysis";
 import { mockAnalysisResult } from "@/mocks/analysis";
+import { splitIntoParagraphs } from "@/utils/textFormat";
 
 const ANALYSIS_DONE_KEY = "skills-analysis-done";
 const ANALYSIS_RESULT_KEY = "skills-analysis-result";
@@ -712,9 +713,11 @@ const Skills = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="p-4 rounded-xl" style={{ backgroundColor: "#FFFBF5" }}>
-                    <p className="text-[#675143] leading-[1.85] text-sm tracking-wide">
-                      {preliminary_summary?.industry_insight || preliminary_summary?.core_insight}
-                    </p>
+                    <div className="space-y-3">
+                      {splitIntoParagraphs(preliminary_summary?.industry_insight || preliminary_summary?.core_insight || "").map((p, i) => (
+                        <p key={i} className="text-[#675143] leading-[1.85] text-sm tracking-wide">{p}</p>
+                      ))}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -728,9 +731,11 @@ const Skills = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="p-5 rounded-xl bg-gradient-to-br from-[#fbf1e8] to-[#FFFBF5] border border-primary/10">
-                    <p className="text-[#502D03] leading-[1.9] text-base font-semibold tracking-wide">
-                      {preliminary_summary?.personal_summary || ""}
-                    </p>
+                    <div className="space-y-3">
+                      {splitIntoParagraphs(preliminary_summary?.personal_summary || "").map((p, i) => (
+                        <p key={i} className="text-[#502D03] leading-[1.9] text-base font-semibold tracking-wide">{p}</p>
+                      ))}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -891,9 +896,11 @@ const Skills = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-foreground mb-2">認知偏差分析</p>
-                      <p className="text-sm text-[#675143] leading-[1.85] tracking-wide">
-                        {gap_analysis?.current_status?.cognitive_bias}
-                      </p>
+                      <div className="space-y-2">
+                        {splitIntoParagraphs(gap_analysis?.current_status?.cognitive_bias || "").map((p, i) => (
+                          <p key={i} className="text-sm text-[#675143] leading-[1.85] tracking-wide">{p}</p>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -965,7 +972,11 @@ const Skills = () => {
                       <h4 className="font-bold text-lg mb-1.5" style={{ color: letterColors[idx] }}>
                         {card.label}
                       </h4>
-                      <p className="text-sm leading-[1.85] tracking-wide text-foreground/80">{card.text}</p>
+                      <div className="space-y-2">
+                        {splitIntoParagraphs(card.text).map((p, i) => (
+                          <p key={i} className="text-sm leading-[1.85] tracking-wide text-foreground/80">{p}</p>
+                        ))}
+                      </div>
                     </div>
                   </motion.div>
                 );
@@ -985,7 +996,11 @@ const Skills = () => {
                         <div className="flex items-center gap-2 mb-2">
                           <span className="font-bold text-lg text-primary">核心落差</span>
                         </div>
-                        <p className="text-base text-[#502D03] leading-[1.85] tracking-wide font-medium">{swot.gap}</p>
+                        <div className="space-y-2">
+                          {splitIntoParagraphs(swot.gap).map((p, i) => (
+                            <p key={i} className="text-base text-[#502D03] leading-[1.85] tracking-wide font-medium">{p}</p>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </CardContent>
@@ -1037,7 +1052,11 @@ const Skills = () => {
                           <item.icon className="h-5 w-5" style={{ color: item.accent }} />
                           <span className="font-semibold text-foreground">{item.label}</span>
                         </div>
-                        <p className="text-sm text-muted-foreground leading-[1.85] tracking-wide">{item.text}</p>
+                        <div className="space-y-2">
+                          {splitIntoParagraphs(item.text).map((p, i) => (
+                            <p key={i} className="text-sm text-muted-foreground leading-[1.85] tracking-wide">{p}</p>
+                          ))}
+                        </div>
                       </CardContent>
                     </Card>
                   </motion.div>
