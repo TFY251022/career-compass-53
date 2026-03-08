@@ -406,7 +406,7 @@ const Skills = () => {
             >
               <ArrowLeft className="h-4 w-4" /> 返回職能圖譜
             </Button>
-            <Button variant="ghost" size="icon" onClick={handleDownloadReport}>
+            <Button variant="ghost" size="icon" onClick={handleDownloadSideProjects}>
               <Download className="h-5 w-5 text-[#502D03]" />
             </Button>
           </div>
