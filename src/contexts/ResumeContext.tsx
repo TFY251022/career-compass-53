@@ -9,13 +9,20 @@ interface ResumeState {
   resumes: ResumeItem[];
   selectedResumeId: number | null;
   setSelectedResumeId: (id: number | null) => void;
+  removeResume: (id: number) => void;
 }
 
 const STORAGE_KEY = 'selectedResumeId';
 
 export const ResumeProvider = ({ children }: { children: ReactNode }) => {
-  // TODO: Replace with API call
-  const resumes = MOCK_RESUMES;
+  const [resumes, setResumes] = useState<ResumeItem[]>(MOCK_RESUMES);
+
+  const removeResume = (id: number) => {
+    setResumes((prev) => prev.filter((r) => r.id !== id));
+    if (selectedResumeId === id) {
+      setSelectedResumeId(null);
+    }
+  };
 
   // Smart default: pick most recent resume by updatedAt, or use localStorage
   const getDefaultId = (): number | null => {
@@ -41,7 +48,7 @@ export const ResumeProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <ResumeContext.Provider value={{ resumes, selectedResumeId, setSelectedResumeId }}>
+    <ResumeContext.Provider value={{ resumes, selectedResumeId, setSelectedResumeId, removeResume }}>
       {children}
     </ResumeContext.Provider>
   );

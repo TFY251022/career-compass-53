@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import { useResumes, type ResumeItem } from '@/contexts/ResumeContext';
 import { ResumeTemplateRenderer, TEMPLATE_THEMES } from '@/components/resume/ResumeTemplates';
+import AlertModal from '@/components/modals/AlertModal';
 import html2pdf from 'html2pdf.js';
 
 /** Clone a rendered DOM element and inline styles for accurate PDF output */
@@ -134,7 +135,8 @@ const MyResumes = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
-  const { resumes } = useResumes();
+  const { resumes, removeResume } = useResumes();
+  const [deleteTarget, setDeleteTarget] = useState<ResumeItem | null>(null);
 
   const handlePreview = (resume: ResumeItem) => {
     setSelectedResume(resume);
@@ -289,7 +291,7 @@ const MyResumes = () => {
                           <Download className="h-4 w-4" />
                         )}
                       </Button>
-                      <Button variant="ghost" size="icon" className="text-destructive h-8 w-8 md:h-9 md:w-9">
+                      <Button variant="ghost" size="icon" className="text-destructive h-8 w-8 md:h-9 md:w-9" onClick={() => setDeleteTarget(resume)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -318,6 +320,20 @@ const MyResumes = () => {
             </motion.div>
           )}
         </RightDrawer>
+
+        <AlertModal
+          open={!!deleteTarget}
+          onClose={() => setDeleteTarget(null)}
+          type="warning"
+          title="確認刪除"
+          message={`確定要刪除「${deleteTarget?.name ?? ''}」嗎？此操作無法復原。`}
+          confirmLabel="刪除"
+          cancelLabel="取消"
+          showCancel
+          onConfirm={() => {
+            if (deleteTarget) removeResume(deleteTarget.id);
+          }}
+        />
       </div>
     </LoginRequired>
   );
