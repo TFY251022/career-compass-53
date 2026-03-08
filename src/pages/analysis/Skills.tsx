@@ -257,7 +257,7 @@ const Skills = () => {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-foreground/80 leading-relaxed">{strategy.overall_strategy}</p>
+                      <p className="text-sm text-foreground/80 leading-[1.85] tracking-wide">{strategy.overall_strategy}</p>
                     </CardContent>
                   </Card>
                 </motion.div>
