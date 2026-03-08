@@ -882,7 +882,7 @@ const Skills = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-foreground mb-2">認知偏差分析</p>
-                      <p className="text-sm text-[#675143] leading-relaxed">
+                      <p className="text-sm text-[#675143] leading-[1.85] tracking-wide">
                         {gap_analysis?.current_status?.cognitive_bias}
                       </p>
                     </div>
