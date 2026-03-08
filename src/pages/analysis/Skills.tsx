@@ -905,7 +905,7 @@ const Skills = () => {
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Shield className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-xl font-bold">SWOT 分析</h2>
+              <h2 className="text-xl font-bold tracking-tight">SWOT 分析</h2>
             </div>
 
             {/* SWOT 2×2 grid inspired by template */}
