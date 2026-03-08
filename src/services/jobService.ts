@@ -14,9 +14,11 @@ export async function getJobDetail(id: string): Promise<RecommendedJobDetail> {
   return apiClient.get<RecommendedJobDetail>(`/jobs/${id}`);
 }
 
-export async function generateCoverLetter(jobTitle?: string, company?: string): Promise<{ subject: string; body: string }> {
+export interface CoverLetterResult { subject: string; body: string; author?: string; email?: string; portfolio?: string }
+
+export async function generateCoverLetter(jobTitle?: string, company?: string): Promise<CoverLetterResult> {
   if (isMockMode()) { await mockDelay(2000); return mockCoverLetter(jobTitle, company); }
-  return apiClient.post<{ subject: string; body: string }>('/jobs/cover-letter', { jobTitle, company });
+  return apiClient.post<CoverLetterResult>('/jobs/cover-letter', { jobTitle, company });
 }
 
 export async function getJobCategories(): Promise<JobCategory[]> {
