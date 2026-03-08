@@ -83,7 +83,7 @@ export function buildSkillsReportHtml(data: {
   swot: { strengths: string; weaknesses: string; opportunities: string; threats: string; gap: string };
   actionPlan: { short_term: string; mid_term: string; long_term: string };
   learningResources: { title: string; description: string; tags?: string[]; rating?: number; review_count?: number; level?: string; course_type?: string; duration?: string; priority?: number; strategy_reason?: string; link?: string }[];
-  sideProjects: { name: string; technologies: string[]; highlights?: string; difficulty?: number }[];
+  sideProjects: { name: string; name_en?: string; capability_gaps: string[]; technologies: string[]; phases: { phase_name: string; goal: string; tasks: string[]; resume_value: string }[]; overall_resume_impact: string; difficulty: number; difficulty_label?: string; estimated_duration?: string; difficulty_note?: string }[];
   overallStrategy?: string;
   milestones?: string[];
 }): string {
