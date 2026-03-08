@@ -220,20 +220,20 @@ export function buildLearningResourcesReportHtml(data: {
 
       ${data.overallStrategy ? `
         ${sectionTitle('整體策略')}
+        <div style="padding:16px 20px;border:1px solid #e5e0db;border-radius:10px;background:#fff;margin-bottom:20px;">
+          <p style="margin:0;font-size:13px;color:#444;line-height:1.85;">${data.overallStrategy}</p>
+        </div>
+      ` : ''}
+
+      ${data.milestones && data.milestones.length > 0 ? `
+        ${sectionTitle('關鍵里程碑')}
         <div style="border-left:4px solid #8d4903;background:linear-gradient(135deg,#fbf1e8,#fff);padding:16px 20px;border-radius:0 10px 10px 0;margin-bottom:20px;">
-          <p style="margin:0;font-size:13px;color:#502D03;line-height:1.85;">${data.overallStrategy}</p>
+          <ul style="padding-left:18px;margin:0;">${data.milestones.map(m => `<li style="margin-bottom:8px;font-size:13px;color:#502D03;line-height:1.85;">${m}</li>`).join('')}</ul>
         </div>
       ` : ''}
 
       ${sectionTitle('學習路徑')}
       ${resourceCards}
-
-      ${data.milestones && data.milestones.length > 0 ? `
-        ${sectionTitle('關鍵里程碑')}
-        <div style="padding:16px 20px;border:1px solid #e5e0db;border-radius:10px;background:#fafaf8;">
-          <ul style="padding-left:18px;margin:0;">${data.milestones.map(m => `<li style="margin-bottom:8px;font-size:13px;color:#444;line-height:1.85;">${m}</li>`).join('')}</ul>
-        </div>
-      ` : ''}
     </div>
   `;
 }
