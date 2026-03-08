@@ -37,7 +37,6 @@ function loadCareerReports(): CareerReport[] {
     const raw = localStorage.getItem('resume-optimize-state');
     if (raw) {
       const state = JSON.parse(raw);
-      // The diagnostic result may be stored alongside, or we derive from suggestions
       const diag: ResumeDiagnosticResult | undefined = state.diagnosticResult;
       if (diag) {
         reports.push({
@@ -46,9 +45,7 @@ function loadCareerReports(): CareerReport[] {
           date: new Date().toISOString().slice(0, 10),
           title: '履歷優化建議報告',
           summary: diag.candidate_positioning?.slice(0, 80) + '...',
-          strengths: diag.overall_strengths || [],
-          improvements: diag.overall_weaknesses || [],
-          recommendations: diag.recommended_next_actions || [],
+          rawOptimize: diag,
         });
       }
     }
@@ -60,22 +57,13 @@ function loadCareerReports(): CareerReport[] {
     const raw = localStorage.getItem('skills-analysis-result');
     if (done === 'true' && raw) {
       const result: AnalysisResult = JSON.parse(raw);
-      const swot = result.gap_analysis?.target_position?.gap_description
-        ? parseSWOT(result.gap_analysis.target_position.gap_description)
-        : null;
       reports.push({
         id: 'skills',
         type: 'skills',
         date: result.report_metadata?.timestamp?.slice(0, 10) || new Date().toISOString().slice(0, 10),
         title: '職能圖譜分析報告',
         summary: result.preliminary_summary?.personal_summary?.slice(0, 80) + '...',
-        strengths: swot?.strengths ? [swot.strengths] : [],
-        improvements: swot?.weaknesses ? [swot.weaknesses] : [],
-        recommendations: [
-          result.gap_analysis?.action_plan?.short_term,
-          result.gap_analysis?.action_plan?.mid_term,
-          result.gap_analysis?.action_plan?.long_term,
-        ].filter(Boolean) as string[],
+        rawSkills: result,
       });
     }
   } catch {}
