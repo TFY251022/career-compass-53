@@ -53,19 +53,83 @@ const bulletList = (items: string[]) =>
   `<ul style="padding-left:18px;margin:0;">${items.map(i => `<li style="margin-bottom:6px;line-height:1.85;">${i}</li>`).join('')}</ul>`;
 
 /** 履歷優化建議報告 */
-export function buildSuggestionsReportHtml(suggestions: { section: string; original: string; optimized: string }[]): string {
-  const rows = suggestions.map(s => `
-    <div style="margin-bottom:16px;page-break-inside:avoid;">
-      <h3 style="font-size:14px;color:#333;margin:0 0 6px;">【${s.section}】</h3>
-      <p style="margin:0 0 4px;"><strong style="color:#888;">原始：</strong>${s.original}</p>
-      <p style="margin:0;"><strong style="color:#1F3A5F;">優化建議：</strong>${s.optimized}</p>
+export function buildSuggestionsReportHtml(data: {
+  candidate_positioning: string;
+  target_role_gap_summary: string;
+  overall_strengths: string[];
+  overall_weaknesses: string[];
+  critical_issues: { section: string; severity: string; original_text: string; issue_reason: string; improvement_direction: string }[];
+  recommended_next_actions: string[];
+}): string {
+  const swBlock = (label: string, color: string, items: string[]) =>
+    items.length > 0 ? `
+      ${h('h3', `font-size:15px;color:${color};margin:0 0 10px;`, label)}
+      ${items.map(s => `<div style="display:flex;gap:8px;align-items:flex-start;padding:10px 14px;border-radius:8px;background:${color}08;margin-bottom:8px;">
+        <span style="color:${color};font-size:14px;margin-top:1px;">●</span>
+        <p style="margin:0;font-size:13px;line-height:1.85;color:#333;">${s}</p>
+      </div>`).join('')}
+    ` : '';
+
+  const issuesHtml = data.critical_issues.map(issue => `
+    <div style="border:1px solid #e5e0db;border-radius:10px;overflow:hidden;margin-bottom:14px;page-break-inside:avoid;">
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f5f0eb;border-bottom:1px solid #e5e0db;">
+        <strong style="font-size:13px;">${issue.section}</strong>
+        <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:#fff;border:1px solid #ddd;color:#666;">${issue.severity}</span>
+      </div>
+      <div style="padding:14px;space-y:12px;">
+        <div style="padding:10px 12px;border-radius:6px;background:#f9f9f7;border:1px solid #eee;margin-bottom:10px;">
+          <p style="font-size:11px;color:#888;margin:0 0 4px;font-weight:600;">原文內容</p>
+          <p style="font-size:13px;color:#555;line-height:1.85;margin:0;">${issue.original_text}</p>
+        </div>
+        <div style="margin-bottom:10px;">
+          <p style="font-size:11px;color:#888;margin:0 0 4px;font-weight:600;">診斷分析</p>
+          <p style="font-size:13px;line-height:1.85;margin:0;color:#333;">${issue.issue_reason}</p>
+        </div>
+        <div style="padding:10px 12px;border-radius:6px;background:#8d490308;border:1px solid #8d490320;">
+          <p style="font-size:11px;color:#8d4903;margin:0 0 4px;font-weight:600;">優化方向</p>
+          <p style="font-size:13px;line-height:1.85;margin:0;color:#502D03;font-weight:500;">${issue.improvement_direction}</p>
+        </div>
+      </div>
     </div>
   `).join('');
+
+  const actionsHtml = data.recommended_next_actions.map((a, i) => `
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:8px;background:#fff;border:1px solid #eee;margin-bottom:8px;">
+      <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#8d490315;color:#8d4903;font-size:11px;font-weight:700;flex-shrink:0;">${i + 1}</span>
+      <p style="margin:0;font-size:13px;line-height:1.85;color:#333;">${a}</p>
+    </div>
+  `).join('');
+
   return `
     <div>
       ${h('h1', 'font-size:22px;text-align:center;color:#1F3A5F;margin-bottom:4px;', '履歷優化建議報告')}
-      ${h('p', 'text-align:center;color:#888;font-size:12px;margin-bottom:24px;', `生成日期：${new Date().toLocaleDateString('zh-TW')}`)}
-      ${rows}
+      ${h('p', 'text-align:center;color:#888;font-size:12px;margin-bottom:28px;', `生成日期：${new Date().toLocaleDateString('zh-TW')}`)}
+
+      ${sectionTitle('一、核心定位分析')}
+      <div style="padding:14px 18px;border-radius:8px;background:#8d490308;border:1px solid #8d490320;margin-bottom:14px;">
+        <p style="font-size:12px;color:#8d4903;font-weight:600;margin:0 0 6px;">候選人定位</p>
+        <p style="font-size:13px;line-height:1.85;margin:0;color:#333;">${data.candidate_positioning}</p>
+      </div>
+      <div style="padding:14px 18px;border-radius:8px;background:#f9f9f7;border:1px solid #eee;margin-bottom:20px;">
+        <p style="font-size:12px;color:#666;font-weight:600;margin:0 0 6px;">目標職位落差摘要</p>
+        <p style="font-size:13px;line-height:1.85;margin:0;color:#555;">${data.target_role_gap_summary}</p>
+      </div>
+
+      ${sectionTitle('二、優劣勢對比分析')}
+      ${swBlock('整體優勢', '#059669', data.overall_strengths)}
+      ${swBlock('待改善項目', '#8d4903', data.overall_weaknesses)}
+
+      ${data.critical_issues.length > 0 ? `
+        ${sectionTitle('三、關鍵問題診斷')}
+        ${issuesHtml}
+      ` : ''}
+
+      ${data.recommended_next_actions.length > 0 ? `
+        ${sectionTitle('四、後續行動計畫')}
+        <div style="padding:14px 18px;border-radius:10px;background:#fbf1e810;border:1px solid #8d490315;">
+          ${actionsHtml}
+        </div>
+      ` : ''}
     </div>
   `;
 }

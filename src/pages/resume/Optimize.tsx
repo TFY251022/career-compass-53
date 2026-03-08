@@ -196,10 +196,18 @@ const Optimize = () => {
   };
 
   const handleDownloadSuggestions = async () => {
+    if (!diagnosticResult) return;
     const { exportHtmlToPdf, buildSuggestionsReportHtml } = await import('@/utils/pdfExport');
     await exportHtmlToPdf({
       filename: '履歷優化建議報告.pdf',
-      htmlContent: buildSuggestionsReportHtml(suggestions),
+      htmlContent: buildSuggestionsReportHtml({
+        candidate_positioning: diagnosticResult.candidate_positioning,
+        target_role_gap_summary: diagnosticResult.target_role_gap_summary,
+        overall_strengths: diagnosticResult.overall_strengths,
+        overall_weaknesses: diagnosticResult.overall_weaknesses,
+        critical_issues: diagnosticResult.critical_issues,
+        recommended_next_actions: diagnosticResult.recommended_next_actions,
+      }),
     });
   };
 
