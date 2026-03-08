@@ -84,7 +84,7 @@ export const mockAnalysisResult: AnalysisResult = {
       duration: '3 months',
       priority: 1,
       strategy_reason:
-        '掌握高併發處理能力是後端工程師必須具備的基礎技能，尤其在微服務和容器化技術廣泛應用的環境中。',
+        '本課程提供高併發處理的基礎知識，為後續進一步優化系統性能打下基礎。掌握高併發處理能力是後端工程師必須具備的基礎技能，尤其在微服務和容器化技術廣泛應用的環境中。',
     },
     {
       title: 'Advanced Relational Database and SQL',
@@ -98,7 +98,7 @@ export const mockAnalysisResult: AnalysisResult = {
       duration: '2 months',
       priority: 2,
       strategy_reason:
-        '強化對 SQL 數據庫的優化技術是提升系統性能的關鍵，尤其在處理大規模數據時。',
+        '在掌握高併發基礎後，進一步提升數據庫設計與優化能力。強化對 SQL 數據庫的優化技術是提升系統性能的關鍵，尤其在處理大規模數據時。',
     },
     {
       title: 'Advanced Django: Mastering Django and Django Rest Framework',
@@ -112,7 +112,7 @@ export const mockAnalysisResult: AnalysisResult = {
       duration: '4 months',
       priority: 3,
       strategy_reason:
-        'Django 框架的深入掌握有助於構建可擴展的應用程式和 RESTful API。',
+        '在數據庫優化之後，進一步掌握框架技術如 Django，這是構建微服務架構的關鍵。Django 框架的深入掌握有助於構建可擴展的應用程式和 RESTful API。',
     },
     {
       title: 'Advanced Ruby Programming and Object-Oriented Design',
@@ -126,7 +126,7 @@ export const mockAnalysisResult: AnalysisResult = {
       duration: '3 months',
       priority: 4,
       strategy_reason:
-        '理解並應用多樣化的技術方案，增加在異構系統環境中的適應能力。',
+        '最後，進一步提升對面向對象設計和 Ruby 編程的掌握。這將有助於理解和應用多樣化的技術方案，增加在異構系統環境中的適應能力。',
     },
   ],
   sideProjects: [
