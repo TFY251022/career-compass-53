@@ -1068,7 +1068,7 @@ const ResumeEditMode = ({
                 </div>
                 <div className="p-3 rounded-lg bg-muted/40 border border-border">
                   <h4 className="text-xs font-semibold text-foreground mb-1.5">目標職位落差摘要</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{diagnosticResult.target_role_gap_summary}</p>
+                  <div className="text-sm text-muted-foreground leading-relaxed space-y-1.5">{splitIntoParagraphs(diagnosticResult.target_role_gap_summary).map((p, i) => <p key={i}>{p}</p>)}</div>
                 </div>
               </div>
             )}
