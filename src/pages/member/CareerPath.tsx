@@ -116,7 +116,7 @@ const CareerPath = () => {
           <main className="space-y-6 md:space-y-8 overflow-hidden">
             {/* Career Ladder Section */}
             <section className="overflow-hidden">
-              <CareerLadder isLoading={isLoading} />
+              <CareerLadder isLoading={isLoading} experiences={resumeExperiences} />
             </section>
 
             {/* Analysis History Section */}
