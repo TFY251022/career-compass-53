@@ -324,8 +324,8 @@ const Skills = () => {
 
                             {/* Strategy reason */}
                             {resource.strategy_reason && (
-                              <div className="bg-[#fbf1e8] rounded-md p-2.5 mb-3">
-                                <p className="text-xs text-[#502D03] leading-relaxed">
+                              <div className="bg-[#fbf1e8] rounded-md p-3 mb-3">
+                                <p className="text-xs text-[#502D03] leading-[1.8]">
                                   <span className="font-semibold">策略原因：</span>
                                   {resource.strategy_reason}
                                 </p>
