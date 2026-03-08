@@ -828,7 +828,11 @@ const SuggestionsPhase = ({
                     {diagnosticResult.overall_weaknesses.map((w, i) => (
                       <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-primary/5">
                         <AlertTriangle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                        <p className="text-sm leading-relaxed">{w}</p>
+                        <div className="text-sm leading-relaxed space-y-1.5">
+                          {splitIntoParagraphs(w).map((p, j) => (
+                            <p key={j}>{p}</p>
+                          ))}
+                        </div>
                       </div>
                     ))}
                   </CardContent>
