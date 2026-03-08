@@ -1,12 +1,21 @@
 import { useState } from 'react';
-import { FileText, Download, Trash2, Eye } from 'lucide-react';
+import { FileText, Download, Trash2, Eye, Sparkles, Edit3, Upload } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import RightDrawer from '@/components/panels/RightDrawer';
 import { motion } from 'framer-motion';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import { useResumes, type ResumeItem } from '@/contexts/ResumeContext';
+import { ResumeTemplateRenderer } from '@/components/resume/ResumeTemplates';
+import type { ResumeVersion } from '@/types/resume';
+
+const VERSION_LABELS: Record<ResumeVersion, { label: string; icon: React.ReactNode; color: string }> = {
+  'original': { label: '原版', icon: <Upload className="h-3 w-3" />, color: 'bg-muted text-muted-foreground' },
+  'user-edited': { label: '自行修改', icon: <Edit3 className="h-3 w-3" />, color: 'bg-amber-100 text-amber-800' },
+  'site-optimized': { label: '網站優化', icon: <Sparkles className="h-3 w-3" />, color: 'bg-primary/10 text-primary' },
+};
 
 const MyResumes = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -34,6 +43,28 @@ const MyResumes = () => {
     }
   };
 
+  const renderPreviewContent = (resume: ResumeItem) => {
+    // Site-optimized: render with template + theme
+    if (resume.version === 'site-optimized' && resume.optimizedData && resume.templateId) {
+      return (
+        <div className="bg-white p-4 rounded-lg">
+          <ResumeTemplateRenderer
+            templateId={resume.templateId}
+            themeIndex={resume.themeIndex ?? 0}
+            data={resume.optimizedData}
+          />
+        </div>
+      );
+    }
+
+    // Original / user-edited: plain text preview
+    return (
+      <div className="whitespace-pre-wrap text-xs md:text-sm leading-relaxed bg-muted/30 p-3 md:p-4 rounded-lg font-mono">
+        {resume.content}
+      </div>
+    );
+  };
+
   return (
     <LoginRequired>
       <div className="container py-8 md:py-12 animate-fade-in">
@@ -55,39 +86,48 @@ const MyResumes = () => {
           </div>
 
           <div className="space-y-3 md:space-y-4">
-            {resumes.map((resume, index) => (
-              <motion.div
-                key={resume.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="hover:shadow-medium transition-shadow">
-                  <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between py-3 md:py-4 gap-3">
-                    <div className="flex items-center gap-3 md:gap-4 w-full sm:w-auto">
-                      <div className="h-9 w-9 md:h-10 md:w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                        <FileText className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+            {resumes.map((resume, index) => {
+              const versionInfo = VERSION_LABELS[resume.version];
+              return (
+                <motion.div
+                  key={resume.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Card className="hover:shadow-medium transition-shadow">
+                    <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between py-3 md:py-4 gap-3">
+                      <div className="flex items-center gap-3 md:gap-4 w-full sm:w-auto">
+                        <div className="h-9 w-9 md:h-10 md:w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                          <FileText className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <p className="font-medium text-sm md:text-base truncate">{resume.name}</p>
+                            <Badge variant="secondary" className={`text-[10px] px-1.5 py-0 gap-1 shrink-0 ${versionInfo.color}`}>
+                              {versionInfo.icon}
+                              {versionInfo.label}
+                            </Badge>
+                          </div>
+                          <p className="text-xs md:text-sm text-muted-foreground">更新於 {resume.updatedAt}</p>
+                        </div>
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-sm md:text-base truncate">{resume.name}</p>
-                        <p className="text-xs md:text-sm text-muted-foreground">更新於 {resume.updatedAt}</p>
+                      <div className="flex gap-1 md:gap-2 w-full sm:w-auto justify-end">
+                        <Button variant="ghost" size="icon" onClick={() => handlePreview(resume)} className="h-8 w-8 md:h-9 md:w-9">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-destructive h-8 w-8 md:h-9 md:w-9">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
-                    </div>
-                    <div className="flex gap-1 md:gap-2 w-full sm:w-auto justify-end">
-                      <Button variant="ghost" size="icon" onClick={() => handlePreview(resume)} className="h-8 w-8 md:h-9 md:w-9">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9">
-                        <Download className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="text-destructive h-8 w-8 md:h-9 md:w-9">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
 
@@ -95,7 +135,7 @@ const MyResumes = () => {
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
           title="履歷預覽"
-          subtitle={selectedResume?.name}
+          subtitle={selectedResume ? `${selectedResume.name}${selectedResume.version !== 'original' ? ` (${VERSION_LABELS[selectedResume.version].label})` : ''}` : undefined}
           showDownload
           onDownload={handleDownload}
           isDownloading={isDownloading}
@@ -104,9 +144,8 @@ const MyResumes = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="whitespace-pre-wrap text-xs md:text-sm leading-relaxed bg-muted/30 p-3 md:p-4 rounded-lg font-mono"
             >
-              {selectedResume.content}
+              {renderPreviewContent(selectedResume)}
             </motion.div>
           )}
         </RightDrawer>

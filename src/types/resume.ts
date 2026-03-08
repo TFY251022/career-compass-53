@@ -1,8 +1,16 @@
+export type ResumeVersion = 'original' | 'user-edited' | 'site-optimized';
+
 export interface ResumeItem {
   id: number;
   name: string;
   updatedAt: string;
   content: string;
+  version: ResumeVersion;
+  /** Only for site-optimized resumes */
+  templateId?: string;
+  themeIndex?: number;
+  /** Structured data for site-optimized resumes (matches ResumeData shape) */
+  optimizedData?: ResumeData;
 }
 
 export interface OriginalResumeData {
