@@ -5,7 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { careerTemplates, mockResumeExperiences, mockTargetCareer } from '@/data/careerLadderTemplates';
+import { careerTemplates, mockTargetCareer } from '@/data/careerLadderTemplates';
+import type { ParsedExperience } from '@/utils/resumeExperienceParser';
 
 interface StepData {
   id: number;
@@ -168,13 +169,13 @@ const TransitionMarker = ({ isMobile }: { isMobile: boolean }) => (
 );
 
 /* ── Main Component ── */
-const CareerLadder = ({ isLoading }: { isLoading: boolean }) => {
+const CareerLadder = ({ isLoading, experiences }: { isLoading: boolean; experiences: ParsedExperience[] }) => {
   const isMobile = useIsMobile();
   const activeTemplate = mockTargetCareer;
   const template = careerTemplates[activeTemplate];
 
   const steps = useMemo<StepData[]>(() => {
-    const realSteps: StepData[] = mockResumeExperiences.map((exp, i) => ({
+    const realSteps: StepData[] = experiences.map((exp, i) => ({
       id: i + 1,
       title: exp.title,
       duties: exp.duties,
@@ -191,9 +192,9 @@ const CareerLadder = ({ isLoading }: { isLoading: boolean }) => {
     }));
 
     return [...realSteps, ...futureSteps];
-  }, [template]);
+  }, [template, experiences]);
 
-  const lastRealIndex = mockResumeExperiences.length - 1;
+  const lastRealIndex = experiences.length - 1;
 
   if (isLoading) {
     return (

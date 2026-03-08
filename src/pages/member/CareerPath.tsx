@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Map, ChevronRight, Star, FileText, Calendar } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,8 @@ import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import type { AnalysisHistoryItem } from '@/types/analysis';
 import { analysisHistory } from '@/mocks/analysis';
+import { useResumes } from '@/contexts/ResumeContext';
+import { parseExperiencesFromResume } from '@/utils/resumeExperienceParser';
 
 const AnalysisListSkeleton = () => (
   <div className="space-y-3 md:space-y-4">
@@ -52,6 +54,14 @@ const CareerPath = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [drawerLoading, setDrawerLoading] = useState(false);
   const isMobile = useIsMobile();
+  const { resumes } = useResumes();
+
+  // Get the latest resume by updatedAt and parse its experiences
+  const resumeExperiences = useMemo(() => {
+    if (resumes.length === 0) return [];
+    const sorted = [...resumes].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    return parseExperiencesFromResume(sorted[0]);
+  }, [resumes]);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1200);
@@ -106,7 +116,7 @@ const CareerPath = () => {
           <main className="space-y-6 md:space-y-8 overflow-hidden">
             {/* Career Ladder Section */}
             <section className="overflow-hidden">
-              <CareerLadder isLoading={isLoading} />
+              <CareerLadder isLoading={isLoading} experiences={resumeExperiences} />
             </section>
 
             {/* Analysis History Section */}
