@@ -147,17 +147,17 @@ export function buildSkillsReportHtml(data: {
       </table>
 
       ${sectionTitle('三、領航員分析職類')}
-      <div style="background:#fbf1e8;padding:14px 18px;border-radius:8px;margin-bottom:12px;">
-        <p style="margin:0 0 4px;color:#675143;font-size:12px;">領航員分析您適合的職類</p>
-        <p style="margin:0;font-size:20px;font-weight:700;color:#8d4903;">${data.targetRole} <span style="font-size:14px;margin-left:12px;">匹配度 ${data.matchScore}%</span></p>
+      <div style="background:#fbf1e8;padding:16px 20px;border-radius:10px;margin-bottom:14px;">
+        <p style="margin:0 0 6px;color:#675143;font-size:12px;letter-spacing:0.3px;">領航員分析您適合的職類</p>
+        <p style="margin:0;font-size:20px;font-weight:700;color:#8d4903;letter-spacing:0.5px;">${data.targetRole} <span style="font-size:14px;margin-left:12px;">匹配度 ${data.matchScore}%</span></p>
       </div>
-      <div style="display:flex;gap:16px;margin-bottom:12px;">
-        <div style="flex:1;padding:10px 14px;border:1px solid #ddd;border-radius:8px;"><p style="margin:0 0 2px;color:#675143;font-size:12px;">自評等級</p><p style="margin:0;font-size:16px;font-weight:700;">${data.selfAssessment}</p></div>
-        <div style="flex:1;padding:10px 14px;border:1px solid #ddd;border-radius:8px;"><p style="margin:0 0 2px;color:#675143;font-size:12px;">實際等級</p><p style="margin:0;font-size:16px;font-weight:700;color:#8d4903;">${data.actualLevel}</p></div>
+      <div style="display:flex;gap:16px;margin-bottom:14px;">
+        <div style="flex:1;padding:12px 16px;border:1px solid #ddd;border-radius:8px;"><p style="margin:0 0 4px;color:#675143;font-size:12px;">自評等級</p><p style="margin:0;font-size:16px;font-weight:700;">${data.selfAssessment}</p></div>
+        <div style="flex:1;padding:12px 16px;border:1px solid #ddd;border-radius:8px;"><p style="margin:0 0 4px;color:#675143;font-size:12px;">實際等級</p><p style="margin:0;font-size:16px;font-weight:700;color:#8d4903;">${data.actualLevel}</p></div>
       </div>
-      <div style="background:#FFFBF5;padding:12px 16px;border-radius:8px;">
-        <p style="margin:0 0 4px;font-weight:600;">認知偏差分析</p>
-        <p style="margin:0;font-size:13px;color:#675143;">${data.cognitiveBias}</p>
+      <div style="background:#FFFBF5;padding:14px 18px;border-radius:8px;">
+        <p style="margin:0 0 6px;font-weight:600;">認知偏差分析</p>
+        <p style="margin:0;font-size:13px;color:#675143;line-height:1.85;">${data.cognitiveBias}</p>
       </div>
 
       ${sectionTitle('四、SWOT 分析')}
