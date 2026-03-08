@@ -47,7 +47,7 @@ const h = (tag: string, style: string, content: string) =>
   `<${tag} style="${style}">${content}</${tag}>`;
 
 const sectionTitle = (text: string) =>
-  h('h2', 'font-size:16px;color:#1F3A5F;border-bottom:2px solid #1F3A5F;padding-bottom:6px;margin:20px 0 10px;', text);
+  h('h2', 'font-size:16px;color:#1F3A5F;border-bottom:2px solid #1F3A5F;padding-bottom:8px;margin:28px 0 14px;letter-spacing:0.5px;', text);
 
 const bulletList = (items: string[]) =>
   `<ul style="padding-left:18px;margin:0;">${items.map(i => `<li style="margin-bottom:4px;">${i}</li>`).join('')}</ul>`;
