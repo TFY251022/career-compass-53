@@ -243,7 +243,8 @@ const Skills = () => {
             </div>
           ) : (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-              <h1 className="text-2xl font-bold text-foreground">學習資源推薦</h1>
+              <h1 className="text-2xl font-bold text-foreground tracking-tight">學習資源推薦</h1>
+              <p className="text-muted-foreground leading-[1.85] mt-1">根據您的職能分析結果，為您精選最適合的學習路徑與課程資源。</p>
 
               {/* ── Overall Strategy ── */}
               {strategy?.overall_strategy && (
@@ -256,7 +257,7 @@ const Skills = () => {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-foreground/80 leading-relaxed">{strategy.overall_strategy}</p>
+                      <p className="text-sm text-foreground/80 leading-[1.85] tracking-wide">{strategy.overall_strategy}</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -319,12 +320,12 @@ const Skills = () => {
                             </div>
 
                             {/* Description */}
-                            <p className="text-sm text-muted-foreground mb-3 flex-grow">{resource.description}</p>
+                            <p className="text-sm text-muted-foreground mb-3 flex-grow leading-[1.8]">{resource.description}</p>
 
                             {/* Strategy reason */}
                             {resource.strategy_reason && (
-                              <div className="bg-[#fbf1e8] rounded-md p-2.5 mb-3">
-                                <p className="text-xs text-[#502D03] leading-relaxed">
+                              <div className="bg-[#fbf1e8] rounded-md p-3 mb-3">
+                                <p className="text-xs text-[#502D03] leading-[1.8]">
                                   <span className="font-semibold">策略原因：</span>
                                   {resource.strategy_reason}
                                 </p>
@@ -367,8 +368,8 @@ const Skills = () => {
                     <CardContent>
                       <ul className="space-y-2">
                         {strategy.milestones.map((m, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
-                            <span className="mt-1.5 h-2 w-2 rounded-full bg-[#8d4903] shrink-0" />
+                  <li key={i} className="flex items-start gap-2.5 text-sm text-foreground/80 leading-[1.8]">
+                            <span className="mt-2 h-2 w-2 rounded-full bg-[#8d4903] shrink-0" />
                             {m}
                           </li>
                         ))}
@@ -408,8 +409,8 @@ const Skills = () => {
             </div>
           ) : (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-              <h1 className="text-2xl font-bold text-foreground">Side Project 推薦</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-2xl font-bold text-foreground tracking-tight">Side Project 推薦</h1>
+              <p className="text-muted-foreground leading-[1.85]">
                 根據您的職能落差，為您量身規劃的 Side Project，透過階段式開發逐步補足技術缺口。
               </p>
 
@@ -503,15 +504,15 @@ const Skills = () => {
                           </div>
                           <Card className="bg-white hover:shadow-medium transition-shadow">
                             <CardContent className="pt-4 pb-4 space-y-2">
-                              <h3 className="font-semibold text-foreground">{phase.phase_name}</h3>
-                              <p className="text-sm text-muted-foreground">
+                              <h3 className="font-semibold text-foreground tracking-tight">{phase.phase_name}</h3>
+                              <p className="text-sm text-muted-foreground leading-[1.8]">
                                 <span className="font-medium text-foreground">目標：</span>{phase.goal}
                               </p>
                               <div>
                                 <span className="text-sm font-medium text-foreground">任務：</span>
-                                <ul className="mt-1 space-y-1">
+                                <ul className="mt-1.5 space-y-1.5">
                                   {phase.tasks.map((task, i) => (
-                                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground leading-[1.75]">
                                       <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#8d4903] shrink-0" />
                                       {task}
                                     </li>
@@ -537,7 +538,7 @@ const Skills = () => {
                         <FileText className="h-5 w-5 text-[#8d4903] shrink-0 mt-0.5" />
                         <div>
                           <h4 className="font-semibold text-sm text-[#502D03] mb-1">整體履歷影響</h4>
-                          <p className="text-sm text-[#502D03]/80 leading-relaxed">{project.overall_resume_impact}</p>
+                          <p className="text-sm text-[#502D03]/80 leading-[1.85] tracking-wide">{project.overall_resume_impact}</p>
                         </div>
                       </div>
                     </CardContent>
@@ -690,7 +691,7 @@ const Skills = () => {
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Lightbulb className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-xl font-bold">核心洞察</h2>
+              <h2 className="text-xl font-bold tracking-tight">核心洞察</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               {/* 產業洞察 */}
@@ -703,7 +704,7 @@ const Skills = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="p-4 rounded-xl" style={{ backgroundColor: "#FFFBF5" }}>
-                    <p className="text-[#675143] leading-relaxed text-sm">
+                    <p className="text-[#675143] leading-[1.85] text-sm tracking-wide">
                       {preliminary_summary?.industry_insight || preliminary_summary?.core_insight}
                     </p>
                   </div>
@@ -719,7 +720,7 @@ const Skills = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="p-5 rounded-xl bg-gradient-to-br from-[#fbf1e8] to-[#FFFBF5] border border-primary/10">
-                    <p className="text-[#502D03] leading-relaxed text-base font-semibold">
+                    <p className="text-[#502D03] leading-[1.9] text-base font-semibold tracking-wide">
                       {preliminary_summary?.personal_summary || ""}
                     </p>
                   </div>
@@ -741,7 +742,7 @@ const Skills = () => {
               <div className="h-10 w-10 rounded-lg flex items-center justify-center bg-background">
                 <Radar className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-xl font-bold">職能雷達圖</h2>
+              <h2 className="text-xl font-bold tracking-tight">職能雷達圖</h2>
             </div>
             <Card className="transition-all duration-300 hover:shadow-medium">
               <CardContent className="pt-6">
@@ -828,7 +829,7 @@ const Skills = () => {
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Target className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-xl font-bold">分析職類</h2>
+              <h2 className="text-xl font-bold tracking-tight">分析職類</h2>
             </div>
 
             {/* Target Position + Match */}
@@ -882,7 +883,7 @@ const Skills = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-foreground mb-2">認知偏差分析</p>
-                      <p className="text-sm text-[#675143] leading-relaxed">
+                      <p className="text-sm text-[#675143] leading-[1.85] tracking-wide">
                         {gap_analysis?.current_status?.cognitive_bias}
                       </p>
                     </div>
@@ -905,7 +906,7 @@ const Skills = () => {
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Shield className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-xl font-bold">SWOT 分析</h2>
+              <h2 className="text-xl font-bold tracking-tight">SWOT 分析</h2>
             </div>
 
             {/* SWOT 2×2 grid inspired by template */}
@@ -956,7 +957,7 @@ const Skills = () => {
                       <h4 className="font-bold text-lg mb-1.5" style={{ color: letterColors[idx] }}>
                         {card.label}
                       </h4>
-                      <p className="text-sm leading-relaxed text-foreground/80">{card.text}</p>
+                      <p className="text-sm leading-[1.85] tracking-wide text-foreground/80">{card.text}</p>
                     </div>
                   </motion.div>
                 );
@@ -976,7 +977,7 @@ const Skills = () => {
                         <div className="flex items-center gap-2 mb-2">
                           <span className="font-bold text-lg text-primary">核心落差</span>
                         </div>
-                        <p className="text-base text-[#502D03] leading-relaxed font-medium">{swot.gap}</p>
+                        <p className="text-base text-[#502D03] leading-[1.85] tracking-wide font-medium">{swot.gap}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -998,7 +999,7 @@ const Skills = () => {
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <BookOpen className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-xl font-bold">職涯行動計畫</h2>
+              <h2 className="text-xl font-bold tracking-tight">職涯行動計畫</h2>
             </div>
 
             <div className="relative">
@@ -1028,7 +1029,7 @@ const Skills = () => {
                           <item.icon className="h-5 w-5" style={{ color: item.accent }} />
                           <span className="font-semibold text-foreground">{item.label}</span>
                         </div>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{item.text}</p>
+                        <p className="text-sm text-muted-foreground leading-[1.85] tracking-wide">{item.text}</p>
                       </CardContent>
                     </Card>
                   </motion.div>
