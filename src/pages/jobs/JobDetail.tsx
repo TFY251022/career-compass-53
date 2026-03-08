@@ -62,7 +62,8 @@ const JobDetail = () => {
 
   const handleCopyContent = async () => {
     if (!letterContent) return;
-    const fullContent = `主旨：${letterContent.subject}\n\n${letterContent.body}`;
+    const sig = [letterContent.author && `此致，${letterContent.author}`, letterContent.email, letterContent.portfolio].filter(Boolean).join('\n');
+    const fullContent = `${letterContent.subject}\n\n${letterContent.body}${sig ? `\n\n${sig}` : ''}`;
     await navigator.clipboard.writeText(fullContent);
     setIsCopied(true);
     toast.success('已複製到剪貼簿');
