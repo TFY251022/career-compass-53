@@ -180,6 +180,9 @@ const Skills = () => {
 
   // ── Learning Resources Sub-view ──
   if (subView === "learning") {
+    const strategy = analysisResult?.learningStrategy;
+    const visibleResources = (learningResources ?? []).slice(0, 6);
+
     return (
       <div className="min-h-screen bg-card">
         <div className="container py-8 md:py-12">
@@ -201,41 +204,141 @@ const Skills = () => {
               <p className="mt-4 text-[#8d4903] animate-pulse">正在載入學習資源...</p>
             </div>
           ) : (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
               <h1 className="text-2xl font-bold text-foreground">學習資源推薦</h1>
-              <p className="text-muted-foreground">
-                根據您的職能差距分析，我們為您精選以下學習資源。建議優先完成「高優先」技能的相關課程，每週投入 5-10
-                小時，預計 3-6 個月內可達成目標職位的技能要求。
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {learningResources.map((resource, index) => (
-                  <motion.div
-                    key={resource.title}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <Card className="h-full bg-white transition-all duration-300 hover:shadow-medium hover:-translate-y-1 group cursor-pointer">
-                      <CardContent className="pt-6 h-full flex flex-col">
-                        <h3 className="font-semibold mb-2 group-hover:text-primary transition-colors">
-                          {resource.title}
-                        </h3>
-                        <p className="text-sm text-muted-foreground mb-4 flex-grow">{resource.description}</p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex flex-wrap gap-1">
-                            {resource.tags.map((tag) => (
-                              <Badge key={tag} variant="secondary" className="text-xs">
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-                          <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
+
+              {/* ── Overall Strategy ── */}
+              {strategy?.overall_strategy && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+                  <Card className="border-l-4 border-l-[#8d4903] bg-gradient-to-br from-[#fbf1e8] to-white">
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center gap-2">
+                        <Target className="h-5 w-5 text-[#8d4903]" />
+                        <CardTitle className="text-lg">整體策略</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-foreground/80 leading-relaxed">{strategy.overall_strategy}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+
+              {/* ── Learning Path Cards ── */}
+              {visibleResources.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <BookOpen className="h-5 w-5 text-primary" />
+                    <h2 className="text-lg font-semibold">學習路徑</h2>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {visibleResources.map((resource, index) => (
+                      <motion.div
+                        key={resource.title}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 + index * 0.08 }}
+                      >
+                        <Card className="h-full bg-white transition-all duration-300 hover:shadow-medium hover:-translate-y-1 group">
+                          <CardContent className="pt-5 h-full flex flex-col">
+                            {/* Priority badge + level */}
+                            <div className="flex items-center justify-between mb-3">
+                              {resource.priority != null && (
+                                <Badge className="bg-[#8d4903] text-white text-xs">
+                                  優先 {resource.priority}
+                                </Badge>
+                              )}
+                              {resource.level && (
+                                <Badge variant="outline" className="text-xs">
+                                  {resource.level}
+                                </Badge>
+                              )}
+                            </div>
+
+                            {/* Title */}
+                            <h3 className="font-semibold mb-1 group-hover:text-primary transition-colors leading-snug">
+                              {resource.title}
+                            </h3>
+
+                            {/* Meta row: rating, reviews, type, duration */}
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mb-2">
+                              {resource.rating != null && (
+                                <span className="flex items-center gap-1">
+                                  <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                                  {resource.rating}
+                                </span>
+                              )}
+                              {resource.review_count != null && (
+                                <span>{resource.review_count.toLocaleString()} 則評論</span>
+                              )}
+                              {resource.course_type && <span>· {resource.course_type}</span>}
+                              {resource.duration && (
+                                <span className="flex items-center gap-1">
+                                  <Clock className="h-3 w-3" />
+                                  {resource.duration}
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Description */}
+                            <p className="text-sm text-muted-foreground mb-3 flex-grow">{resource.description}</p>
+
+                            {/* Strategy reason */}
+                            {resource.strategy_reason && (
+                              <div className="bg-[#fbf1e8] rounded-md p-2.5 mb-3">
+                                <p className="text-xs text-[#502D03] leading-relaxed">
+                                  <span className="font-semibold">策略原因：</span>
+                                  {resource.strategy_reason}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Tags + link */}
+                            <div className="flex items-center justify-between pt-2 border-t">
+                              <div className="flex flex-wrap gap-1">
+                                {resource.tags.map((tag) => (
+                                  <Badge key={tag} variant="secondary" className="text-xs">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                              </div>
+                              {resource.link && resource.link !== '#' && (
+                                <a href={resource.link} target="_blank" rel="noopener noreferrer">
+                                  <ExternalLink className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
+                                </a>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ── Milestones ── */}
+              {strategy?.milestones && strategy.milestones.length > 0 && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5 text-primary" />
+                        <CardTitle className="text-lg">關鍵里程碑</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2">
+                        {strategy.milestones.map((m, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
+                            <span className="mt-1.5 h-2 w-2 rounded-full bg-[#8d4903] shrink-0" />
+                            {m}
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
             </motion.div>
           )}
         </div>

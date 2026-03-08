@@ -39,6 +39,19 @@ export interface LearningResource {
   description: string;
   tags: string[];
   link: string;
+  rating?: number;
+  review_count?: number;
+  level?: string;
+  course_type?: string;
+  duration?: string;
+  priority?: number;
+  strategy_reason?: string;
+}
+
+/** Overall learning strategy & milestones returned alongside resources */
+export interface LearningStrategy {
+  overall_strategy: string;
+  milestones: string[];
 }
 
 export interface SideProject {
@@ -79,6 +92,7 @@ export interface AnalysisResult {
   target_radar?: TargetRadarData;
   gap_analysis: GapAnalysis;
   learningResources: LearningResource[];
+  learningStrategy?: LearningStrategy;
   sideProjects: SideProject[];
 }
 
