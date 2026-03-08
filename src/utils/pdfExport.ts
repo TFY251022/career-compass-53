@@ -82,14 +82,51 @@ export function buildSkillsReportHtml(data: {
   matchScore: number;
   swot: { strengths: string; weaknesses: string; opportunities: string; threats: string; gap: string };
   actionPlan: { short_term: string; mid_term: string; long_term: string };
-  learningResources: { title: string; description: string }[];
-  sideProjects: { name: string; technologies: string[] }[];
+  learningResources: { title: string; description: string; tags?: string[]; rating?: number; review_count?: number; level?: string; course_type?: string; duration?: string; priority?: number; strategy_reason?: string; link?: string }[];
+  sideProjects: { name: string; technologies: string[]; highlights?: string; difficulty?: number }[];
+  overallStrategy?: string;
+  milestones?: string[];
 }): string {
   const swotBlock = (label: string, color: string, text: string) =>
     text ? `<div style="margin-bottom:10px;padding:10px 14px;border-left:4px solid ${color};background:${color}10;border-radius:4px;">
       <strong style="color:${color};">${label}</strong>
       <p style="margin:4px 0 0;font-size:13px;">${text}</p>
     </div>` : '';
+
+  const starRating = (rating: number) => {
+    const full = Math.floor(rating);
+    const stars = '★'.repeat(full) + '☆'.repeat(5 - full);
+    return `<span style="color:#d97706;letter-spacing:1px;">${stars}</span> <span style="font-size:12px;color:#888;">${rating}</span>`;
+  };
+
+  const difficultyDots = (level: number) => {
+    return Array.from({ length: 5 }, (_, i) =>
+      `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:3px;background:${i < level ? '#8d4903' : '#ddd'};"></span>`
+    ).join('');
+  };
+
+  const resourceCards = data.learningResources.map((r, i) => {
+    const metaParts: string[] = [];
+    if (r.rating != null) metaParts.push(starRating(r.rating));
+    if (r.review_count != null) metaParts.push(`${r.review_count.toLocaleString()} 則評論`);
+    if (r.course_type) metaParts.push(r.course_type);
+    if (r.duration) metaParts.push(`⏱ ${r.duration}`);
+    if (r.level) metaParts.push(r.level);
+
+    return `<div style="border:1px solid #e5e0db;border-radius:8px;padding:16px;margin-bottom:12px;page-break-inside:avoid;background:#fff;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        ${r.priority != null ? `<span style="background:#8d4903;color:#fff;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;">優先 ${r.priority}</span>` : '<span></span>'}
+        ${r.level ? `<span style="border:1px solid #ccc;padding:2px 8px;border-radius:12px;font-size:11px;color:#666;">${r.level}</span>` : ''}
+      </div>
+      <h3 style="font-size:14px;margin:0 0 6px;color:#1F3A5F;">${r.title}</h3>
+      <div style="font-size:11px;color:#888;margin-bottom:6px;">${metaParts.join(' · ')}</div>
+      <p style="font-size:13px;margin:0 0 8px;color:#444;">${r.description}</p>
+      ${r.strategy_reason ? `<div style="background:#fbf1e8;padding:8px 12px;border-radius:6px;margin-bottom:8px;">
+        <p style="margin:0;font-size:12px;color:#502D03;"><strong>策略原因：</strong>${r.strategy_reason}</p>
+      </div>` : ''}
+      ${r.tags && r.tags.length > 0 ? `<div style="margin-top:4px;">${r.tags.map(t => `<span style="display:inline-block;background:#f0ebe5;color:#675143;padding:2px 8px;border-radius:10px;font-size:11px;margin-right:4px;">${t}</span>`).join('')}</div>` : ''}
+    </div>`;
+  }).join('');
 
   return `
     <div>
@@ -138,10 +175,27 @@ export function buildSkillsReportHtml(data: {
       <p><strong>🔹 長期計畫：</strong>${data.actionPlan.long_term}</p>
 
       ${sectionTitle('六、推薦學習資源')}
-      ${bulletList(data.learningResources.map(r => `${r.title}：${r.description}`))}
+      ${data.overallStrategy ? `<div style="border-left:4px solid #8d4903;background:linear-gradient(135deg,#fbf1e8,#fff);padding:14px 18px;border-radius:0 8px 8px 0;margin-bottom:16px;">
+        <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#8d4903;">🎯 整體策略</p>
+        <p style="margin:0;font-size:13px;color:#502D03;line-height:1.7;">${data.overallStrategy}</p>
+      </div>` : ''}
+      ${resourceCards}
+      ${data.milestones && data.milestones.length > 0 ? `
+        <div style="margin-top:16px;padding:14px 18px;border:1px solid #e5e0db;border-radius:8px;background:#fafaf8;">
+          <p style="margin:0 0 10px;font-size:14px;font-weight:700;color:#1F3A5F;">📌 關鍵里程碑</p>
+          <ul style="padding-left:18px;margin:0;">${data.milestones.map(m => `<li style="margin-bottom:6px;font-size:13px;color:#444;">${m}</li>`).join('')}</ul>
+        </div>
+      ` : ''}
 
       ${sectionTitle('七、推薦 Side Project')}
-      ${bulletList(data.sideProjects.map(p => `${p.name}（技術：${p.technologies.join('、')}）`))}
+      ${data.sideProjects.map(p => `<div style="border:1px solid #e5e0db;border-radius:8px;padding:14px;margin-bottom:10px;page-break-inside:avoid;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <h3 style="font-size:14px;margin:0;color:#1F3A5F;">${p.name}</h3>
+          ${p.difficulty != null ? `<div>${difficultyDots(p.difficulty)}</div>` : ''}
+        </div>
+        ${p.highlights ? `<p style="font-size:13px;color:#444;margin:0 0 6px;">${p.highlights}</p>` : ''}
+        <div>${p.technologies.map(t => `<span style="display:inline-block;background:#f0ebe5;color:#675143;padding:2px 8px;border-radius:10px;font-size:11px;margin-right:4px;">${t}</span>`).join('')}</div>
+      </div>`).join('')}
     </div>
   `;
 }
