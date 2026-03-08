@@ -124,7 +124,7 @@ const Optimize = () => {
   const [editedOriginalData, setEditedOriginalData] = useState<OriginalResumeData>(canRestore ? persisted!.originalData : mockOriginalResumeData);
   const [resumeData, setResumeData] = useState<ResumeData>(canRestore ? persisted!.resumeData : mockResumeData);
   const [suggestions, setSuggestions] = useState<Suggestion[]>(canRestore ? persisted!.suggestions : []);
-  const [diagnosticResult, setDiagnosticResult] = useState<ResumeDiagnosticResult | null>(null);
+  const [diagnosticResult, setDiagnosticResult] = useState<ResumeDiagnosticResult | null>(canRestore ? persisted!.diagnosticResult ?? null : null);
   const [selectedTemplate, setSelectedTemplate] = useState<string>(canRestore ? persisted!.selectedTemplate : '');
   const [selectedThemeIndex, setSelectedThemeIndex] = useState<number>(canRestore ? persisted!.selectedThemeIndex : 0);
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
