@@ -368,8 +368,8 @@ const Skills = () => {
                     <CardContent>
                       <ul className="space-y-2">
                         {strategy.milestones.map((m, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
-                            <span className="mt-1.5 h-2 w-2 rounded-full bg-[#8d4903] shrink-0" />
+                  <li key={i} className="flex items-start gap-2.5 text-sm text-foreground/80 leading-[1.8]">
+                            <span className="mt-2 h-2 w-2 rounded-full bg-[#8d4903] shrink-0" />
                             {m}
                           </li>
                         ))}
