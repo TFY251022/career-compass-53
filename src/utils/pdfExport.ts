@@ -177,6 +177,66 @@ export function buildSkillsReportHtml(data: {
   `;
 }
 
+/** 學習資源推薦報告 */
+export function buildLearningResourcesReportHtml(data: {
+  overallStrategy?: string;
+  milestones?: string[];
+  learningResources: { title: string; description: string; tags?: string[]; rating?: number; review_count?: number; level?: string; course_type?: string; duration?: string; priority?: number; strategy_reason?: string; link?: string }[];
+}): string {
+  const starRating = (rating: number) => {
+    const full = Math.floor(rating);
+    const stars = '★'.repeat(full) + '☆'.repeat(5 - full);
+    return `<span style="color:#d97706;letter-spacing:1px;">${stars}</span> <span style="font-size:12px;color:#888;">${rating}</span>`;
+  };
+
+  const resourceCards = data.learningResources.map((r) => {
+    const metaParts: string[] = [];
+    if (r.rating != null) metaParts.push(starRating(r.rating));
+    if (r.review_count != null) metaParts.push(`${r.review_count.toLocaleString()} 則評論`);
+    if (r.course_type) metaParts.push(r.course_type);
+    if (r.duration) metaParts.push(`⏱ ${r.duration}`);
+    if (r.level) metaParts.push(r.level);
+
+    return `<div style="border:1px solid #e5e0db;border-radius:8px;padding:16px;margin-bottom:12px;page-break-inside:avoid;background:#fff;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        ${r.priority != null ? `<span style="background:#8d4903;color:#fff;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;">優先 ${r.priority}</span>` : '<span></span>'}
+        ${r.level ? `<span style="border:1px solid #ccc;padding:2px 8px;border-radius:12px;font-size:11px;color:#666;">${r.level}</span>` : ''}
+      </div>
+      <h3 style="font-size:14px;margin:0 0 6px;color:#1F3A5F;">${r.title}</h3>
+      <div style="font-size:11px;color:#888;margin-bottom:6px;">${metaParts.join(' · ')}</div>
+      <p style="font-size:13px;margin:0 0 8px;color:#444;">${r.description}</p>
+      ${r.strategy_reason ? `<div style="background:#fbf1e8;padding:8px 12px;border-radius:6px;margin-bottom:8px;">
+        <p style="margin:0;font-size:12px;color:#502D03;"><strong>策略原因：</strong>${r.strategy_reason}</p>
+      </div>` : ''}
+      ${r.tags && r.tags.length > 0 ? `<div style="margin-top:4px;">${r.tags.map(t => `<span style="display:inline-block;background:#f0ebe5;color:#675143;padding:2px 8px;border-radius:10px;font-size:11px;margin-right:4px;">${t}</span>`).join('')}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  return `
+    <div>
+      ${h('h1', 'font-size:22px;text-align:center;color:#1F3A5F;margin-bottom:4px;', '學習資源推薦報告')}
+      ${h('p', 'text-align:center;color:#888;font-size:12px;margin-bottom:24px;', `生成日期：${new Date().toLocaleDateString('zh-TW')}`)}
+
+      ${data.overallStrategy ? `
+        ${sectionTitle('整體策略')}
+        <div style="border-left:4px solid #8d4903;background:linear-gradient(135deg,#fbf1e8,#fff);padding:14px 18px;border-radius:0 8px 8px 0;margin-bottom:16px;">
+          <p style="margin:0;font-size:13px;color:#502D03;line-height:1.7;">${data.overallStrategy}</p>
+        </div>
+      ` : ''}
+
+      ${sectionTitle('學習路徑')}
+      ${resourceCards}
+
+      ${data.milestones && data.milestones.length > 0 ? `
+        ${sectionTitle('關鍵里程碑')}
+        <div style="padding:14px 18px;border:1px solid #e5e0db;border-radius:8px;background:#fafaf8;">
+          <ul style="padding-left:18px;margin:0;">${data.milestones.map(m => `<li style="margin-bottom:6px;font-size:13px;color:#444;">${m}</li>`).join('')}</ul>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
 /** 我的履歷 (plain text content → PDF) */
 export function buildResumeContentHtml(name: string, content: string): string {
   return `
