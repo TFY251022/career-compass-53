@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Map, ChevronRight, Star, FileText, Calendar } from 'lucide-react';
+import { Map, ChevronRight, Star, FileText, Calendar, BarChart3, FileEdit, Inbox } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -9,10 +9,78 @@ import CareerLadder from '@/components/career-path/CareerLadder';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
-import type { AnalysisHistoryItem } from '@/types/analysis';
-import { analysisHistory } from '@/mocks/analysis';
 import { useResumes } from '@/contexts/ResumeContext';
 import { parseExperiencesFromResume } from '@/utils/resumeExperienceParser';
+import { parseSWOT } from '@/types/analysis';
+import type { AnalysisResult } from '@/types/analysis';
+import type { ResumeDiagnosticResult } from '@/types/resume';
+
+/** Unified report item for the history list */
+interface CareerReport {
+  id: string;
+  type: 'optimize' | 'skills';
+  date: string;
+  title: string;
+  summary: string;
+  strengths: string[];
+  improvements: string[];
+  recommendations: string[];
+}
+
+/** Read persisted reports from localStorage */
+function loadCareerReports(): CareerReport[] {
+  const reports: CareerReport[] = [];
+
+  // 1. Resume Optimization report
+  try {
+    const raw = localStorage.getItem('resume-optimize-state');
+    if (raw) {
+      const state = JSON.parse(raw);
+      // The diagnostic result may be stored alongside, or we derive from suggestions
+      const diag: ResumeDiagnosticResult | undefined = state.diagnosticResult;
+      if (diag) {
+        reports.push({
+          id: 'optimize',
+          type: 'optimize',
+          date: new Date().toISOString().slice(0, 10),
+          title: '履歷優化建議報告',
+          summary: diag.candidate_positioning?.slice(0, 80) + '...',
+          strengths: diag.overall_strengths || [],
+          improvements: diag.overall_weaknesses || [],
+          recommendations: diag.recommended_next_actions || [],
+        });
+      }
+    }
+  } catch {}
+
+  // 2. Skills Analysis report
+  try {
+    const done = localStorage.getItem('skills-analysis-done');
+    const raw = localStorage.getItem('skills-analysis-result');
+    if (done === 'true' && raw) {
+      const result: AnalysisResult = JSON.parse(raw);
+      const swot = result.gap_analysis?.target_position?.gap_description
+        ? parseSWOT(result.gap_analysis.target_position.gap_description)
+        : null;
+      reports.push({
+        id: 'skills',
+        type: 'skills',
+        date: result.report_metadata?.timestamp?.slice(0, 10) || new Date().toISOString().slice(0, 10),
+        title: '職能圖譜分析報告',
+        summary: result.preliminary_summary?.personal_summary?.slice(0, 80) + '...',
+        strengths: swot?.strengths ? [swot.strengths] : [],
+        improvements: swot?.weaknesses ? [swot.weaknesses] : [],
+        recommendations: [
+          result.gap_analysis?.action_plan?.short_term,
+          result.gap_analysis?.action_plan?.mid_term,
+          result.gap_analysis?.action_plan?.long_term,
+        ].filter(Boolean) as string[],
+      });
+    }
+  } catch {}
+
+  return reports;
+}
 
 const AnalysisListSkeleton = () => (
   <div className="space-y-3 md:space-y-4">
