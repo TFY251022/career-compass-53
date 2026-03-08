@@ -118,7 +118,7 @@ const DrawerContentSkeleton = () => (
 const CareerPath = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedAnalysis, setSelectedAnalysis] = useState<typeof analysisHistory[0] | null>(null);
+  const [selectedReport, setSelectedReport] = useState<CareerReport | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [drawerLoading, setDrawerLoading] = useState(false);
   const isMobile = useIsMobile();
@@ -131,32 +131,35 @@ const CareerPath = () => {
     return parseExperiencesFromResume(sorted[0]);
   }, [resumes]);
 
+  // Load real reports from localStorage
+  const reports = useMemo(() => loadCareerReports(), []);
+
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1200);
     return () => clearTimeout(timer);
   }, []);
 
-  const handleAnalysisClick = (analysis: typeof analysisHistory[0]) => {
+  const handleReportClick = (report: CareerReport) => {
     setDrawerLoading(true);
-    setSelectedAnalysis(analysis);
+    setSelectedReport(report);
     setDrawerOpen(true);
     setTimeout(() => setDrawerLoading(false), 800);
   };
 
   const handleDownload = async () => {
-    if (!selectedAnalysis) return;
+    if (!selectedReport) return;
     setIsDownloading(true);
     try {
       const { exportHtmlToPdf, buildCareerAnalysisHtml } = await import('@/utils/pdfExport');
       await exportHtmlToPdf({
-        filename: `${selectedAnalysis.title}.pdf`,
+        filename: `${selectedReport.title}.pdf`,
         htmlContent: buildCareerAnalysisHtml({
-          title: selectedAnalysis.title,
-          date: selectedAnalysis.date,
-          summary: selectedAnalysis.summary,
-          strengths: selectedAnalysis.content.strengths,
-          improvements: selectedAnalysis.content.improvements,
-          recommendations: selectedAnalysis.content.recommendations,
+          title: selectedReport.title,
+          date: selectedReport.date,
+          summary: selectedReport.summary,
+          strengths: selectedReport.strengths,
+          improvements: selectedReport.improvements,
+          recommendations: selectedReport.recommendations,
         }),
       });
     } finally {
