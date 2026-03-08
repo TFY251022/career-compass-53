@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import { useResumes, type ResumeItem } from '@/contexts/ResumeContext';
 import { ResumeTemplateRenderer, TEMPLATE_THEMES } from '@/components/resume/ResumeTemplates';
+import AlertModal from '@/components/modals/AlertModal';
 import html2pdf from 'html2pdf.js';
 
 /** Clone a rendered DOM element and inline styles for accurate PDF output */
