@@ -320,6 +320,20 @@ const MyResumes = () => {
             </motion.div>
           )}
         </RightDrawer>
+
+        <AlertModal
+          open={!!deleteTarget}
+          onClose={() => setDeleteTarget(null)}
+          type="warning"
+          title="確認刪除"
+          message={`確定要刪除「${deleteTarget?.name ?? ''}」嗎？此操作無法復原。`}
+          confirmLabel="刪除"
+          cancelLabel="取消"
+          showCancel
+          onConfirm={() => {
+            if (deleteTarget) removeResume(deleteTarget.id);
+          }}
+        />
       </div>
     </LoginRequired>
   );

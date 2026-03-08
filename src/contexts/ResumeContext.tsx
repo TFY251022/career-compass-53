@@ -48,7 +48,7 @@ export const ResumeProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <ResumeContext.Provider value={{ resumes, selectedResumeId, setSelectedResumeId }}>
+    <ResumeContext.Provider value={{ resumes, selectedResumeId, setSelectedResumeId, removeResume }}>
       {children}
     </ResumeContext.Provider>
   );
