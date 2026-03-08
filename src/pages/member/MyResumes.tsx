@@ -87,7 +87,6 @@ const MyResumes = () => {
 
           <div className="space-y-3 md:space-y-4">
             {resumes.map((resume, index) => {
-              const versionInfo = VERSION_LABELS[resume.version];
               return (
                 <motion.div
                   key={resume.id}
