@@ -1064,7 +1064,7 @@ const ResumeEditMode = ({
               <div className="space-y-3">
                 <div className="p-3 rounded-lg bg-primary/5 border border-primary/15">
                   <h4 className="text-xs font-semibold text-primary mb-1.5">候選人定位</h4>
-                  <p className="text-sm leading-relaxed">{diagnosticResult.candidate_positioning}</p>
+                  <div className="text-sm leading-relaxed space-y-1.5">{splitIntoParagraphs(diagnosticResult.candidate_positioning).map((p, i) => <p key={i}>{p}</p>)}</div>
                 </div>
                 <div className="p-3 rounded-lg bg-muted/40 border border-border">
                   <h4 className="text-xs font-semibold text-foreground mb-1.5">目標職位落差摘要</h4>
