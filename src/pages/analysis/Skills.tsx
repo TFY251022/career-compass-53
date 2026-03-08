@@ -956,7 +956,7 @@ const Skills = () => {
                       <h4 className="font-bold text-lg mb-1.5" style={{ color: letterColors[idx] }}>
                         {card.label}
                       </h4>
-                      <p className="text-sm leading-relaxed text-foreground/80">{card.text}</p>
+                      <p className="text-sm leading-[1.85] tracking-wide text-foreground/80">{card.text}</p>
                     </div>
                   </motion.div>
                 );
