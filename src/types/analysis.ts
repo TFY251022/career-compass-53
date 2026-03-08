@@ -92,6 +92,7 @@ export interface AnalysisResult {
   target_radar?: TargetRadarData;
   gap_analysis: GapAnalysis;
   learningResources: LearningResource[];
+  learningStrategy?: LearningStrategy;
   sideProjects: SideProject[];
 }
 
