@@ -265,3 +265,73 @@ export function buildCareerAnalysisHtml(analysis: {
     </div>
   `;
 }
+
+/** Side Project 推薦報告 */
+export function buildSideProjectsReportHtml(projects: {
+  name: string;
+  name_en?: string;
+  capability_gaps: string[];
+  technologies: string[];
+  phases: { phase_name: string; goal: string; tasks: string[]; resume_value: string }[];
+  overall_resume_impact: string;
+  difficulty: number;
+  difficulty_label?: string;
+  estimated_duration?: string;
+  difficulty_note?: string;
+}[]): string {
+  const projectBlocks = projects.map((p, pIdx) => {
+    const phasesHtml = p.phases.map((ph, i) => `
+      <div style="margin-bottom:16px;page-break-inside:avoid;padding-left:20px;border-left:3px solid #8d4903;">
+        <div style="margin-bottom:4px;">
+          <span style="display:inline-block;background:#8d4903;color:#fff;width:22px;height:22px;border-radius:50%;text-align:center;line-height:22px;font-size:11px;font-weight:700;margin-right:8px;">${i + 1}</span>
+          <strong style="font-size:14px;color:#1F3A5F;">${ph.phase_name}</strong>
+        </div>
+        <p style="margin:4px 0;font-size:13px;line-height:1.85;color:#444;"><strong>目標：</strong>${ph.goal}</p>
+        <ul style="padding-left:18px;margin:4px 0 8px;">
+          ${ph.tasks.map(t => `<li style="font-size:13px;color:#555;line-height:1.85;margin-bottom:4px;">${t}</li>`).join('')}
+        </ul>
+        <div style="background:#fbf1e8;padding:8px 12px;border-radius:6px;">
+          <p style="margin:0;font-size:12px;color:#502D03;"><strong>履歷價值：</strong>${ph.resume_value}</p>
+        </div>
+      </div>
+    `).join('');
+
+    const gapTags = p.capability_gaps.map(g => `<span style="display:inline-block;background:#8d490310;border:1px solid #8d490330;color:#502D03;padding:3px 10px;border-radius:10px;font-size:11px;margin-right:5px;margin-bottom:4px;">${g}</span>`).join('');
+    const techTags = p.technologies.map(t => `<span style="display:inline-block;border:1px solid #ccc;color:#555;padding:3px 10px;border-radius:10px;font-size:11px;margin-right:5px;margin-bottom:4px;">${t}</span>`).join('');
+
+    return `
+      <div style="margin-bottom:32px;page-break-inside:avoid;">
+        <h2 style="font-size:18px;color:#1F3A5F;margin:0 0 6px;">${p.name}${p.name_en ? ` <span style="font-size:13px;color:#888;font-weight:400;">（${p.name_en}）</span>` : ''}</h2>
+        <div style="font-size:12px;color:#888;margin-bottom:12px;">
+          難度：<strong style="color:#333;">${p.difficulty_label ?? `${p.difficulty}/5`}</strong>
+          ${p.estimated_duration ? ` · 預計開發週期：${p.estimated_duration}` : ''}
+          ${p.difficulty_note ? ` · ${p.difficulty_note}` : ''}
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <p style="font-size:12px;color:#675143;font-weight:600;margin:0 0 6px;">能力缺口</p>
+          ${gapTags}
+        </div>
+        <div style="margin-bottom:16px;">
+          <p style="font-size:12px;color:#675143;font-weight:600;margin:0 0 6px;">技術棧</p>
+          ${techTags}
+        </div>
+
+        ${h('h3', 'font-size:15px;color:#1F3A5F;margin:0 0 12px;', '項目階段')}
+        ${phasesHtml}
+
+        <div style="background:linear-gradient(135deg,#fbf1e8,#f5e6d3);padding:14px 18px;border-radius:10px;border:1px solid #8d490320;margin-top:8px;">
+          <p style="margin:0;font-size:13px;color:#502D03;"><strong>整體履歷影響：</strong>${p.overall_resume_impact}</p>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div>
+      ${h('h1', 'font-size:24px;text-align:center;color:#1F3A5F;margin-bottom:6px;letter-spacing:1px;', 'Side Project 推薦報告')}
+      ${h('p', 'text-align:center;color:#999;font-size:12px;margin-bottom:32px;', `生成日期：${new Date().toLocaleDateString('zh-TW')}`)}
+      ${projectBlocks}
+    </div>
+  `;
+}
