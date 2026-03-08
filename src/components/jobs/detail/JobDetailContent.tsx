@@ -1,38 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { RecommendedJobDetail } from '@/types/job';
 import { cleanDimensionText } from '@/utils/textCleaner';
+import { splitIntoParagraphs } from '@/utils/textFormat';
 
 interface Props {
   job: RecommendedJobDetail;
-}
-
-/**
- * Split a raw text blob into paragraphs.
- * Strategy: prefer newline splitting; if only a single block remains, fall back to
- * splitting on sentence-ending punctuation (。！？) so dense API text still reads well.
- */
-function splitIntoParagraphs(raw: string): string[] {
-  // 1. Try splitting by newlines (single or double)
-  const byNewline = raw
-    .split(/\n{1,}/)
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  if (byNewline.length > 1) return byNewline;
-
-  // 2. Fallback: split on sentence-ending punctuation, keeping the punctuation
-  const bySentence = raw
-    .split(/(?<=[。！？])\s*/)
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  // Group every 2-3 sentences into one paragraph to avoid too many tiny blocks
-  const grouped: string[] = [];
-  for (let i = 0; i < bySentence.length; i += 2) {
-    grouped.push(bySentence.slice(i, i + 2).join(''));
-  }
-
-  return grouped.length > 0 ? grouped : [raw];
 }
 
 const JobDetailContent = ({ job }: Props) => {
