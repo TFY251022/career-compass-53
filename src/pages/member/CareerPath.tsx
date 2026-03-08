@@ -54,6 +54,14 @@ const CareerPath = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [drawerLoading, setDrawerLoading] = useState(false);
   const isMobile = useIsMobile();
+  const { resumes } = useResumes();
+
+  // Get the latest resume by updatedAt and parse its experiences
+  const resumeExperiences = useMemo(() => {
+    if (resumes.length === 0) return [];
+    const sorted = [...resumes].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    return parseExperiencesFromResume(sorted[0]);
+  }, [resumes]);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1200);
