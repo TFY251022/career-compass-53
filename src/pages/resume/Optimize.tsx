@@ -1415,5 +1415,3 @@ const ResultPhase = ({
 };
 
 export default Optimize;
-
-export default Optimize;
