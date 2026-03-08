@@ -409,8 +409,8 @@ const Skills = () => {
             </div>
           ) : (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-              <h1 className="text-2xl font-bold text-foreground">Side Project 推薦</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-2xl font-bold text-foreground tracking-tight">Side Project 推薦</h1>
+              <p className="text-muted-foreground leading-[1.85]">
                 根據您的職能落差，為您量身規劃的 Side Project，透過階段式開發逐步補足技術缺口。
               </p>
 
