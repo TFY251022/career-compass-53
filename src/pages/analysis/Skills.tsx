@@ -249,7 +249,7 @@ const Skills = () => {
               {/* ── Overall Strategy ── */}
               {strategy?.overall_strategy && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-                  <Card className="border-l-4 border-l-[#8d4903] bg-gradient-to-br from-[#fbf1e8] to-white">
+                  <Card>
                     <CardHeader className="pb-2">
                       <div className="flex items-center gap-2">
                         <Target className="h-5 w-5 text-[#8d4903]" />
@@ -258,6 +258,30 @@ const Skills = () => {
                     </CardHeader>
                     <CardContent>
                       <p className="text-sm text-foreground/80 leading-[1.85] tracking-wide">{strategy.overall_strategy}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+
+              {/* ── Milestones ── */}
+              {strategy?.milestones && strategy.milestones.length > 0 && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+                  <Card className="border-l-4 border-l-[#8d4903] bg-gradient-to-br from-[#fbf1e8] to-white">
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5 text-primary" />
+                        <CardTitle className="text-lg">關鍵里程碑</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2">
+                        {strategy.milestones.map((m, i) => (
+                          <li key={i} className="flex items-start gap-2.5 text-sm text-foreground/80 leading-[1.8]">
+                            <span className="mt-2 h-2 w-2 rounded-full bg-[#8d4903] shrink-0" />
+                            {m}
+                          </li>
+                        ))}
+                      </ul>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -353,30 +377,6 @@ const Skills = () => {
                     ))}
                   </div>
                 </div>
-              )}
-
-              {/* ── Milestones ── */}
-              {strategy?.milestones && strategy.milestones.length > 0 && (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="h-5 w-5 text-primary" />
-                        <CardTitle className="text-lg">關鍵里程碑</CardTitle>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-2">
-                        {strategy.milestones.map((m, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-sm text-foreground/80 leading-[1.8]">
-                            <span className="mt-2 h-2 w-2 rounded-full bg-[#8d4903] shrink-0" />
-                            {m}
-                          </li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
-                </motion.div>
               )}
             </motion.div>
           )}
