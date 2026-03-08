@@ -264,6 +264,32 @@ const Optimize = () => {
         (el as HTMLElement).style.justifyContent = 'flex-start';
       });
 
+      // Force flex-wrap containers (fix skill pills layout in PDF)
+      clone.querySelectorAll('[class*="flex-wrap"]').forEach((el) => {
+        const htmlEl = el as HTMLElement;
+        htmlEl.style.display = 'flex';
+        htmlEl.style.flexWrap = 'wrap';
+      });
+
+      // Force gap on flex/grid containers
+      clone.querySelectorAll('[class*="gap-"]').forEach((el) => {
+        const htmlEl = el as HTMLElement;
+        const gapMatch = htmlEl.className.match(/\bgap-(\d+)\b/);
+        if (gapMatch) {
+          htmlEl.style.gap = `${parseInt(gapMatch[1]) * 4}px`;
+        }
+      });
+
+      // Force pill/badge inline styles (rounded-full with px/py)
+      clone.querySelectorAll('[class*="rounded-full"]').forEach((el) => {
+        const htmlEl = el as HTMLElement;
+        htmlEl.style.borderRadius = '9999px';
+        htmlEl.style.display = 'inline-block';
+        if (htmlEl.className.includes('px-3')) htmlEl.style.paddingLeft = htmlEl.style.paddingRight = '12px';
+        if (htmlEl.className.includes('py-1')) htmlEl.style.paddingTop = htmlEl.style.paddingBottom = '4px';
+        if (htmlEl.className.includes('text-sm')) htmlEl.style.fontSize = '14px';
+      });
+
       // Ensure images load in clone
       const images = clone.querySelectorAll('img');
       await Promise.all(
