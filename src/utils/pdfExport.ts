@@ -131,14 +131,14 @@ export function buildSkillsReportHtml(data: {
 
   return `
     <div>
-      ${h('h1', 'font-size:22px;text-align:center;color:#1F3A5F;margin-bottom:4px;', '職能分析報告')}
-      ${h('p', 'text-align:center;color:#888;font-size:12px;margin-bottom:24px;', `生成日期：${new Date().toLocaleDateString('zh-TW')}`)}
+      ${h('h1', 'font-size:24px;text-align:center;color:#1F3A5F;margin-bottom:6px;letter-spacing:1px;', '職能分析報告')}
+      ${h('p', 'text-align:center;color:#999;font-size:12px;margin-bottom:32px;', `生成日期：${new Date().toLocaleDateString('zh-TW')}`)}
 
       ${sectionTitle('一、核心洞察')}
-      ${h('h3', 'font-size:14px;color:#675143;margin:0 0 4px;', '產業洞察')}
-      <p style="margin-bottom:12px;">${data.industryInsight}</p>
-      ${h('h3', 'font-size:15px;color:#502D03;margin:0 0 4px;font-weight:700;', '⭐ 個人總結')}
-      <p style="font-weight:600;color:#502D03;margin-bottom:0;">${data.personalSummary}</p>
+      ${h('h3', 'font-size:14px;color:#675143;margin:0 0 6px;letter-spacing:0.3px;', '產業洞察')}
+      <p style="margin-bottom:16px;line-height:1.85;">${data.industryInsight}</p>
+      ${h('h3', 'font-size:15px;color:#502D03;margin:0 0 6px;font-weight:700;letter-spacing:0.3px;', '⭐ 個人總結')}
+      <p style="font-weight:600;color:#502D03;margin-bottom:0;line-height:1.85;">${data.personalSummary}</p>
 
       ${sectionTitle('二、職能雷達圖')}
       <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px;">
