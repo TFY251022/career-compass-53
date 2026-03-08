@@ -1084,7 +1084,7 @@ const ResumeEditMode = ({
                     {diagnosticResult.overall_strengths.map((s, i) => (
                       <div key={i} className="flex items-start gap-2 p-2 rounded-md bg-green-50/60">
                         <CheckCircle className="h-3.5 w-3.5 text-green-600 shrink-0 mt-0.5" />
-                        <p className="text-xs leading-relaxed">{s}</p>
+                        <div className="text-xs leading-relaxed space-y-1">{splitIntoParagraphs(s).map((p, j) => <p key={j}>{p}</p>)}</div>
                       </div>
                     ))}
                   </div>
