@@ -1,21 +1,13 @@
 import { useState } from 'react';
-import { FileText, Download, Trash2, Eye, Sparkles, Edit3, Upload } from 'lucide-react';
+import { FileText, Download, Trash2, Eye, Upload } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import RightDrawer from '@/components/panels/RightDrawer';
 import { motion } from 'framer-motion';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import { useResumes, type ResumeItem } from '@/contexts/ResumeContext';
 import { ResumeTemplateRenderer } from '@/components/resume/ResumeTemplates';
-import type { ResumeVersion } from '@/types/resume';
-
-const VERSION_LABELS: Record<ResumeVersion, { label: string; icon: React.ReactNode; color: string }> = {
-  'original': { label: '原版', icon: <Upload className="h-3 w-3" />, color: 'bg-muted text-muted-foreground' },
-  'user-edited': { label: '自行修改', icon: <Edit3 className="h-3 w-3" />, color: 'bg-amber-100 text-amber-800' },
-  'site-optimized': { label: '網站優化', icon: <Sparkles className="h-3 w-3" />, color: 'bg-primary/10 text-primary' },
-};
 
 const MyResumes = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -44,15 +36,23 @@ const MyResumes = () => {
   };
 
   const renderPreviewContent = (resume: ResumeItem) => {
-    // Site-optimized: render with template + theme
+    // Site-optimized: render with template + theme, scaled to fit drawer
     if (resume.version === 'site-optimized' && resume.optimizedData && resume.templateId) {
       return (
-        <div className="bg-white p-4 rounded-lg">
-          <ResumeTemplateRenderer
-            templateId={resume.templateId}
-            themeIndex={resume.themeIndex ?? 0}
-            data={resume.optimizedData}
-          />
+        <div className="bg-white rounded-lg overflow-hidden">
+          <div
+            style={{
+              transform: 'scale(0.55)',
+              transformOrigin: 'top left',
+              width: '182%',
+            }}
+          >
+            <ResumeTemplateRenderer
+              templateId={resume.templateId}
+              themeIndex={resume.themeIndex ?? 0}
+              data={resume.optimizedData}
+            />
+          </div>
         </div>
       );
     }
@@ -87,7 +87,6 @@ const MyResumes = () => {
 
           <div className="space-y-3 md:space-y-4">
             {resumes.map((resume, index) => {
-              const versionInfo = VERSION_LABELS[resume.version];
               return (
                 <motion.div
                   key={resume.id}
@@ -102,13 +101,7 @@ const MyResumes = () => {
                           <FileText className="h-4 w-4 md:h-5 md:w-5 text-primary" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 mb-0.5">
-                            <p className="font-medium text-sm md:text-base truncate">{resume.name}</p>
-                            <Badge variant="secondary" className={`text-[10px] px-1.5 py-0 gap-1 shrink-0 ${versionInfo.color}`}>
-                              {versionInfo.icon}
-                              {versionInfo.label}
-                            </Badge>
-                          </div>
+                          <p className="font-medium text-sm md:text-base truncate">{resume.name}</p>
                           <p className="text-xs md:text-sm text-muted-foreground">更新於 {resume.updatedAt}</p>
                         </div>
                       </div>
@@ -135,7 +128,7 @@ const MyResumes = () => {
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
           title="履歷預覽"
-          subtitle={selectedResume ? `${selectedResume.name}${selectedResume.version !== 'original' ? ` (${VERSION_LABELS[selectedResume.version].label})` : ''}` : undefined}
+          subtitle={selectedResume?.name}
           showDownload
           onDownload={handleDownload}
           isDownloading={isDownloading}
