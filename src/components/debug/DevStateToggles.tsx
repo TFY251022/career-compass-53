@@ -20,7 +20,6 @@ const DevStateToggles = forwardRef<HTMLDivElement>((_, ref) => {
     setIsPersonalityQuizDone,
     setIsJobPreferenceQuizDone,
     setIsPersonalityTestDone,
-    setUseMockData,
   } = useAppState();
 
   const unlockAll = () => {
