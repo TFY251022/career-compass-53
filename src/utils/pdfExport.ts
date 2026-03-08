@@ -198,18 +198,18 @@ export function buildLearningResourcesReportHtml(data: {
     if (r.duration) metaParts.push(`⏱ ${r.duration}`);
     if (r.level) metaParts.push(r.level);
 
-    return `<div style="border:1px solid #e5e0db;border-radius:8px;padding:16px;margin-bottom:12px;page-break-inside:avoid;background:#fff;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        ${r.priority != null ? `<span style="background:#8d4903;color:#fff;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;">優先 ${r.priority}</span>` : '<span></span>'}
-        ${r.level ? `<span style="border:1px solid #ccc;padding:2px 8px;border-radius:12px;font-size:11px;color:#666;">${r.level}</span>` : ''}
+    return `<div style="border:1px solid #e5e0db;border-radius:10px;padding:18px;margin-bottom:14px;page-break-inside:avoid;background:#fff;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        ${r.priority != null ? `<span style="background:#8d4903;color:#fff;padding:3px 12px;border-radius:12px;font-size:11px;font-weight:600;letter-spacing:0.3px;">優先 ${r.priority}</span>` : '<span></span>'}
+        ${r.level ? `<span style="border:1px solid #ccc;padding:3px 10px;border-radius:12px;font-size:11px;color:#666;">${r.level}</span>` : ''}
       </div>
-      <h3 style="font-size:14px;margin:0 0 6px;color:#1F3A5F;">${r.title}</h3>
-      <div style="font-size:11px;color:#888;margin-bottom:6px;">${metaParts.join(' · ')}</div>
-      <p style="font-size:13px;margin:0 0 8px;color:#444;">${r.description}</p>
-      ${r.strategy_reason ? `<div style="background:#fbf1e8;padding:8px 12px;border-radius:6px;margin-bottom:8px;">
-        <p style="margin:0;font-size:12px;color:#502D03;"><strong>策略原因：</strong>${r.strategy_reason}</p>
+      <h3 style="font-size:15px;margin:0 0 8px;color:#1F3A5F;letter-spacing:0.3px;">${r.title}</h3>
+      <div style="font-size:11px;color:#888;margin-bottom:8px;">${metaParts.join(' · ')}</div>
+      <p style="font-size:13px;margin:0 0 10px;color:#444;line-height:1.85;">${r.description}</p>
+      ${r.strategy_reason ? `<div style="background:#fbf1e8;padding:10px 14px;border-radius:8px;margin-bottom:10px;">
+        <p style="margin:0;font-size:12px;color:#502D03;line-height:1.8;"><strong>策略原因：</strong>${r.strategy_reason}</p>
       </div>` : ''}
-      ${r.tags && r.tags.length > 0 ? `<div style="margin-top:4px;">${r.tags.map(t => `<span style="display:inline-block;background:#f0ebe5;color:#675143;padding:2px 8px;border-radius:10px;font-size:11px;margin-right:4px;">${t}</span>`).join('')}</div>` : ''}
+      ${r.tags && r.tags.length > 0 ? `<div style="margin-top:6px;">${r.tags.map(t => `<span style="display:inline-block;background:#f0ebe5;color:#675143;padding:3px 10px;border-radius:10px;font-size:11px;margin-right:5px;">${t}</span>`).join('')}</div>` : ''}
     </div>`;
   }).join('');
 
