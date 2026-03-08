@@ -48,7 +48,7 @@ import { splitIntoParagraphs } from "@/utils/textFormat";
 
 const ANALYSIS_DONE_KEY = "skills-analysis-done";
 const ANALYSIS_RESULT_KEY = "skills-analysis-result";
-const ANALYSIS_MOCK_VERSION = "v3"; // bump to invalidate cached mock data
+const ANALYSIS_MOCK_VERSION = "v4"; // bump to invalidate cached mock data
 const ANALYSIS_VERSION_KEY = "skills-analysis-version";
 
 const loadingMessages = [
