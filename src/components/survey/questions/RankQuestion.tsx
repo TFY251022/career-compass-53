@@ -37,7 +37,7 @@ const RankQuestion = ({ question, value, onChange }: Props) => {
               className={`flex items-center gap-3 p-3 rounded-lg border transition-all cursor-pointer hover:bg-muted/50 ${
                 selected
                   ? 'border-primary/60 bg-primary/5 shadow-[0_0_8px_hsl(var(--primary)/0.15)]'
-                  : 'border-border'
+                  : 'border-border bg-white'
               }`}
             >
               <div
