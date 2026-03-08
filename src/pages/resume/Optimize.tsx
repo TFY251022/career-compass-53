@@ -1097,7 +1097,7 @@ const ResumeEditMode = ({
                     {diagnosticResult.overall_weaknesses.map((w, i) => (
                       <div key={i} className="flex items-start gap-2 p-2 rounded-md bg-primary/5">
                         <AlertTriangle className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
-                        <p className="text-xs leading-relaxed">{w}</p>
+                        <div className="text-xs leading-relaxed space-y-1">{splitIntoParagraphs(w).map((p, j) => <p key={j}>{p}</p>)}</div>
                       </div>
                     ))}
                   </div>
