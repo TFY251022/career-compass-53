@@ -11,7 +11,7 @@ import JobDetailContent from '@/components/jobs/detail/JobDetailContent';
 import JobDetailUserAnalysis from '@/components/jobs/detail/JobDetailUserAnalysis';
 import JobDetailSkeleton from '@/components/jobs/detail/JobDetailSkeleton';
 import type { RecommendedJobDetail } from '@/types/job';
-import { getJobDetail, generateCoverLetter } from '@/services/jobService';
+import { getJobDetail, generateCoverLetter, type CoverLetterResult } from '@/services/jobService';
 import {
   ChevronLeft,
   Copy,
