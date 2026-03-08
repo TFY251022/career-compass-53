@@ -173,47 +173,6 @@ export function buildSkillsReportHtml(data: {
       <p><strong>🔹 短期計畫：</strong>${data.actionPlan.short_term}</p>
       <p><strong>🔸 中期計畫：</strong>${data.actionPlan.mid_term}</p>
       <p><strong>🔹 長期計畫：</strong>${data.actionPlan.long_term}</p>
-
-      ${sectionTitle('六、推薦學習資源')}
-      ${data.overallStrategy ? `<div style="border-left:4px solid #8d4903;background:linear-gradient(135deg,#fbf1e8,#fff);padding:14px 18px;border-radius:0 8px 8px 0;margin-bottom:16px;">
-        <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#8d4903;">🎯 整體策略</p>
-        <p style="margin:0;font-size:13px;color:#502D03;line-height:1.7;">${data.overallStrategy}</p>
-      </div>` : ''}
-      ${resourceCards}
-      ${data.milestones && data.milestones.length > 0 ? `
-        <div style="margin-top:16px;padding:14px 18px;border:1px solid #e5e0db;border-radius:8px;background:#fafaf8;">
-          <p style="margin:0 0 10px;font-size:14px;font-weight:700;color:#1F3A5F;">📌 關鍵里程碑</p>
-          <ul style="padding-left:18px;margin:0;">${data.milestones.map(m => `<li style="margin-bottom:6px;font-size:13px;color:#444;">${m}</li>`).join('')}</ul>
-        </div>
-      ` : ''}
-
-      ${sectionTitle('七、推薦 Side Project')}
-      ${data.sideProjects.map(p => `<div style="border:1px solid #e5e0db;border-radius:8px;padding:16px;margin-bottom:14px;page-break-inside:avoid;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <h3 style="font-size:15px;margin:0;color:#1F3A5F;">${p.name}${p.name_en ? ` <span style="font-size:12px;color:#888;font-weight:normal;">（${p.name_en}）</span>` : ''}</h3>
-          <div style="font-size:12px;color:#675143;">${p.difficulty_label ?? `${p.difficulty}/5`}${p.estimated_duration ? ` · ${p.estimated_duration}` : ''}</div>
-        </div>
-        ${p.difficulty_note ? `<p style="font-size:11px;color:#888;margin:0 0 8px;">${p.difficulty_note}</p>` : ''}
-        <div style="margin-bottom:8px;">
-          <strong style="font-size:12px;color:#8d4903;">能力缺口：</strong>
-          ${p.capability_gaps.map(g => `<span style="display:inline-block;background:#fbf1e8;color:#502D03;padding:2px 8px;border-radius:10px;font-size:11px;margin:2px 4px 2px 0;border:1px solid #e5d5c3;">${g}</span>`).join('')}
-        </div>
-        <div style="margin-bottom:10px;">
-          <strong style="font-size:12px;color:#1F3A5F;">技術棧：</strong>
-          ${p.technologies.map(t => `<span style="display:inline-block;background:#f0ebe5;color:#675143;padding:2px 8px;border-radius:10px;font-size:11px;margin:2px 4px 2px 0;">${t}</span>`).join('')}
-        </div>
-        ${p.phases.map((ph, i) => `<div style="border-left:3px solid #8d4903;padding:8px 14px;margin-bottom:8px;background:#fafaf8;border-radius:0 6px 6px 0;">
-          <h4 style="font-size:13px;margin:0 0 4px;color:#1F3A5F;">${ph.phase_name}</h4>
-          <p style="font-size:12px;margin:0 0 4px;color:#444;"><strong>目標：</strong>${ph.goal}</p>
-          <ul style="padding-left:16px;margin:0 0 4px;">${ph.tasks.map(t => `<li style="font-size:12px;color:#555;margin-bottom:2px;">${t}</li>`).join('')}</ul>
-          <div style="background:#fbf1e8;padding:6px 10px;border-radius:4px;margin-top:4px;">
-            <p style="margin:0;font-size:11px;color:#502D03;"><strong>履歷價值：</strong>${ph.resume_value}</p>
-          </div>
-        </div>`).join('')}
-        <div style="background:linear-gradient(135deg,#fbf1e8,#f5e6d3);padding:10px 14px;border-radius:6px;margin-top:6px;">
-          <p style="margin:0;font-size:12px;color:#502D03;"><strong>📋 整體履歷影響：</strong>${p.overall_resume_impact}</p>
-        </div>
-      </div>`).join('')}
     </div>
   `;
 }
