@@ -378,40 +378,143 @@ const Skills = () => {
               <p className="mt-4 text-[#8d4903] animate-pulse">正在載入 Side Project 推薦...</p>
             </div>
           ) : (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
               <h1 className="text-2xl font-bold text-foreground">Side Project 推薦</h1>
               <p className="text-muted-foreground">
-                實作 Side Project
-                是提升技術深度最有效的方式。以下專案根據您的職能落差量身推薦，建議從低難度開始逐步挑戰。
+                根據您的職能落差，為您量身規劃的 Side Project，透過階段式開發逐步補足技術缺口。
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {sideProjects.map((project, index) => (
-                  <motion.div
-                    key={project.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <Card className="h-full bg-white transition-all duration-300 hover:shadow-medium hover:-translate-y-1">
-                      <CardContent className="pt-6 h-full flex flex-col">
-                        <h3 className="font-semibold text-lg mb-3">{project.name}</h3>
-                        <div className="flex flex-wrap gap-1 mb-4">
+
+              {sideProjects.map((project, pIdx) => (
+                <motion.div
+                  key={project.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: pIdx * 0.15 }}
+                  className="space-y-5"
+                >
+                  {/* ── Project Header ── */}
+                  <Card className="border-l-4 border-l-[#8d4903] bg-gradient-to-br from-[#fbf1e8] to-white">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-xl">
+                        {project.name}
+                        {project.name_en && (
+                          <span className="text-sm font-normal text-muted-foreground ml-2">
+                            （{project.name_en}）
+                          </span>
+                        )}
+                      </CardTitle>
+                      {/* Difficulty + duration meta */}
+                      <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mt-1">
+                        <span className="flex items-center gap-1">
+                          難度：
+                          <span className="font-medium text-foreground">{project.difficulty_label ?? `${project.difficulty}/5`}</span>
+                        </span>
+                        {project.estimated_duration && (
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3.5 w-3.5" />
+                            預計開發週期：{project.estimated_duration}
+                          </span>
+                        )}
+                      </div>
+                      {project.difficulty_note && (
+                        <p className="text-xs text-muted-foreground mt-1">{project.difficulty_note}</p>
+                      )}
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {/* Capability Gaps */}
+                      <div>
+                        <h4 className="text-sm font-semibold mb-2 flex items-center gap-1.5">
+                          <Target className="h-4 w-4 text-[#8d4903]" /> 能力缺口
+                        </h4>
+                        <div className="flex flex-wrap gap-1.5">
+                          {project.capability_gaps.map((gap) => (
+                            <Badge key={gap} className="bg-[#8d4903]/10 text-[#502D03] border border-[#8d4903]/20 text-xs">
+                              {gap}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Tech Stack */}
+                      <div>
+                        <h4 className="text-sm font-semibold mb-2 flex items-center gap-1.5">
+                          <Lightbulb className="h-4 w-4 text-primary" /> 技術棧
+                        </h4>
+                        <div className="flex flex-wrap gap-1.5">
                           {project.technologies.map((tech) => (
                             <Badge key={tech} variant="outline" className="text-xs">
                               {tech}
                             </Badge>
                           ))}
                         </div>
-                        <p className="text-sm text-muted-foreground mb-4 flex-grow">{project.highlights}</p>
-                        <div className="flex items-center justify-between pt-3 border-t">
-                          <span className="text-sm text-muted-foreground">實作難度</span>
-                          {renderDifficulty(project.difficulty)}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* ── Phases Timeline ── */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-4">
+                      <TrendingUp className="h-5 w-5 text-primary" />
+                      <h2 className="text-lg font-semibold">項目階段</h2>
+                    </div>
+                    <div className="relative pl-6 space-y-0">
+                      {/* vertical line */}
+                      <div className="absolute left-[11px] top-3 bottom-3 w-0.5 bg-[#8d4903]/20" />
+                      {project.phases.map((phase, phaseIdx) => (
+                        <motion.div
+                          key={phase.phase_name}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.2 + phaseIdx * 0.1 }}
+                          className="relative pb-6 last:pb-0"
+                        >
+                          {/* dot */}
+                          <div className="absolute -left-6 top-1 h-5 w-5 rounded-full bg-[#8d4903] text-white flex items-center justify-center text-[10px] font-bold">
+                            {phaseIdx + 1}
+                          </div>
+                          <Card className="bg-white hover:shadow-medium transition-shadow">
+                            <CardContent className="pt-4 pb-4 space-y-2">
+                              <h3 className="font-semibold text-foreground">{phase.phase_name}</h3>
+                              <p className="text-sm text-muted-foreground">
+                                <span className="font-medium text-foreground">目標：</span>{phase.goal}
+                              </p>
+                              <div>
+                                <span className="text-sm font-medium text-foreground">任務：</span>
+                                <ul className="mt-1 space-y-1">
+                                  {phase.tasks.map((task, i) => (
+                                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#8d4903] shrink-0" />
+                                      {task}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div className="bg-[#fbf1e8] rounded-md p-2.5 mt-2">
+                                <p className="text-xs text-[#502D03]">
+                                  <span className="font-semibold">履歷價值：</span>{phase.resume_value}
+                                </p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* ── Overall Resume Impact ── */}
+                  <Card className="bg-gradient-to-r from-[#fbf1e8] to-[#f5e6d3] border-[#8d4903]/20">
+                    <CardContent className="pt-5 pb-5">
+                      <div className="flex items-start gap-3">
+                        <FileText className="h-5 w-5 text-[#8d4903] shrink-0 mt-0.5" />
+                        <div>
+                          <h4 className="font-semibold text-sm text-[#502D03] mb-1">整體履歷影響</h4>
+                          <p className="text-sm text-[#502D03]/80 leading-relaxed">{project.overall_resume_impact}</p>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
             </motion.div>
           )}
         </div>
