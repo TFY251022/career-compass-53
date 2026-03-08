@@ -186,7 +186,7 @@ const PersonalityTest = () => {
                 </div>
 
                 {/* Questions */}
-                <div className="space-y-5">
+                <div className="space-y-8">
                   {currentModule?.questions.map((q, idx) => {
                     const globalIndex = currentStep * 2 + idx + 1;
                     return (
@@ -199,8 +199,8 @@ const PersonalityTest = () => {
                         }`}
                       >
                         <CardContent className="p-6 md:p-8">
-                          <div className="space-y-4">
-                            <p className="font-semibold text-sm md:text-base text-foreground">
+                          <div className="space-y-5">
+                            <p className="font-bold text-base md:text-lg text-foreground">
                               <span className="text-destructive mr-1">*</span>
                               {globalIndex}. {q.question}
                               <span className="text-xs text-muted-foreground ml-1.5 font-normal">(單選)</span>
