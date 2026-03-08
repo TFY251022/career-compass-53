@@ -102,13 +102,7 @@ const MyResumes = () => {
                           <FileText className="h-4 w-4 md:h-5 md:w-5 text-primary" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 mb-0.5">
-                            <p className="font-medium text-sm md:text-base truncate">{resume.name}</p>
-                            <Badge variant="secondary" className={`text-[10px] px-1.5 py-0 gap-1 shrink-0 ${versionInfo.color}`}>
-                              {versionInfo.icon}
-                              {versionInfo.label}
-                            </Badge>
-                          </div>
+                          <p className="font-medium text-sm md:text-base truncate">{resume.name}</p>
                           <p className="text-xs md:text-sm text-muted-foreground">更新於 {resume.updatedAt}</p>
                         </div>
                       </div>
