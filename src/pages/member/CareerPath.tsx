@@ -205,6 +205,12 @@ const CareerPath = () => {
                 <CardContent>
                   {isLoading ? (
                     <AnalysisListSkeleton />
+                  ) : reports.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-10 text-center">
+                      <Inbox className="h-10 w-10 text-muted-foreground/40 mb-3" />
+                      <p className="text-sm text-muted-foreground">尚無分析紀錄</p>
+                      <p className="text-xs text-muted-foreground/60 mt-1">完成「履歷優化」或「職能圖譜」分析後，報告將自動出現在這裡</p>
+                    </div>
                   ) : (
                     <motion.div
                       initial={{ opacity: 0 }}
@@ -212,23 +218,27 @@ const CareerPath = () => {
                       transition={{ duration: 0.5, delay: 0.2 }}
                       className="space-y-3 md:space-y-4"
                     >
-                      {analysisHistory.map((analysis, index) => (
+                      {reports.map((report, index) => (
                         <motion.div
-                          key={analysis.id}
+                          key={report.id}
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.1 }}
                           className="p-3 md:p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer group"
-                          onClick={() => handleAnalysisClick(analysis)}
+                          onClick={() => handleReportClick(report)}
                         >
                           <div className="flex items-start justify-between">
                             <div className="space-y-0.5 md:space-y-1 flex-1 min-w-0">
                               <div className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-muted-foreground">
-                                <Calendar className="h-3.5 w-3.5 md:h-4 md:w-4 shrink-0" />
-                                {analysis.date}
+                                {report.type === 'optimize' ? (
+                                  <FileEdit className="h-3.5 w-3.5 md:h-4 md:w-4 shrink-0 text-primary" />
+                                ) : (
+                                  <BarChart3 className="h-3.5 w-3.5 md:h-4 md:w-4 shrink-0 text-primary" />
+                                )}
+                                {report.date}
                               </div>
-                              <h4 className="font-semibold text-sm md:text-base truncate">{analysis.title}</h4>
-                              <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">{analysis.summary}</p>
+                              <h4 className="font-semibold text-sm md:text-base truncate">{report.title}</h4>
+                              <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">{report.summary}</p>
                             </div>
                             <ChevronRight className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground group-hover:text-primary transition-colors mt-1 shrink-0 ml-2" />
                           </div>
