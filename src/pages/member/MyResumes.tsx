@@ -135,7 +135,8 @@ const MyResumes = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
-  const { resumes } = useResumes();
+  const { resumes, removeResume } = useResumes();
+  const [deleteTarget, setDeleteTarget] = useState<ResumeItem | null>(null);
 
   const handlePreview = (resume: ResumeItem) => {
     setSelectedResume(resume);
