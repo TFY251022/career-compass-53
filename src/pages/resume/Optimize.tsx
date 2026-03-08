@@ -808,7 +808,11 @@ const SuggestionsPhase = ({
                     {diagnosticResult.overall_strengths.map((s, i) => (
                       <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-green-50/60">
                         <CheckCircle className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
-                        <p className="text-sm leading-relaxed">{s}</p>
+                        <div className="text-sm leading-relaxed space-y-1.5">
+                          {splitIntoParagraphs(s).map((p, j) => (
+                            <p key={j}>{p}</p>
+                          ))}
+                        </div>
                       </div>
                     ))}
                   </CardContent>
