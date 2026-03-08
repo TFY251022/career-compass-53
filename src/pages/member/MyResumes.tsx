@@ -128,7 +128,7 @@ const MyResumes = () => {
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
           title="履歷預覽"
-          subtitle={selectedResume ? `${selectedResume.name}${selectedResume.version !== 'original' ? ` (${VERSION_LABELS[selectedResume.version].label})` : ''}` : undefined}
+          subtitle={selectedResume?.name}
           showDownload
           onDownload={handleDownload}
           isDownloading={isDownloading}
