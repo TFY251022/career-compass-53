@@ -89,9 +89,9 @@ export function buildSkillsReportHtml(data: {
   milestones?: string[];
 }): string {
   const swotBlock = (label: string, color: string, text: string) =>
-    text ? `<div style="margin-bottom:10px;padding:10px 14px;border-left:4px solid ${color};background:${color}10;border-radius:4px;">
-      <strong style="color:${color};">${label}</strong>
-      <p style="margin:4px 0 0;font-size:13px;">${text}</p>
+    text ? `<div style="margin-bottom:12px;padding:12px 16px;border-left:4px solid ${color};background:${color}10;border-radius:6px;">
+      <strong style="color:${color};letter-spacing:0.3px;">${label}</strong>
+      <p style="margin:6px 0 0;font-size:13px;line-height:1.85;">${text}</p>
     </div>` : '';
 
   const starRating = (rating: number) => {
