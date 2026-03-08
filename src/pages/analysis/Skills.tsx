@@ -190,6 +190,32 @@ const Skills = () => {
     </div>
   );
 
+  const handleDownloadLearningResources = async () => {
+    const { exportHtmlToPdf, buildLearningResourcesReportHtml } = await import("@/utils/pdfExport");
+    const strategy = analysisResult?.learningStrategy;
+    const visibleResources = (learningResources ?? []).slice(0, 6);
+    await exportHtmlToPdf({
+      filename: "學習資源推薦報告.pdf",
+      htmlContent: buildLearningResourcesReportHtml({
+        overallStrategy: strategy?.overall_strategy,
+        milestones: strategy?.milestones,
+        learningResources: visibleResources.map((r) => ({
+          title: r.title,
+          description: r.description,
+          tags: r.tags,
+          rating: r.rating,
+          review_count: r.review_count,
+          level: r.level,
+          course_type: r.course_type,
+          duration: r.duration,
+          priority: r.priority,
+          strategy_reason: r.strategy_reason,
+          link: r.link,
+        })),
+      }),
+    });
+  };
+
   // ── Learning Resources Sub-view ──
   if (subView === "learning") {
     const strategy = analysisResult?.learningStrategy;
@@ -205,6 +231,9 @@ const Skills = () => {
               onClick={() => setSubView("main")}
             >
               <ArrowLeft className="h-4 w-4" /> 返回職能圖譜
+            </Button>
+            <Button variant="ghost" size="icon" onClick={handleDownloadLearningResources}>
+              <Download className="h-5 w-5 text-[#502D03]" />
             </Button>
           </div>
           {subViewLoading ? (
