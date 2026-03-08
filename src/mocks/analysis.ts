@@ -131,28 +131,41 @@ export const mockAnalysisResult: AnalysisResult = {
   ],
   sideProjects: [
     {
-      name: '個人 DevOps 實驗室',
-      technologies: ['Docker', 'K8s', 'GitHub Actions'],
-      highlights: '建立完整的 CI/CD 流程，從程式碼提交到自動部署',
-      difficulty: 4,
-    },
-    {
-      name: '微服務電商平台',
-      technologies: ['Node.js', 'PostgreSQL', 'Redis'],
-      highlights: '實作分散式系統架構，練習服務間通訊與資料一致性',
-      difficulty: 5,
-    },
-    {
-      name: '即時數據儀表板',
-      technologies: ['React', 'WebSocket', 'Chart.js'],
-      highlights: '結合前端視覺化與即時數據串流，強化全端技能',
+      name: '智慧化物流系統',
+      name_en: 'Intelligent Logistics System',
+      capability_gaps: ['後端系統設計', '數據處理能力', '數據分析能力', '人工智能應用能力', '系統優化與擴展能力'],
+      technologies: ['Python', 'Flask', 'TensorFlow', 'PyTorch', 'PostgreSQL', 'Docker', 'Kubernetes'],
+      phases: [
+        {
+          phase_name: '階段一：物流系統後端',
+          goal: '開發一個基本的物流系統後端',
+          tasks: ['使用 Flask 建立 API', '處理基本的訂單數據'],
+          resume_value: '成功設計並實作一個可擴展的物流系統後端，強調系統架構設計能力。',
+        },
+        {
+          phase_name: '階段二：數據分析模組',
+          goal: '展示使用者的數據分析能力。',
+          tasks: ['整合 PostgreSQL 資料庫', '實作數據收集與簡單分析功能', '產生報表'],
+          resume_value: '實作數據收集與分析模組，提升數據處理能力。',
+        },
+        {
+          phase_name: '階段三：人工智能預測',
+          goal: '證明使用者在人工智能技術上的應用能力。',
+          tasks: ['使用 TensorFlow 或 PyTorch 開發需求預測模型', '整合機器學習模型', '實作預測功能', '評估模型效能'],
+          resume_value: '成功應用人工智能技術於需求預測，增強系統智能化水平。',
+        },
+        {
+          phase_name: '階段四：系統優化與擴展',
+          goal: '展示使用者在高壓環境下的系統優化與擴展能力。',
+          tasks: ['使用 Docker 和 Kubernetes 進行系統容器化', '自動化部署'],
+          resume_value: '實作系統容器化與自動化部署，提升系統在高壓環境下的穩定性與擴展能力。',
+        },
+      ],
+      overall_resume_impact: '此專案計畫不僅符合該職位的技術要求，還能有效地在履歷上展示使用者的多方面能力，並且具備真實世界的商業邏輯，讓面試官能夠深入探討專案細節。',
       difficulty: 3,
-    },
-    {
-      name: '智慧日誌分析系統',
-      technologies: ['Python', 'Elasticsearch', 'Kibana'],
-      highlights: '學習日誌收集與分析，提升運維能力',
-      difficulty: 4,
+      difficulty_label: '中等',
+      estimated_duration: '12 週',
+      difficulty_note: '主要挑戰在於整合多種技術棧並確保系統的穩定性與擴展性。',
     },
   ],
 };
