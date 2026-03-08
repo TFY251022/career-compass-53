@@ -220,8 +220,8 @@ export function buildLearningResourcesReportHtml(data: {
 
       ${data.overallStrategy ? `
         ${sectionTitle('整體策略')}
-        <div style="border-left:4px solid #8d4903;background:linear-gradient(135deg,#fbf1e8,#fff);padding:14px 18px;border-radius:0 8px 8px 0;margin-bottom:16px;">
-          <p style="margin:0;font-size:13px;color:#502D03;line-height:1.7;">${data.overallStrategy}</p>
+        <div style="border-left:4px solid #8d4903;background:linear-gradient(135deg,#fbf1e8,#fff);padding:16px 20px;border-radius:0 10px 10px 0;margin-bottom:20px;">
+          <p style="margin:0;font-size:13px;color:#502D03;line-height:1.85;">${data.overallStrategy}</p>
         </div>
       ` : ''}
 
