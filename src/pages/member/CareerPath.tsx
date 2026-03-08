@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import RightDrawer from '@/components/panels/RightDrawer';
 import LoginRequired from '@/components/gatekeeper/LoginRequired';
 import CareerLadder from '@/components/career-path/CareerLadder';
+import { OptimizeReportPreview, SkillsReportPreview } from '@/components/career-path/ReportDrawerContent';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -22,9 +23,9 @@ interface CareerReport {
   date: string;
   title: string;
   summary: string;
-  strengths: string[];
-  improvements: string[];
-  recommendations: string[];
+  /** Raw data for full report preview */
+  rawOptimize?: ResumeDiagnosticResult;
+  rawSkills?: AnalysisResult;
 }
 
 /** Read persisted reports from localStorage */
