@@ -171,9 +171,9 @@ export function buildSkillsReportHtml(data: {
       </div>` : ''}
 
       ${sectionTitle('五、職涯行動計畫')}
-      <p><strong>🔹 短期計畫：</strong>${data.actionPlan.short_term}</p>
-      <p><strong>🔸 中期計畫：</strong>${data.actionPlan.mid_term}</p>
-      <p><strong>🔹 長期計畫：</strong>${data.actionPlan.long_term}</p>
+      <p style="margin-bottom:10px;line-height:1.85;"><strong>🔹 短期計畫：</strong>${data.actionPlan.short_term}</p>
+      <p style="margin-bottom:10px;line-height:1.85;"><strong>🔸 中期計畫：</strong>${data.actionPlan.mid_term}</p>
+      <p style="margin-bottom:10px;line-height:1.85;"><strong>🔹 長期計畫：</strong>${data.actionPlan.long_term}</p>
     </div>
   `;
 }
