@@ -512,7 +512,7 @@ const Skills = () => {
                                 <span className="text-sm font-medium text-foreground">任務：</span>
                                 <ul className="mt-1.5 space-y-1.5">
                                   {phase.tasks.map((task, i) => (
-                                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground leading-[1.75]">
                                       <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#8d4903] shrink-0" />
                                       {task}
                                     </li>
