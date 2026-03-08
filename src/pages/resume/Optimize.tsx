@@ -774,7 +774,11 @@ const SuggestionsPhase = ({
                 <CardContent className="space-y-4">
                   <div className="p-4 rounded-lg bg-primary/5 border border-primary/15">
                     <h4 className="text-sm font-semibold text-primary mb-2">候選人定位</h4>
-                    <p className="text-sm leading-relaxed">{diagnosticResult.candidate_positioning}</p>
+                    <div className="text-sm leading-relaxed space-y-2">
+                      {splitIntoParagraphs(diagnosticResult.candidate_positioning).map((p, i) => (
+                        <p key={i}>{p}</p>
+                      ))}
+                    </div>
                   </div>
                   <div className="p-4 rounded-lg bg-muted/40 border border-border">
                     <h4 className="text-sm font-semibold text-foreground mb-2">目標職位落差摘要</h4>
