@@ -1129,7 +1129,7 @@ const ResumeEditMode = ({
                       <div className="p-3 space-y-2.5">
                         <div className="p-2 rounded-md bg-muted/40 border border-border/60">
                           <p className="text-[10px] text-muted-foreground mb-0.5 font-medium">原文內容</p>
-                          <p className="text-xs text-foreground/80 leading-relaxed">{issue.original_text}</p>
+                          <div className="text-xs text-foreground/80 leading-relaxed space-y-1">{splitIntoParagraphs(issue.original_text).map((p, j) => <p key={j}>{p}</p>)}</div>
                         </div>
                         <div>
                           <p className="text-[10px] text-muted-foreground mb-0.5 font-medium">診斷分析</p>
