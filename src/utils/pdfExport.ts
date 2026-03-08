@@ -215,8 +215,8 @@ export function buildLearningResourcesReportHtml(data: {
 
   return `
     <div>
-      ${h('h1', 'font-size:22px;text-align:center;color:#1F3A5F;margin-bottom:4px;', '學習資源推薦報告')}
-      ${h('p', 'text-align:center;color:#888;font-size:12px;margin-bottom:24px;', `生成日期：${new Date().toLocaleDateString('zh-TW')}`)}
+      ${h('h1', 'font-size:24px;text-align:center;color:#1F3A5F;margin-bottom:6px;letter-spacing:1px;', '學習資源推薦報告')}
+      ${h('p', 'text-align:center;color:#999;font-size:12px;margin-bottom:32px;', `生成日期：${new Date().toLocaleDateString('zh-TW')}`)}
 
       ${data.overallStrategy ? `
         ${sectionTitle('整體策略')}
