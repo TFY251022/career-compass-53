@@ -357,7 +357,11 @@ const Skills = () => {
                             </div>
 
                             {/* Description */}
-                            <p className="text-sm text-muted-foreground mb-3 flex-grow leading-[1.8]">{resource.description}</p>
+                            <div className="text-sm text-muted-foreground mb-3 flex-grow space-y-2">
+                              {splitIntoParagraphs(resource.description).map((p, i) => (
+                                <p key={i} className="leading-[1.8]">{p}</p>
+                              ))}
+                            </div>
 
                             {/* Strategy reason */}
                             {resource.strategy_reason && (
