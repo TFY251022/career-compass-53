@@ -690,7 +690,7 @@ const Skills = () => {
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Lightbulb className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-xl font-bold">核心洞察</h2>
+              <h2 className="text-xl font-bold tracking-tight">核心洞察</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               {/* 產業洞察 */}
@@ -703,7 +703,7 @@ const Skills = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="p-4 rounded-xl" style={{ backgroundColor: "#FFFBF5" }}>
-                    <p className="text-[#675143] leading-relaxed text-sm">
+                    <p className="text-[#675143] leading-[1.85] text-sm tracking-wide">
                       {preliminary_summary?.industry_insight || preliminary_summary?.core_insight}
                     </p>
                   </div>
@@ -719,7 +719,7 @@ const Skills = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="p-5 rounded-xl bg-gradient-to-br from-[#fbf1e8] to-[#FFFBF5] border border-primary/10">
-                    <p className="text-[#502D03] leading-relaxed text-base font-semibold">
+                    <p className="text-[#502D03] leading-[1.9] text-base font-semibold tracking-wide">
                       {preliminary_summary?.personal_summary || ""}
                     </p>
                   </div>
