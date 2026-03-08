@@ -184,15 +184,13 @@ export function buildLearningResourcesReportHtml(data: {
   milestones?: string[];
   learningResources: { title: string; description: string; tags?: string[]; rating?: number; review_count?: number; level?: string; course_type?: string; duration?: string; priority?: number; strategy_reason?: string; link?: string }[];
 }): string {
-  const starRating = (rating: number) => {
-    const full = Math.floor(rating);
-    const stars = '★'.repeat(full) + '☆'.repeat(5 - full);
-    return `<span style="color:#d97706;letter-spacing:1px;">${stars}</span> <span style="font-size:12px;color:#888;">${rating}</span>`;
-  };
-
   const resourceCards = data.learningResources.map((r) => {
     const metaParts: string[] = [];
-    if (r.rating != null) metaParts.push(starRating(r.rating));
+    if (r.rating != null) {
+      const full = Math.floor(r.rating);
+      const stars = '★'.repeat(full) + '☆'.repeat(5 - full);
+      metaParts.push(`<span style="color:#d97706;letter-spacing:1px;">${stars}</span> <span style="font-size:12px;color:#888;">${r.rating}</span>`);
+    }
     if (r.review_count != null) metaParts.push(`${r.review_count.toLocaleString()} 則評論`);
     if (r.course_type) metaParts.push(r.course_type);
     if (r.duration) metaParts.push(`⏱ ${r.duration}`);
@@ -200,15 +198,13 @@ export function buildLearningResourcesReportHtml(data: {
 
     return `<div style="border:1px solid #e5e0db;border-radius:10px;padding:18px;margin-bottom:14px;page-break-inside:avoid;background:#fff;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        ${r.priority != null ? `<span style="background:#8d4903;color:#fff;padding:3px 12px;border-radius:12px;font-size:11px;font-weight:600;letter-spacing:0.3px;">優先 ${r.priority}</span>` : '<span></span>'}
+        ${r.priority != null ? `<span style="font-size:20px;font-weight:700;color:#8d4903;letter-spacing:0.5px;">${r.priority}</span>` : '<span></span>'}
         ${r.level ? `<span style="border:1px solid #ccc;padding:3px 10px;border-radius:12px;font-size:11px;color:#666;">${r.level}</span>` : ''}
       </div>
       <h3 style="font-size:15px;margin:0 0 8px;color:#1F3A5F;letter-spacing:0.3px;">${r.title}</h3>
       <div style="font-size:11px;color:#888;margin-bottom:8px;">${metaParts.join(' · ')}</div>
       <p style="font-size:13px;margin:0 0 10px;color:#444;line-height:1.85;">${r.description}</p>
-      ${r.strategy_reason ? `<div style="background:#fbf1e8;padding:10px 14px;border-radius:8px;margin-bottom:10px;">
-        <p style="margin:0;font-size:12px;color:#502D03;line-height:1.8;"><strong>策略原因：</strong>${r.strategy_reason}</p>
-      </div>` : ''}
+      ${r.link && r.link !== '#' ? `<p style="margin:0 0 8px;font-size:12px;"><a href="${r.link}" style="color:#1F3A5F;word-break:break-all;">${r.link}</a></p>` : ''}
       ${r.tags && r.tags.length > 0 ? `<div style="margin-top:6px;">${r.tags.map(t => `<span style="display:inline-block;background:#f0ebe5;color:#675143;padding:3px 10px;border-radius:10px;font-size:11px;margin-right:5px;">${t}</span>`).join('')}</div>` : ''}
     </div>`;
   }).join('');
@@ -218,18 +214,11 @@ export function buildLearningResourcesReportHtml(data: {
       ${h('h1', 'font-size:24px;text-align:center;color:#1F3A5F;margin-bottom:6px;letter-spacing:1px;', '學習資源推薦報告')}
       ${h('p', 'text-align:center;color:#999;font-size:12px;margin-bottom:32px;', `生成日期：${new Date().toLocaleDateString('zh-TW')}`)}
 
-      ${data.overallStrategy ? `
-        ${sectionTitle('整體策略')}
-        <div style="padding:16px 20px;border:1px solid #e5e0db;border-radius:10px;background:#fff;margin-bottom:20px;">
-          <p style="margin:0;font-size:13px;color:#444;line-height:1.85;">${data.overallStrategy}</p>
-        </div>
-      ` : ''}
-
       ${data.milestones && data.milestones.length > 0 ? `
         ${sectionTitle('關鍵里程碑')}
-        <div style="border-left:4px solid #8d4903;background:linear-gradient(135deg,#fbf1e8,#fff);padding:16px 20px;border-radius:0 10px 10px 0;margin-bottom:20px;">
-          <ul style="padding-left:18px;margin:0;">${data.milestones.map(m => `<li style="margin-bottom:8px;font-size:13px;color:#502D03;line-height:1.85;">${m}</li>`).join('')}</ul>
-        </div>
+        <ol style="padding-left:20px;margin:0 0 24px;">
+          ${data.milestones.map(m => `<li style="margin-bottom:8px;font-size:13px;color:#333;line-height:1.85;">${m}</li>`).join('')}
+        </ol>
       ` : ''}
 
       ${sectionTitle('學習路徑')}
