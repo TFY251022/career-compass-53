@@ -19,9 +19,10 @@ export async function exportHtmlToPdf({
   wrapper.innerHTML = htmlContent;
   wrapper.style.width = '700px';
   wrapper.style.fontFamily = "'Noto Sans TC', 'Microsoft JhengHei', sans-serif";
-  wrapper.style.color = '#222';
-  wrapper.style.lineHeight = '1.7';
+  wrapper.style.color = '#333';
+  wrapper.style.lineHeight = '1.85';
   wrapper.style.fontSize = '13px';
+  wrapper.style.letterSpacing = '0.3px';
   document.body.appendChild(wrapper);
 
   const opt = {
