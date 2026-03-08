@@ -73,8 +73,8 @@ const JobDetail = () => {
   const handleDownload = async () => {
     if (!letterContent) return;
     setIsDownloading(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const fullContent = `主旨：${letterContent.subject}\n\n${letterContent.body}`;
+    const sig = [letterContent.author && `此致，${letterContent.author}`, letterContent.email, letterContent.portfolio].filter(Boolean).join('\n');
+    const fullContent = `${letterContent.subject}\n\n${letterContent.body}${sig ? `\n\n${sig}` : ''}`;
     const blob = new Blob([fullContent], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
