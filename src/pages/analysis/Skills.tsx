@@ -176,6 +176,8 @@ const Skills = () => {
         actionPlan: gap_analysis?.action_plan ?? { short_term: "", mid_term: "", long_term: "" },
         learningResources,
         sideProjects,
+        overallStrategy: analysisResult?.learningStrategy?.overall_strategy,
+        milestones: analysisResult?.learningStrategy?.milestones,
       }),
     });
   };
@@ -203,9 +205,6 @@ const Skills = () => {
               onClick={() => setSubView("main")}
             >
               <ArrowLeft className="h-4 w-4" /> 返回職能圖譜
-            </Button>
-            <Button variant="ghost" size="icon" onClick={handleDownloadReport}>
-              <Download className="h-5 w-5 text-[#502D03]" />
             </Button>
           </div>
           {subViewLoading ? (
