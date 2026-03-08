@@ -170,16 +170,44 @@ const JobDetail = () => {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-4"
+              className="space-y-5"
             >
-              <div className="bg-muted/50 rounded-lg p-4 border">
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">主旨</label>
-                <p className="mt-1 font-medium">{letterContent.subject}</p>
+              {/* Subject / Title */}
+              <div className="rounded-xl p-5 border" style={{ backgroundColor: '#fbf1e8' }}>
+                <p className="text-lg font-bold text-[#502D03] leading-snug tracking-tight">
+                  {letterContent.subject}
+                </p>
               </div>
-              <div className="bg-muted/30 rounded-lg p-4 border">
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">內容</label>
-                <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">{letterContent.body}</p>
+
+              {/* Body */}
+              <div className="rounded-xl p-5 border bg-card">
+                <p className="whitespace-pre-wrap text-sm leading-[1.9] tracking-wide text-foreground/85">
+                  {letterContent.body}
+                </p>
               </div>
+
+              {/* Signature / Contact */}
+              {(letterContent.author || letterContent.email || letterContent.portfolio) && (
+                <div className="rounded-xl p-4 border bg-muted/30 space-y-1">
+                  {letterContent.author && (
+                    <p className="text-sm font-semibold text-foreground">此致，{letterContent.author}</p>
+                  )}
+                  {letterContent.email && (
+                    <p className="text-xs text-muted-foreground">{letterContent.email}</p>
+                  )}
+                  {letterContent.portfolio && (
+                    <a
+                      href={letterContent.portfolio}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-[#8d4903] hover:underline break-all"
+                    >
+                      {letterContent.portfolio}
+                    </a>
+                  )}
+                </div>
+              )}
+
               <Button variant="outline" className="w-full gap-2" onClick={handleCopyContent}>
                 {isCopied ? (
                   <><CheckCircle2 className="h-4 w-4 text-primary" />已複製</>
