@@ -47,6 +47,8 @@ import { mockAnalysisResult } from "@/mocks/analysis";
 
 const ANALYSIS_DONE_KEY = "skills-analysis-done";
 const ANALYSIS_RESULT_KEY = "skills-analysis-result";
+const ANALYSIS_MOCK_VERSION = "v2"; // bump to invalidate cached mock data
+const ANALYSIS_VERSION_KEY = "skills-analysis-version";
 
 const loadingMessages = [
   "正在解析履歷關鍵字...",
@@ -91,8 +93,16 @@ const Skills = () => {
 
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult>(() => {
     try {
-      const saved = localStorage.getItem(ANALYSIS_RESULT_KEY);
-      if (saved) return JSON.parse(saved);
+      const savedVersion = localStorage.getItem(ANALYSIS_VERSION_KEY);
+      if (savedVersion === ANALYSIS_MOCK_VERSION) {
+        const saved = localStorage.getItem(ANALYSIS_RESULT_KEY);
+        if (saved) return JSON.parse(saved);
+      } else {
+        // Version mismatch — clear stale cache
+        localStorage.removeItem(ANALYSIS_RESULT_KEY);
+        localStorage.removeItem(ANALYSIS_DONE_KEY);
+        localStorage.setItem(ANALYSIS_VERSION_KEY, ANALYSIS_MOCK_VERSION);
+      }
     } catch {}
     return mockAnalysisResult;
   });
