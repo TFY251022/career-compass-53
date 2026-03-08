@@ -22,6 +22,7 @@ import { mockOriginalResumeData, mockResumeData, mockSuggestions, mockDiagnostic
 import { Badge } from '@/components/ui/badge';
 
 import logoCat from '@/assets/logocat.png';
+import { splitIntoParagraphs } from '@/utils/textFormat';
 type Phase = 'initial' | 'analyzing' | 'suggestions' | 'templates' | 'generating' | 'result';
 
 interface ThemeColors {
