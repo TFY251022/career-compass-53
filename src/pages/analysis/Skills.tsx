@@ -243,7 +243,8 @@ const Skills = () => {
             </div>
           ) : (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-              <h1 className="text-2xl font-bold text-foreground">學習資源推薦</h1>
+              <h1 className="text-2xl font-bold text-foreground tracking-tight">學習資源推薦</h1>
+              <p className="text-muted-foreground leading-[1.85] mt-1">根據您的職能分析結果，為您精選最適合的學習路徑與課程資源。</p>
 
               {/* ── Overall Strategy ── */}
               {strategy?.overall_strategy && (
