@@ -73,8 +73,26 @@ const JobDetail = () => {
   const handleDownload = async () => {
     if (!letterContent) return;
     setIsDownloading(true);
-    const sig = [letterContent.author && `此致，${letterContent.author}`, letterContent.email, letterContent.portfolio].filter(Boolean).join('\n');
-    const fullContent = `${letterContent.subject}\n\n${letterContent.body}${sig ? `\n\n${sig}` : ''}`;
+
+    const date = new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' });
+    const divider = '─'.repeat(40);
+
+    const lines = [
+      divider,
+      `主旨：${letterContent.subject}`,
+      `日期：${date}`,
+      divider,
+      '',
+      letterContent.body,
+      '',
+      divider,
+      ...(letterContent.author ? [`${letterContent.author}`] : []),
+      ...(letterContent.email ? [`Email：${letterContent.email}`] : []),
+      ...(letterContent.portfolio ? [`Portfolio：${letterContent.portfolio}`] : []),
+      divider,
+    ];
+
+    const fullContent = lines.join('\n');
     const blob = new Blob([fullContent], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
