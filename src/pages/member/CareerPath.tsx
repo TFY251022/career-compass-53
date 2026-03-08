@@ -139,17 +139,40 @@ const CareerPath = () => {
     if (!selectedReport) return;
     setIsDownloading(true);
     try {
-      const { exportHtmlToPdf, buildCareerAnalysisHtml } = await import('@/utils/pdfExport');
-      await exportHtmlToPdf({
+      const pdfUtils = await import('@/utils/pdfExport');
+      let htmlContent: string;
+
+      if (selectedReport.type === 'optimize' && selectedReport.rawOptimize) {
+        htmlContent = pdfUtils.buildSuggestionsReportHtml(selectedReport.rawOptimize);
+      } else if (selectedReport.type === 'skills' && selectedReport.rawSkills) {
+        const result = selectedReport.rawSkills;
+        const swot = result.gap_analysis?.target_position?.gap_description
+          ? parseSWOT(result.gap_analysis.target_position.gap_description)
+          : { strengths: '', weaknesses: '', opportunities: '', threats: '', gap: '' };
+        htmlContent = pdfUtils.buildSkillsReportHtml({
+          industryInsight: result.preliminary_summary?.industry_insight || '',
+          personalSummary: result.preliminary_summary?.personal_summary || '',
+          radarDimensions: result.radar_chart?.dimensions || [],
+          targetRadarDimensions: result.target_radar?.dimensions,
+          selfAssessment: result.gap_analysis?.current_status?.self_assessment || '',
+          actualLevel: result.gap_analysis?.current_status?.actual_level || '',
+          cognitiveBias: result.gap_analysis?.current_status?.cognitive_bias || '',
+          targetRole: result.gap_analysis?.target_position?.role || '',
+          matchScore: result.gap_analysis?.target_position?.match_score || 0,
+          swot,
+          actionPlan: result.gap_analysis?.action_plan || { short_term: '', mid_term: '', long_term: '' },
+          learningResources: result.learningResources || [],
+          sideProjects: result.sideProjects || [],
+          overallStrategy: result.learningStrategy?.overall_strategy,
+          milestones: result.learningStrategy?.milestones,
+        });
+      } else {
+        return;
+      }
+
+      await pdfUtils.exportHtmlToPdf({
         filename: `${selectedReport.title}.pdf`,
-        htmlContent: buildCareerAnalysisHtml({
-          title: selectedReport.title,
-          date: selectedReport.date,
-          summary: selectedReport.summary,
-          strengths: selectedReport.strengths,
-          improvements: selectedReport.improvements,
-          recommendations: selectedReport.recommendations,
-        }),
+        htmlContent,
       });
     } finally {
       setIsDownloading(false);
