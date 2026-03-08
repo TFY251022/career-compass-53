@@ -828,7 +828,7 @@ const Skills = () => {
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Target className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-xl font-bold">分析職類</h2>
+              <h2 className="text-xl font-bold tracking-tight">分析職類</h2>
             </div>
 
             {/* Target Position + Match */}
