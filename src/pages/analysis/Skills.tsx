@@ -44,6 +44,7 @@ import { generateAnalysis } from "@/services/analysisService";
 import type { AnalysisResult } from "@/types/analysis";
 import { parseSWOT } from "@/types/analysis";
 import { mockAnalysisResult } from "@/mocks/analysis";
+import { splitIntoParagraphs } from "@/utils/textFormat";
 
 const ANALYSIS_DONE_KEY = "skills-analysis-done";
 const ANALYSIS_RESULT_KEY = "skills-analysis-result";
