@@ -561,7 +561,11 @@ const Skills = () => {
                         <FileText className="h-5 w-5 text-[#8d4903] shrink-0 mt-0.5" />
                         <div>
                           <h4 className="font-semibold text-sm text-[#502D03] mb-1">整體履歷影響</h4>
-                          <p className="text-sm text-[#502D03]/80 leading-[1.85] tracking-wide">{project.overall_resume_impact}</p>
+                          <div className="text-sm text-[#502D03]/80 leading-[1.85] tracking-wide space-y-2">
+                            {splitIntoParagraphs(project.overall_resume_impact).map((p, i) => (
+                              <p key={i}>{p}</p>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </CardContent>
