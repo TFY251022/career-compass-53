@@ -163,7 +163,7 @@ const Optimize = () => {
     setDiagnosticResult(mockDiagnosticResult);
     setSuggestions(mockDiagnosticResult.suggestions);
     setPhase('suggestions');
-    saveOptimizeState({ phase: 'suggestions', suggestions: mockSuggestions, selectedTemplate: '', selectedThemeIndex: 0, resumeData, originalData });
+    saveOptimizeState({ phase: 'suggestions', suggestions: mockSuggestions, selectedTemplate: '', selectedThemeIndex: 0, resumeData, originalData, diagnosticResult: mockDiagnosticResult });
   };
 
   const handleSelectTemplate = async (templateId: string) => {
