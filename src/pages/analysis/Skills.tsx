@@ -176,6 +176,8 @@ const Skills = () => {
         actionPlan: gap_analysis?.action_plan ?? { short_term: "", mid_term: "", long_term: "" },
         learningResources,
         sideProjects,
+        overallStrategy: analysisResult?.learningStrategy?.overall_strategy,
+        milestones: analysisResult?.learningStrategy?.milestones,
       }),
     });
   };
