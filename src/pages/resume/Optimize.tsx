@@ -172,7 +172,7 @@ const Optimize = () => {
     setPhase('generating');
     await new Promise(resolve => setTimeout(resolve, 2500));
     setPhase('result');
-    saveOptimizeState({ phase: 'result', suggestions, selectedTemplate: templateId, selectedThemeIndex: 0, resumeData, originalData });
+    saveOptimizeState({ phase: 'result', suggestions, selectedTemplate: templateId, selectedThemeIndex: 0, resumeData, originalData, diagnosticResult: diagnosticResult ?? undefined });
   };
 
   const handleDownloadSuggestions = async () => {
