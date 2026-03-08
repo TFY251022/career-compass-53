@@ -165,9 +165,9 @@ export function buildSkillsReportHtml(data: {
       ${swotBlock('劣勢', '#d97706', data.swot.weaknesses)}
       ${swotBlock('機會', '#0284c7', data.swot.opportunities)}
       ${swotBlock('威脅', '#e11d48', data.swot.threats)}
-      ${data.swot.gap ? `<div style="margin-top:12px;padding:12px 16px;border:2px solid #8d4903;border-radius:8px;background:linear-gradient(135deg,#fbf1e8,#fff);">
-        <strong style="color:#8d4903;">核心落差</strong>
-        <p style="margin:4px 0 0;color:#502D03;font-weight:500;">${data.swot.gap}</p>
+      ${data.swot.gap ? `<div style="margin-top:16px;padding:14px 18px;border:2px solid #8d4903;border-radius:10px;background:linear-gradient(135deg,#fbf1e8,#fff);">
+        <strong style="color:#8d4903;letter-spacing:0.3px;">核心落差</strong>
+        <p style="margin:6px 0 0;color:#502D03;font-weight:500;line-height:1.85;">${data.swot.gap}</p>
       </div>` : ''}
 
       ${sectionTitle('五、職涯行動計畫')}
