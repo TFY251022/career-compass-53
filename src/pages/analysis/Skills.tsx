@@ -266,7 +266,11 @@ const Skills = () => {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-foreground/80 leading-[1.85] tracking-wide">{strategy.overall_strategy}</p>
+                      <div className="space-y-2">
+                        {splitIntoParagraphs(strategy.overall_strategy).map((p, i) => (
+                          <p key={i} className="text-sm text-foreground/80 leading-[1.85] tracking-wide">{p}</p>
+                        ))}
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
