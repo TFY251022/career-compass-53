@@ -11,9 +11,28 @@ import { ResumeTemplateRenderer, TEMPLATE_THEMES } from '@/components/resume/Res
 import AlertModal from '@/components/modals/AlertModal';
 import html2pdf from 'html2pdf.js';
 
+/** Recursively inline all computed styles from source to cloned element */
+function inlineComputedStyles(source: HTMLElement, target: HTMLElement) {
+  const computed = window.getComputedStyle(source);
+  for (let i = 0; i < computed.length; i++) {
+    const prop = computed[i];
+    target.style.setProperty(prop, computed.getPropertyValue(prop));
+  }
+  const sourceChildren = source.children;
+  const targetChildren = target.children;
+  for (let i = 0; i < sourceChildren.length; i++) {
+    if (sourceChildren[i] instanceof HTMLElement && targetChildren[i] instanceof HTMLElement) {
+      inlineComputedStyles(sourceChildren[i] as HTMLElement, targetChildren[i] as HTMLElement);
+    }
+  }
+}
+
 /** Clone a rendered DOM element and inline styles for accurate PDF output */
 async function exportElementToPdf(element: HTMLElement, filename: string) {
   const clone = element.cloneNode(true) as HTMLElement;
+  // Inline all computed styles so pdf renderer sees them
+  inlineComputedStyles(element, clone);
+
   clone.style.width = '794px';
   clone.style.padding = '24px';
   clone.style.margin = '0';
@@ -22,7 +41,6 @@ async function exportElementToPdf(element: HTMLElement, filename: string) {
   clone.style.top = '0';
   clone.style.backgroundColor = '#ffffff';
   clone.style.fontFamily = "'Noto Sans TC', 'Microsoft JhengHei', sans-serif";
-  // Remove any scale transform from preview
   clone.style.transform = 'none';
 
   // Remove scaled inner wrapper if present
@@ -31,62 +49,6 @@ async function exportElementToPdf(element: HTMLElement, filename: string) {
     scaledChild.style.transform = 'none';
     scaledChild.style.width = '100%';
   }
-
-  // Force responsive grid layouts to desktop
-  clone.querySelectorAll('[class*="md\\:grid-cols"]').forEach((el) => {
-    const htmlEl = el as HTMLElement;
-    const classes = htmlEl.className;
-    const mdMatch = classes.match(/md:grid-cols-\[([^\]]+)\]/);
-    if (mdMatch) {
-      htmlEl.style.display = 'grid';
-      htmlEl.style.gridTemplateColumns = mdMatch[1];
-    }
-    const mdSimple = classes.match(/md:grid-cols-(\d+)/);
-    if (mdSimple) {
-      htmlEl.style.display = 'grid';
-      htmlEl.style.gridTemplateColumns = `repeat(${mdSimple[1]}, minmax(0, 1fr))`;
-    }
-  });
-
-  clone.querySelectorAll('[class*="md\\:flex-row"]').forEach((el) => {
-    (el as HTMLElement).style.flexDirection = 'row';
-  });
-  clone.querySelectorAll('[class*="md\\:text-left"]').forEach((el) => {
-    (el as HTMLElement).style.textAlign = 'left';
-  });
-  clone.querySelectorAll('[class*="md\\:justify-start"]').forEach((el) => {
-    (el as HTMLElement).style.justifyContent = 'flex-start';
-  });
-  clone.querySelectorAll('[class*="flex-wrap"]').forEach((el) => {
-    const htmlEl = el as HTMLElement;
-    htmlEl.style.display = 'flex';
-    htmlEl.style.flexWrap = 'wrap';
-  });
-  clone.querySelectorAll('[class*="gap-"]').forEach((el) => {
-    const htmlEl = el as HTMLElement;
-    const gapMatch = htmlEl.className.match(/\bgap-(\d+)\b/);
-    if (gapMatch) {
-      htmlEl.style.gap = `${parseInt(gapMatch[1]) * 4}px`;
-    }
-  });
-  clone.querySelectorAll('[class*="rounded-full"]').forEach((el) => {
-    const htmlEl = el as HTMLElement;
-    htmlEl.style.borderRadius = '9999px';
-    htmlEl.style.display = 'inline-block';
-    if (htmlEl.className.includes('px-3')) htmlEl.style.paddingLeft = htmlEl.style.paddingRight = '12px';
-    if (htmlEl.className.includes('py-1')) htmlEl.style.paddingTop = htmlEl.style.paddingBottom = '4px';
-    if (htmlEl.className.includes('text-sm')) htmlEl.style.fontSize = '14px';
-  });
-  clone.querySelectorAll('[class*="space-y-"]').forEach((el) => {
-    const htmlEl = el as HTMLElement;
-    const m = htmlEl.className.match(/\bspace-y-(\d+)\b/);
-    if (m) {
-      const gap = parseInt(m[1]) * 4;
-      Array.from(htmlEl.children).forEach((child, i) => {
-        if (i > 0) (child as HTMLElement).style.marginTop = `${gap}px`;
-      });
-    }
-  });
 
   // Wait for images
   const images = clone.querySelectorAll('img');
