@@ -320,7 +320,7 @@ const Skills = () => {
                             </div>
 
                             {/* Description */}
-                            <p className="text-sm text-muted-foreground mb-3 flex-grow">{resource.description}</p>
+                            <p className="text-sm text-muted-foreground mb-3 flex-grow leading-[1.8]">{resource.description}</p>
 
                             {/* Strategy reason */}
                             {resource.strategy_reason && (
