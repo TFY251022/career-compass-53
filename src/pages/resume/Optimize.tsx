@@ -22,6 +22,7 @@ import { mockOriginalResumeData, mockResumeData, mockSuggestions, mockDiagnostic
 import { Badge } from '@/components/ui/badge';
 
 import logoCat from '@/assets/logocat.png';
+import { splitIntoParagraphs } from '@/utils/textFormat';
 type Phase = 'initial' | 'analyzing' | 'suggestions' | 'templates' | 'generating' | 'result';
 
 interface ThemeColors {
@@ -773,11 +774,19 @@ const SuggestionsPhase = ({
                 <CardContent className="space-y-4">
                   <div className="p-4 rounded-lg bg-primary/5 border border-primary/15">
                     <h4 className="text-sm font-semibold text-primary mb-2">候選人定位</h4>
-                    <p className="text-sm leading-relaxed">{diagnosticResult.candidate_positioning}</p>
+                    <div className="text-sm leading-relaxed space-y-2">
+                      {splitIntoParagraphs(diagnosticResult.candidate_positioning).map((p, i) => (
+                        <p key={i}>{p}</p>
+                      ))}
+                    </div>
                   </div>
                   <div className="p-4 rounded-lg bg-muted/40 border border-border">
                     <h4 className="text-sm font-semibold text-foreground mb-2">目標職位落差摘要</h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{diagnosticResult.target_role_gap_summary}</p>
+                    <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
+                      {splitIntoParagraphs(diagnosticResult.target_role_gap_summary).map((p, i) => (
+                        <p key={i}>{p}</p>
+                      ))}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -799,7 +808,11 @@ const SuggestionsPhase = ({
                     {diagnosticResult.overall_strengths.map((s, i) => (
                       <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-green-50/60">
                         <CheckCircle className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
-                        <p className="text-sm leading-relaxed">{s}</p>
+                        <div className="text-sm leading-relaxed space-y-1.5">
+                          {splitIntoParagraphs(s).map((p, j) => (
+                            <p key={j}>{p}</p>
+                          ))}
+                        </div>
                       </div>
                     ))}
                   </CardContent>
@@ -815,7 +828,11 @@ const SuggestionsPhase = ({
                     {diagnosticResult.overall_weaknesses.map((w, i) => (
                       <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-primary/5">
                         <AlertTriangle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                        <p className="text-sm leading-relaxed">{w}</p>
+                        <div className="text-sm leading-relaxed space-y-1.5">
+                          {splitIntoParagraphs(w).map((p, j) => (
+                            <p key={j}>{p}</p>
+                          ))}
+                        </div>
                       </div>
                     ))}
                   </CardContent>
@@ -853,15 +870,27 @@ const SuggestionsPhase = ({
                       <div className="p-4 space-y-4">
                         <div className="p-3 rounded-md bg-muted/40 border border-border/60">
                           <p className="text-xs text-muted-foreground mb-1 font-medium">原文內容</p>
-                          <p className="text-sm text-foreground/80 leading-relaxed">{issue.original_text}</p>
+                          <div className="text-sm text-foreground/80 leading-relaxed space-y-1.5">
+                            {splitIntoParagraphs(issue.original_text).map((p, j) => (
+                              <p key={j}>{p}</p>
+                            ))}
+                          </div>
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground mb-1 font-medium">診斷分析</p>
-                          <p className="text-sm leading-relaxed">{issue.issue_reason}</p>
+                          <div className="text-sm leading-relaxed space-y-1.5">
+                            {splitIntoParagraphs(issue.issue_reason).map((p, j) => (
+                              <p key={j}>{p}</p>
+                            ))}
+                          </div>
                         </div>
                         <div className="p-3 rounded-md bg-primary/5 border border-primary/15">
                           <p className="text-xs text-primary mb-1 font-semibold">優化方向</p>
-                          <p className="text-sm leading-relaxed font-medium text-primary">{issue.improvement_direction}</p>
+                          <div className="text-sm leading-relaxed font-medium text-primary space-y-1.5">
+                            {splitIntoParagraphs(issue.improvement_direction).map((p, j) => (
+                              <p key={j}>{p}</p>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </motion.div>
@@ -889,7 +918,11 @@ const SuggestionsPhase = ({
                         <div className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">
                           {i + 1}
                         </div>
-                        <p className="text-sm leading-relaxed">{action}</p>
+                        <div className="text-sm leading-relaxed space-y-1.5">
+                          {splitIntoParagraphs(action).map((p, j) => (
+                            <p key={j}>{p}</p>
+                          ))}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -1031,11 +1064,11 @@ const ResumeEditMode = ({
               <div className="space-y-3">
                 <div className="p-3 rounded-lg bg-primary/5 border border-primary/15">
                   <h4 className="text-xs font-semibold text-primary mb-1.5">候選人定位</h4>
-                  <p className="text-sm leading-relaxed">{diagnosticResult.candidate_positioning}</p>
+                  <div className="text-sm leading-relaxed space-y-1.5">{splitIntoParagraphs(diagnosticResult.candidate_positioning).map((p, i) => <p key={i}>{p}</p>)}</div>
                 </div>
                 <div className="p-3 rounded-lg bg-muted/40 border border-border">
                   <h4 className="text-xs font-semibold text-foreground mb-1.5">目標職位落差摘要</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{diagnosticResult.target_role_gap_summary}</p>
+                  <div className="text-sm text-muted-foreground leading-relaxed space-y-1.5">{splitIntoParagraphs(diagnosticResult.target_role_gap_summary).map((p, i) => <p key={i}>{p}</p>)}</div>
                 </div>
               </div>
             )}
@@ -1051,7 +1084,7 @@ const ResumeEditMode = ({
                     {diagnosticResult.overall_strengths.map((s, i) => (
                       <div key={i} className="flex items-start gap-2 p-2 rounded-md bg-green-50/60">
                         <CheckCircle className="h-3.5 w-3.5 text-green-600 shrink-0 mt-0.5" />
-                        <p className="text-xs leading-relaxed">{s}</p>
+                        <div className="text-xs leading-relaxed space-y-1">{splitIntoParagraphs(s).map((p, j) => <p key={j}>{p}</p>)}</div>
                       </div>
                     ))}
                   </div>
@@ -1064,7 +1097,7 @@ const ResumeEditMode = ({
                     {diagnosticResult.overall_weaknesses.map((w, i) => (
                       <div key={i} className="flex items-start gap-2 p-2 rounded-md bg-primary/5">
                         <AlertTriangle className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
-                        <p className="text-xs leading-relaxed">{w}</p>
+                        <div className="text-xs leading-relaxed space-y-1">{splitIntoParagraphs(w).map((p, j) => <p key={j}>{p}</p>)}</div>
                       </div>
                     ))}
                   </div>
@@ -1096,15 +1129,15 @@ const ResumeEditMode = ({
                       <div className="p-3 space-y-2.5">
                         <div className="p-2 rounded-md bg-muted/40 border border-border/60">
                           <p className="text-[10px] text-muted-foreground mb-0.5 font-medium">原文內容</p>
-                          <p className="text-xs text-foreground/80 leading-relaxed">{issue.original_text}</p>
+                          <div className="text-xs text-foreground/80 leading-relaxed space-y-1">{splitIntoParagraphs(issue.original_text).map((p, j) => <p key={j}>{p}</p>)}</div>
                         </div>
                         <div>
                           <p className="text-[10px] text-muted-foreground mb-0.5 font-medium">診斷分析</p>
-                          <p className="text-xs leading-relaxed">{issue.issue_reason}</p>
+                          <div className="text-xs leading-relaxed space-y-1">{splitIntoParagraphs(issue.issue_reason).map((p, j) => <p key={j}>{p}</p>)}</div>
                         </div>
                         <div className="p-2 rounded-md bg-primary/5 border border-primary/15">
                           <p className="text-[10px] text-primary mb-0.5 font-semibold">優化方向</p>
-                          <p className="text-xs leading-relaxed font-medium text-primary">{issue.improvement_direction}</p>
+                          <div className="text-xs leading-relaxed font-medium text-primary space-y-1">{splitIntoParagraphs(issue.improvement_direction).map((p, j) => <p key={j}>{p}</p>)}</div>
                         </div>
                       </div>
                     </div>
@@ -1124,7 +1157,7 @@ const ResumeEditMode = ({
                     <div className="h-5 w-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-[10px] font-bold mt-0.5">
                       {i + 1}
                     </div>
-                    <p className="text-xs leading-relaxed">{action}</p>
+                    <div className="text-xs leading-relaxed space-y-1">{splitIntoParagraphs(action).map((p, j) => <p key={j}>{p}</p>)}</div>
                   </div>
                 ))}
               </div>
