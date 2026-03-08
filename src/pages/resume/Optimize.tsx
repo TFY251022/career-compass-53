@@ -85,6 +85,7 @@ interface PersistedOptimizeState {
   selectedThemeIndex: number;
   resumeData: ResumeData;
   originalData: OriginalResumeData;
+  diagnosticResult?: ResumeDiagnosticResult;
 }
 
 const loadOptimizeState = (): PersistedOptimizeState | null => {
