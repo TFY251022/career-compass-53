@@ -230,8 +230,8 @@ export function buildLearningResourcesReportHtml(data: {
 
       ${data.milestones && data.milestones.length > 0 ? `
         ${sectionTitle('關鍵里程碑')}
-        <div style="padding:14px 18px;border:1px solid #e5e0db;border-radius:8px;background:#fafaf8;">
-          <ul style="padding-left:18px;margin:0;">${data.milestones.map(m => `<li style="margin-bottom:6px;font-size:13px;color:#444;">${m}</li>`).join('')}</ul>
+        <div style="padding:16px 20px;border:1px solid #e5e0db;border-radius:10px;background:#fafaf8;">
+          <ul style="padding-left:18px;margin:0;">${data.milestones.map(m => `<li style="margin-bottom:8px;font-size:13px;color:#444;line-height:1.85;">${m}</li>`).join('')}</ul>
         </div>
       ` : ''}
     </div>
