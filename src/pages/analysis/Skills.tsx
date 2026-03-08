@@ -216,6 +216,14 @@ const Skills = () => {
     });
   };
 
+  const handleDownloadSideProjects = async () => {
+    const { exportHtmlToPdf, buildSideProjectsReportHtml } = await import("@/utils/pdfExport");
+    await exportHtmlToPdf({
+      filename: "Side_Project推薦報告.pdf",
+      htmlContent: buildSideProjectsReportHtml(sideProjects ?? []),
+    });
+  };
+
   // ── Learning Resources Sub-view ──
   if (subView === "learning") {
     const strategy = analysisResult?.learningStrategy;
