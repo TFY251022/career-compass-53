@@ -15,7 +15,6 @@ const DevStateToggles = forwardRef<HTMLDivElement>((_, ref) => {
     isPersonalityQuizDone,
     isJobPreferenceQuizDone,
     isPersonalityTestDone,
-    useMockData,
     setIsLoggedIn,
     setIsResumeUploaded,
     setIsPersonalityQuizDone,
