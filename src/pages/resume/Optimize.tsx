@@ -25,34 +25,13 @@ import logoCat from '@/assets/logocat.png';
 import { splitIntoParagraphs } from '@/utils/textFormat';
 type Phase = 'initial' | 'analyzing' | 'suggestions' | 'templates' | 'generating' | 'result';
 
-interface ThemeColors {
-  name: string;
-  main: string;
-  secondary: string;
-  accent: string;
-  text: string;
-}
-
-const TEMPLATE_THEMES: Record<string, ThemeColors[]> = {
-  corporate: [
-    { name: '深海藍經典', main: '#1F3A5F', secondary: '#4A6FA5', accent: '#C8A951', text: '#2B2B2B' },
-    { name: '石墨灰商務', main: '#2E2E2E', secondary: '#5A5A5A', accent: '#2E7D73', text: '#1A1A1A' },
-    { name: '酒紅權威', main: '#6A1B2E', secondary: '#A63D40', accent: '#E9C46A', text: '#333333' },
-    { name: '深綠金融系', main: '#1B4332', secondary: '#2D6A4F', accent: '#D8F3DC', text: '#2B2B2B' },
-  ],
-  modern: [
-    { name: '科技藍', main: '#2563EB', secondary: '#1E3A8A', accent: '#60A5FA', text: '#111827' },
-    { name: '冷灰＋電光綠', main: '#374151', secondary: '#6B7280', accent: '#10B981', text: '#111111' },
-    { name: '黑白極簡', main: '#111111', secondary: '#E5E7EB', accent: '#6366F1', text: '#000000' },
-    { name: '靜謐藍灰', main: '#334155', secondary: '#94A3B8', accent: '#22D3EE', text: '#1E293B' },
-  ],
-  creative: [
-    { name: '莫蘭迪粉橘', main: '#E07A5F', secondary: '#C9604A', accent: '#E8A87C', text: '#2B2B2B' },
-    { name: '紫藍創意系', main: '#6D28D9', secondary: '#5320A8', accent: '#9F6CEE', text: '#1F1F1F' },
-    { name: '活力橘藍對比', main: '#F97316', secondary: '#D95F0E', accent: '#FDBA74', text: '#222222' },
-    { name: '黑底霓虹', main: '#0F172A', secondary: '#1E293B', accent: '#475569', text: '#2B2B2B' },
-  ],
-};
+import {
+  type ThemeColors,
+  TEMPLATE_THEMES,
+  CorporateTemplate,
+  ModernTemplate,
+  CreativeTemplate,
+} from '@/components/resume/ResumeTemplates';
 
 // Original resume fields config (for initial preview & suggestions edit)
 const originalResumeFields = [
