@@ -54,11 +54,24 @@ export interface LearningStrategy {
   milestones: string[];
 }
 
+export interface SideProjectPhase {
+  phase_name: string;
+  goal: string;
+  tasks: string[];
+  resume_value: string;
+}
+
 export interface SideProject {
   name: string;
+  name_en?: string;
+  capability_gaps: string[];
   technologies: string[];
-  highlights: string;
+  phases: SideProjectPhase[];
+  overall_resume_impact: string;
   difficulty: number;
+  difficulty_label?: string;
+  estimated_duration?: string;
+  difficulty_note?: string;
 }
 
 /* ── Report Metadata ── */
