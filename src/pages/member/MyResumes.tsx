@@ -291,7 +291,7 @@ const MyResumes = () => {
                           <Download className="h-4 w-4" />
                         )}
                       </Button>
-                      <Button variant="ghost" size="icon" className="text-destructive h-8 w-8 md:h-9 md:w-9">
+                      <Button variant="ghost" size="icon" className="text-destructive h-8 w-8 md:h-9 md:w-9" onClick={() => setDeleteTarget(resume)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
