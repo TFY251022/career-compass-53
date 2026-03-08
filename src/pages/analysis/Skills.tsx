@@ -713,9 +713,11 @@ const Skills = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="p-4 rounded-xl" style={{ backgroundColor: "#FFFBF5" }}>
-                    <p className="text-[#675143] leading-[1.85] text-sm tracking-wide">
-                      {preliminary_summary?.industry_insight || preliminary_summary?.core_insight}
-                    </p>
+                    <div className="space-y-3">
+                      {splitIntoParagraphs(preliminary_summary?.industry_insight || preliminary_summary?.core_insight || "").map((p, i) => (
+                        <p key={i} className="text-[#675143] leading-[1.85] text-sm tracking-wide">{p}</p>
+                      ))}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
