@@ -21,7 +21,7 @@ const RankQuestion = ({ question, value, onChange }: Props) => {
 
   return (
     <div className="space-y-3">
-      <p className="font-medium text-sm md:text-base">
+      <p className="font-bold text-base md:text-lg">
         {question.required && <span className="text-destructive mr-1">*</span>}
         {question.question}
       </p>
