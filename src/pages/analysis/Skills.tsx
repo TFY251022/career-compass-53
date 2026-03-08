@@ -530,7 +530,6 @@ const Skills = () => {
                                   <p key={i}>{p}</p>
                                 ))}
                               </div>
-                              </p>
                               <div>
                                 <span className="text-sm font-medium text-foreground">任務：</span>
                                 <ul className="mt-1.5 space-y-1.5">
