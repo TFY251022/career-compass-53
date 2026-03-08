@@ -33,7 +33,7 @@ const JobDetail = () => {
   // Cover letter drawer
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [letterContent, setLetterContent] = useState<{ subject: string; body: string } | null>(null);
+  const [letterContent, setLetterContent] = useState<CoverLetterResult | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
