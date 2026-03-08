@@ -1157,7 +1157,7 @@ const ResumeEditMode = ({
                     <div className="h-5 w-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-[10px] font-bold mt-0.5">
                       {i + 1}
                     </div>
-                    <p className="text-xs leading-relaxed">{action}</p>
+                    <div className="text-xs leading-relaxed space-y-1">{splitIntoParagraphs(action).map((p, j) => <p key={j}>{p}</p>)}</div>
                   </div>
                 ))}
               </div>
