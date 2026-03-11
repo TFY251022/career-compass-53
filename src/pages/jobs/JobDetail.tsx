@@ -15,8 +15,6 @@ import { getJobDetail, generateCoverLetter, type CoverLetterResult } from '@/ser
 import { parseCoverLetterContent } from '@/utils/coverLetterParser';
 import {
   ChevronLeft,
-  Copy,
-  CheckCircle2,
   Mail,
   Link as LinkIcon,
   User,
@@ -39,7 +37,7 @@ const JobDetail = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [letterContent, setLetterContent] = useState<CoverLetterResult | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
+  
 
   const parsed = useMemo(
     () => letterContent ? parseCoverLetterContent(letterContent.content) : null,
@@ -62,21 +60,12 @@ const JobDetail = () => {
     setDrawerOpen(true);
     setIsGenerating(true);
     setLetterContent(null);
-    setIsCopied(false);
 
     const result = await generateCoverLetter(job?.job_title, job?.company_name);
     setLetterContent(result);
     setIsGenerating(false);
   };
 
-  const handleCopyContent = async () => {
-    if (!letterContent) return;
-    const fullContent = `${letterContent.subject}\n\n${letterContent.content}`;
-    await navigator.clipboard.writeText(fullContent);
-    setIsCopied(true);
-    toast.success('已複製到剪貼簿');
-    setTimeout(() => setIsCopied(false), 2000);
-  };
 
   const handleDownload = async () => {
     if (!letterContent || !parsed) return;
@@ -247,14 +236,6 @@ const JobDetail = () => {
                   )}
                 </div>
               )}
-
-              <Button variant="outline" className="w-full gap-2" onClick={handleCopyContent}>
-                {isCopied ? (
-                  <><CheckCircle2 className="h-4 w-4 text-primary" />已複製</>
-                ) : (
-                  <><Copy className="h-4 w-4" />複製內容</>
-                )}
-              </Button>
             </motion.div>
           ) : null}
         </AnimatePresence>
