@@ -14,7 +14,7 @@ export async function getJobDetail(id: string): Promise<RecommendedJobDetail> {
   return apiClient.get<RecommendedJobDetail>(`/jobs/${id}`);
 }
 
-export interface CoverLetterResult { subject: string; body: string; author?: string; email?: string; portfolio?: string }
+export interface CoverLetterResult { subject: string; content: string }
 
 export async function generateCoverLetter(jobTitle?: string, company?: string): Promise<CoverLetterResult> {
   if (isMockMode()) { await mockDelay(2000); return mockCoverLetter(jobTitle, company); }

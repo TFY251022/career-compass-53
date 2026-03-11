@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -12,10 +12,14 @@ import JobDetailUserAnalysis from '@/components/jobs/detail/JobDetailUserAnalysi
 import JobDetailSkeleton from '@/components/jobs/detail/JobDetailSkeleton';
 import type { RecommendedJobDetail } from '@/types/job';
 import { getJobDetail, generateCoverLetter, type CoverLetterResult } from '@/services/jobService';
+import { parseCoverLetterContent } from '@/utils/coverLetterParser';
 import {
   ChevronLeft,
   Copy,
   CheckCircle2,
+  Mail,
+  Link as LinkIcon,
+  User,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -36,6 +40,11 @@ const JobDetail = () => {
   const [letterContent, setLetterContent] = useState<CoverLetterResult | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+
+  const parsed = useMemo(
+    () => letterContent ? parseCoverLetterContent(letterContent.content) : null,
+    [letterContent]
+  );
 
   useEffect(() => {
     if (!id) return;
@@ -62,8 +71,7 @@ const JobDetail = () => {
 
   const handleCopyContent = async () => {
     if (!letterContent) return;
-    const sig = [letterContent.author && `此致，${letterContent.author}`, letterContent.email, letterContent.portfolio].filter(Boolean).join('\n');
-    const fullContent = `${letterContent.subject}\n\n${letterContent.body}${sig ? `\n\n${sig}` : ''}`;
+    const fullContent = `${letterContent.subject}\n\n${letterContent.content}`;
     await navigator.clipboard.writeText(fullContent);
     setIsCopied(true);
     toast.success('已複製到剪貼簿');
@@ -71,7 +79,7 @@ const JobDetail = () => {
   };
 
   const handleDownload = async () => {
-    if (!letterContent) return;
+    if (!letterContent || !parsed) return;
     setIsDownloading(true);
 
     const date = new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -83,12 +91,12 @@ const JobDetail = () => {
       `日期：${date}`,
       divider,
       '',
-      letterContent.body,
+      ...parsed.bodyParagraphs.map(p => p + '\n'),
       '',
       divider,
-      ...(letterContent.author ? [`${letterContent.author}`] : []),
-      ...(letterContent.email ? [`Email：${letterContent.email}`] : []),
-      ...(letterContent.portfolio ? [`Portfolio：${letterContent.portfolio}`] : []),
+      ...(parsed.author ? [`此致，${parsed.author}`] : []),
+      ...(parsed.email ? [`Email：${parsed.email}`] : []),
+      ...(parsed.portfolio ? [`Portfolio：${parsed.portfolio}`] : []),
       divider,
     ];
 
@@ -143,16 +151,8 @@ const JobDetail = () => {
                   exit={{ opacity: 0 }}
                   className="space-y-6"
                 >
-                  {/* Section 1: Header */}
-                  <JobDetailHeader
-                    job={job}
-                    onGenerateLetter={handleGenerateLetter}
-                  />
-
-                  {/* Section 2: Job Content */}
+                  <JobDetailHeader job={job} onGenerateLetter={handleGenerateLetter} />
                   <JobDetailContent job={job} />
-
-                  {/* Section 3: User Analysis */}
                   <JobDetailUserAnalysis job={job} />
                 </motion.div>
               ) : (
@@ -185,44 +185,65 @@ const JobDetail = () => {
         <AnimatePresence mode="wait">
           {isGenerating ? (
             <AILoadingSpinner message="正在為您撰寫個人化推薦信..." />
-          ) : letterContent ? (
+          ) : letterContent && parsed ? (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="space-y-5"
             >
-              {/* Subject / Title */}
+              {/* Letter Header — Subject */}
               <div className="rounded-xl p-5 border" style={{ backgroundColor: '#fbf1e8' }}>
+                <p className="text-xs text-muted-foreground mb-1 tracking-wider">主旨</p>
                 <p className="text-lg font-bold text-[#502D03] leading-snug tracking-tight">
                   {letterContent.subject}
                 </p>
               </div>
 
-              {/* Body */}
-              <div className="rounded-xl p-5 border bg-card">
-                <p className="whitespace-pre-wrap text-sm leading-[1.9] tracking-wide text-foreground/85">
-                  {letterContent.body}
-                </p>
+              {/* Letter Body — Paragraphs */}
+              <div className="rounded-xl p-6 border bg-card space-y-4">
+                {parsed.bodyParagraphs.map((para, i) => (
+                  <p
+                    key={i}
+                    className="text-sm leading-[1.9] tracking-wide text-foreground/85"
+                    style={{ textIndent: '2em' }}
+                  >
+                    {para}
+                  </p>
+                ))}
               </div>
 
-              {/* Signature / Contact */}
-              {(letterContent.author || letterContent.email || letterContent.portfolio) && (
-                <div className="rounded-xl p-4 border bg-muted/30 space-y-1">
-                  {letterContent.author && (
-                    <p className="text-sm font-semibold text-foreground">此致，{letterContent.author}</p>
+              {/* Signature Block */}
+              {(parsed.author || parsed.email || parsed.portfolio) && (
+                <div className="rounded-xl p-5 border bg-muted/30 space-y-3">
+                  {parsed.author && (
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      <p className="text-sm font-semibold text-foreground">此致，{parsed.author}</p>
+                    </div>
                   )}
-                  {letterContent.email && (
-                    <p className="text-xs text-muted-foreground">{letterContent.email}</p>
+                  {parsed.email && (
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      <a
+                        href={`mailto:${parsed.email}`}
+                        className="text-sm text-[#8d4903] hover:underline"
+                      >
+                        {parsed.email}
+                      </a>
+                    </div>
                   )}
-                  {letterContent.portfolio && (
-                    <a
-                      href={letterContent.portfolio}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-[#8d4903] hover:underline break-all"
-                    >
-                      {letterContent.portfolio}
-                    </a>
+                  {parsed.portfolio && (
+                    <div className="flex items-center gap-2">
+                      <LinkIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      <a
+                        href={parsed.portfolio}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-[#8d4903] hover:underline break-all"
+                      >
+                        {parsed.portfolio}
+                      </a>
+                    </div>
                   )}
                 </div>
               )}
