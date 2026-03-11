@@ -60,7 +60,6 @@ const JobDetail = () => {
     setDrawerOpen(true);
     setIsGenerating(true);
     setLetterContent(null);
-    setIsCopied(false);
 
     const result = await generateCoverLetter(job?.job_title, job?.company_name);
     setLetterContent(result);
