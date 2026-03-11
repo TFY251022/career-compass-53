@@ -66,14 +66,6 @@ const JobDetail = () => {
     setIsGenerating(false);
   };
 
-  const handleCopyContent = async () => {
-    if (!letterContent) return;
-    const fullContent = `${letterContent.subject}\n\n${letterContent.content}`;
-    await navigator.clipboard.writeText(fullContent);
-    setIsCopied(true);
-    toast.success('已複製到剪貼簿');
-    setTimeout(() => setIsCopied(false), 2000);
-  };
 
   const handleDownload = async () => {
     if (!letterContent || !parsed) return;
