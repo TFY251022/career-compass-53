@@ -236,14 +236,6 @@ const JobDetail = () => {
                   )}
                 </div>
               )}
-
-              <Button variant="outline" className="w-full gap-2" onClick={handleCopyContent}>
-                {isCopied ? (
-                  <><CheckCircle2 className="h-4 w-4 text-primary" />已複製</>
-                ) : (
-                  <><Copy className="h-4 w-4" />複製內容</>
-                )}
-              </Button>
             </motion.div>
           ) : null}
         </AnimatePresence>
