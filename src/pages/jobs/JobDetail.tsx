@@ -37,7 +37,7 @@ const JobDetail = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [letterContent, setLetterContent] = useState<CoverLetterResult | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
+  
 
   const parsed = useMemo(
     () => letterContent ? parseCoverLetterContent(letterContent.content) : null,
