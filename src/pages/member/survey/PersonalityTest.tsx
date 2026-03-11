@@ -192,7 +192,7 @@ const PersonalityTest = () => {
                     return (
                       <Card
                         key={q.id}
-                        className={`rounded-2xl border-0 bg-white shadow-[0_4px_20px_rgba(150,105,73,0.08)] transition-all ${
+                        className={`rounded-2xl border border-border/80 bg-white shadow-[0_4px_20px_rgba(150,105,73,0.08)] transition-all ${
                           invalidIds.has(q.id)
                             ? 'ring-2 ring-destructive/50 shadow-[0_4px_20px_rgba(150,105,73,0.08),0_0_8px_hsl(var(--destructive)/0.25)]'
                             : ''
