@@ -15,8 +15,6 @@ import { getJobDetail, generateCoverLetter, type CoverLetterResult } from '@/ser
 import { parseCoverLetterContent } from '@/utils/coverLetterParser';
 import {
   ChevronLeft,
-  Copy,
-  CheckCircle2,
   Mail,
   Link as LinkIcon,
   User,
