@@ -4,21 +4,21 @@ import type { ResumeItem, OriginalResumeData, ResumeData, Suggestion, ResumeDiag
 export const MOCK_RESUMES: ResumeItem[] = [
   {
     id: 1,
-    name: '軟體工程師履歷_原版',
+    name: '軟體工程師履歷',
     updatedAt: '2026-02-12',
     version: 'original',
     content: `王小明\n前端工程師\n\n聯絡方式\nEmail: xiaoming@example.com\n電話: 0912-345-678\n\n工作經歷\n\n科技公司 A | 前端工程師 | 2022 - 現在\n• 開發維護公司核心產品前端\n• 使用 React + TypeScript 建構現代化 UI\n• 優化效能，提升載入速度 40%\n\n新創公司 B | 初階工程師 | 2020 - 2022\n• 參與多個客戶專案開發\n• 學習並應用前端最佳實踐\n\n技能\nReact, TypeScript, JavaScript, CSS, Git, Node.js`,
   },
   {
     id: 2,
-    name: '前端工程師履歷_自行修改版',
+    name: '前端工程師履歷',
     updatedAt: '2026-02-13',
     version: 'user-edited',
     content: `王小明 - 前端工程師履歷\n\n專精於 React 生態系統的前端開發者，\n具備 3 年以上實戰經驗。\n\n核心技能：\n- React / Next.js\n- TypeScript\n- Tailwind CSS\n- REST API 整合\n\n工作經歷：\n科技公司 A | 前端工程師 | 2022 - 現在\n• 主導公司核心產品前端架構重構\n• 使用 React + TypeScript 建構現代化 UI\n• 優化效能，提升載入速度 40%，使用者留存率提高 25%\n\n期望職位：資深前端工程師\n期望薪資：NT$ 70,000 - 90,000`,
   },
   {
     id: 3,
-    name: 'AI工程師_網站優化版',
+    name: 'AI工程師_優化版',
     updatedAt: '2026-02-14',
     version: 'site-optimized',
     templateId: 'modern',
