@@ -48,12 +48,21 @@ const DevStateToggles = forwardRef<HTMLDivElement>((_, ref) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 兩個問卷固定寫死為開啟，不允許被關閉
+  useEffect(() => {
+    if (!isPersonalityQuizDone) setIsPersonalityQuizDone(true);
+  }, [isPersonalityQuizDone]);
+
+  useEffect(() => {
+    if (!isJobPreferenceQuizDone) setIsJobPreferenceQuizDone(true);
+  }, [isJobPreferenceQuizDone]);
 
   const resetAll = () => {
     setIsLoggedIn(false);
     setIsResumeUploaded(false);
-    setIsPersonalityQuizDone(false);
-    setIsJobPreferenceQuizDone(false);
+    // 問卷保持開啟
+    setIsPersonalityQuizDone(true);
+    setIsJobPreferenceQuizDone(true);
     setIsPersonalityTestDone(false);
   };
 

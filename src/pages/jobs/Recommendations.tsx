@@ -61,7 +61,7 @@ const Recommendations = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [jobs, setJobs] = useState<RecommendedJob[]>([]);
   const [currentPage, setCurrentPage] = useState(initialPage);
-  const [totalPages] = useState(5);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     if (isJobPreferenceQuizDone && stage === "survey") {
@@ -69,11 +69,14 @@ const Recommendations = () => {
     }
   }, [isJobPreferenceQuizDone]);
 
+  const JOBS_PER_PAGE = 5;
   const loadJobs = async (page: number) => {
     setIsLoading(true);
     try {
       const data = await getRecommendedJobs(page);
       setJobs(data);
+      // 動態計算總頁數：只有一頁（模擬資料全部回傳）
+      setTotalPages(data.length < JOBS_PER_PAGE ? 1 : Math.ceil(data.length / JOBS_PER_PAGE));
     } finally {
       setIsLoading(false);
     }
