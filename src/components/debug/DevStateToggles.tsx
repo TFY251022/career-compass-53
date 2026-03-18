@@ -42,6 +42,13 @@ const DevStateToggles = forwardRef<HTMLDivElement>((_, ref) => {
     setIsPersonalityTestDone(true);
   };
 
+  // 先固定權限全開
+  useEffect(() => {
+    unlockAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
   const resetAll = () => {
     setIsLoggedIn(false);
     setIsResumeUploaded(false);
