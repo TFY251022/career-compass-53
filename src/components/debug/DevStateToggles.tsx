@@ -158,6 +158,6 @@ const DevStateToggles = forwardRef<HTMLDivElement>((_, ref) => {
   );
 });
 
-DevStateToggles.displayName = 'DevStateToggles';
+DevStateToggles.displayName = '權限設置開關';
 
 export default DevStateToggles;
