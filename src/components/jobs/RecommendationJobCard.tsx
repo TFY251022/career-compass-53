@@ -26,7 +26,7 @@ const RecommendationJobCard = ({ job }: { job: RecommendedJob }) => {
   const reason = cleanDimensionText(job.recommendation_reason);
 
   return (
-    <Card className="overflow-hidden hover:shadow-medium hover:-translate-y-1 transition-all duration-300 group border-border hover:border-primary/30 hover:shadow-[0_8px_30px_rgba(141,73,3,0.12)]">
+    <Card className="overflow-hidden min-w-0 hover:shadow-medium hover:-translate-y-1 transition-all duration-300 group border-border hover:border-primary/30 hover:shadow-[0_8px_30px_rgba(141,73,3,0.12)]">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-4">
           {/* Title with 104 icon on the left */}
