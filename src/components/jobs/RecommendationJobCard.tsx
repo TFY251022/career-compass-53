@@ -26,31 +26,31 @@ const RecommendationJobCard = ({ job }: { job: RecommendedJob }) => {
   const reason = cleanDimensionText(job.recommendation_reason);
 
   return (
-    <Card className="overflow-hidden min-w-0 hover:shadow-medium hover:-translate-y-1 transition-all duration-300 group border-border hover:border-primary/30 hover:shadow-[0_8px_30px_rgba(141,73,3,0.12)]">
+    <Card className="w-full min-w-0 overflow-hidden group border-border transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-medium hover:shadow-[0_8px_30px_rgba(141,73,3,0.12)]">
       <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           {/* Title with 104 icon on the left */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
+          <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 items-center gap-2">
               <img
                 src={icon104}
                 alt="104人力銀行"
-                className="h-6 w-6 rounded-full shadow-sm flex-shrink-0"
+                className="h-6 w-6 flex-shrink-0 rounded-full shadow-sm"
               />
-              <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+              <h3 className="truncate text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
                 {job.job_title}
               </h3>
             </div>
-            <div className="flex items-center gap-2 mt-1 text-muted-foreground">
+            <div className="mt-1 flex min-w-0 items-center gap-2 text-muted-foreground">
               <Building2 className="h-4 w-4 flex-shrink-0" />
-              <span className="text-sm truncate">{job.company_name}</span>
+              <span className="truncate text-sm">{job.company_name}</span>
             </div>
           </div>
 
-          {/* Match score – top right */}
-          <div className="flex-shrink-0">
+          {/* Match score */}
+          <div className="self-start flex-shrink-0">
             <div
-              className={`px-3 py-1.5 rounded-lg border text-sm font-bold ${getScoreColor(job.final_score)}`}
+              className={`rounded-lg border px-3 py-1.5 text-sm font-bold ${getScoreColor(job.final_score)}`}
             >
               {job.final_score.toFixed(1)}%
             </div>
@@ -60,43 +60,35 @@ const RecommendationJobCard = ({ job }: { job: RecommendedJob }) => {
 
       <CardContent className="space-y-4">
         {/* Recommendation reason with line-clamp */}
-        {reason && (
-          <p className="text-muted-foreground text-sm line-clamp-3">
-            {reason}
-          </p>
-        )}
+        {reason && <p className="line-clamp-3 break-words text-sm text-muted-foreground">{reason}</p>}
 
         {/* Badges: city + industry (no salary) */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex min-w-0 flex-wrap gap-2">
           {city && (
             <Badge variant="secondary" className="flex items-center gap-1">
               <MapPin className="h-3 w-3" />
               {city}
             </Badge>
           )}
-          <Badge variant="outline" className="flex items-center gap-1 max-w-full">
+          <Badge variant="outline" className="flex min-w-0 max-w-full items-center gap-1">
             <Briefcase className="h-3 w-3 flex-shrink-0" />
-            <span className="truncate">{job.industry}</span>
+            <span className="block max-w-[10.5rem] truncate sm:max-w-none">{job.industry}</span>
           </Badge>
         </div>
 
         {/* Action buttons */}
-        <div className="flex flex-wrap gap-3 pt-2">
+        <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:flex-wrap sm:gap-3">
           <Button
             size="sm"
             variant="outline"
-            className="gap-1"
+            className="w-full justify-center gap-1 sm:w-auto"
             onClick={() => navigate(`/jobs/${job.job_id}`)}
           >
             <FileSearch className="h-3 w-3" />
             查看詳細
           </Button>
-          <a
-            href={job.source_url}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button size="sm" className="gap-1">
+          <a href={job.source_url} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+            <Button size="sm" className="w-full justify-center gap-1 sm:w-auto">
               立即投遞
               <ExternalLink className="h-3 w-3" />
             </Button>
