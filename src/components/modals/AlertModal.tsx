@@ -69,7 +69,7 @@ const AlertModal = ({
             exit={{ opacity: 0, scale: 0.9, x: "-50%", y: "calc(-50% + 20px)" }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           >
-            <div className="bg-background rounded-2xl border overflow-hidden">
+            <div className="bg-white rounded-2xl border overflow-hidden">
               {/* Close Button */}
               <button
                 onClick={onClose}

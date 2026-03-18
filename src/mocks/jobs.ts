@@ -208,19 +208,6 @@ export const generateMockRecommendedJobs = (page: number): RecommendedJob[] => {
   const base: RecommendedJob[] = [
     {
       job_id: 'rec-1',
-      job_title: 'Senior Backend Engineer - Python',
-      company_name: '塔台智能網絡股份有限公司',
-      industry: '資訊科技',
-      full_address: '台北市南港區園區街3之2號9樓',
-      source_url: 'https://www.104.com.tw/job/8n0gu?jobsource=joblist_list',
-      final_score: 79.8,
-      recommendation_reason: '此職缺強調 Python 後端開發能力，並需要在 AWS 和 Docker 上有豐富經驗。候選人在 D3 (DevOps) 和 D5 (Quality) 上的高分顯示其具備相關經驗，契合度高。',
-      strengths: '候選人在 D3 (DevOps) 和 D6 (Soft Skills) 上的高分顯示了他在系統部署和團隊合作方面的強項，這對於優化現有架構和團隊溝通至關重要。',
-      weaknesses: '候選人在 D1 (Frontend) 和 D4 (AI/Data) 的分數較低，可能在前端技術和數據處理上缺乏經驗。',
-      interview_tips: '建議候選人在面試前深入了解 AWS 和 Docker 的最新技術趨勢，並準備一些實際應用案例。',
-    },
-    {
-      job_id: 'rec-2',
       job_title: '全端工程師',
       company_name: '數位創新科技有限公司',
       industry: '軟體服務',
@@ -231,6 +218,20 @@ export const generateMockRecommendedJobs = (page: number): RecommendedJob[] => {
       strengths: '候選人在 D2 (Backend) 與 D5 (Quality) 表現突出，展現了紮實的後端架構能力與對程式碼品質的高標準。',
       weaknesses: '候選人在 D4 (AI/Data) 方面得分偏低，在資料處理與AI應用上可能需要額外學習。',
       interview_tips: '建議準備全端架構設計案例，展示前後端整合經驗。',
+    },
+
+    {
+      job_id: 'rec-2',
+      job_title: 'Senior Backend Engineer - Python',
+      company_name: '塔台智能網絡股份有限公司',
+      industry: '資訊科技',
+      full_address: '台北市南港區園區街3之2號9樓',
+      source_url: 'https://www.104.com.tw/job/8n0gu?jobsource=joblist_list',
+      final_score: 79.8,
+      recommendation_reason: '此職缺強調 Python 後端開發能力，並需要在 AWS 和 Docker 上有豐富經驗。候選人在 D3 (DevOps) 和 D5 (Quality) 上的高分顯示其具備相關經驗，契合度高。',
+      strengths: '候選人在 D3 (DevOps) 和 D6 (Soft Skills) 上的高分顯示了他在系統部署和團隊合作方面的強項，這對於優化現有架構和團隊溝通至關重要。',
+      weaknesses: '候選人在 D1 (Frontend) 和 D4 (AI/Data) 的分數較低，可能在前端技術和數據處理上缺乏經驗。',
+      interview_tips: '建議候選人在面試前深入了解 AWS 和 Docker 的最新技術趨勢，並準備一些實際應用案例。',
     },
     {
       job_id: 'rec-3',
