@@ -81,7 +81,7 @@ const RecommendationJobCard = ({ job }: { job: RecommendedJob }) => {
         </div>
 
         {/* Action buttons */}
-        <div className="flex gap-3 pt-2">
+        <div className="flex flex-wrap gap-3 pt-2">
           <Button
             size="sm"
             variant="outline"
