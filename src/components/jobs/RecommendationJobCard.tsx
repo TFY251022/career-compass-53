@@ -74,9 +74,9 @@ const RecommendationJobCard = ({ job }: { job: RecommendedJob }) => {
               {city}
             </Badge>
           )}
-          <Badge variant="outline" className="flex items-center gap-1">
-            <Briefcase className="h-3 w-3" />
-            {job.industry}
+          <Badge variant="outline" className="flex items-center gap-1 max-w-full">
+            <Briefcase className="h-3 w-3 flex-shrink-0" />
+            <span className="truncate">{job.industry}</span>
           </Badge>
         </div>
 
