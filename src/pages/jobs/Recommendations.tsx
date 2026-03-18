@@ -140,8 +140,8 @@ const Recommendations = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="container py-8 md:py-12">
+    <div className="min-h-screen overflow-x-hidden">
+      <div className="container py-8 md:py-12 overflow-x-hidden">
         <AnimatePresence mode="wait">
           {/* ─── Stage 1: Survey ─── */}
           {stage === "survey" && (
@@ -216,7 +216,7 @@ const Recommendations = () => {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="grid gap-4"
+                      className="grid gap-4 w-full min-w-0"
                     >
                       {[...Array(5)].map((_, i) => (
                         <JobCardSkeleton key={i} />
@@ -228,11 +228,12 @@ const Recommendations = () => {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="grid gap-4"
+                      className="grid gap-4 w-full min-w-0"
                     >
                       {jobs.map((job, index) => (
                         <motion.div
                           key={`${job.job_title}-${job.company_name}-${index}`}
+                          className="w-full min-w-0"
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.05 }}
