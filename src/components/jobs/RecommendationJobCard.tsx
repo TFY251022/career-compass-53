@@ -16,7 +16,7 @@ import { cleanDimensionText, extractCity } from "@/utils/textCleaner";
 /** Score color helper */
 const getScoreColor = (score: number) => {
   if (score >= 80) return "text-emerald-600 bg-emerald-50 border-emerald-200";
-  if (score >= 65) return "text-amber-600 bg-amber-50 border-amber-200";
+  if (score >= 60) return "text-amber-600 bg-amber-50 border-amber-200";
   return "text-rose-600 bg-rose-50 border-rose-200";
 };
 
@@ -87,7 +87,7 @@ const RecommendationJobCard = ({ job }: { job: RecommendedJob }) => {
             <FileSearch className="h-3 w-3" />
             查看詳細
           </Button>
-          <a href={job.source_url} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+          <a href={job.source_url} target="_blank" rel="noopener noreferrer" className="block w-full sm:w-auto">
             <Button size="sm" className="w-full justify-center gap-1 sm:w-auto">
               立即投遞
               <ExternalLink className="h-3 w-3" />
