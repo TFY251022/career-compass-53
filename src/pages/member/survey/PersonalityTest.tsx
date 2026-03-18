@@ -106,14 +106,20 @@ const PersonalityTest = () => {
     }
     if (currentStep < totalSteps - 1) {
       updateProgress({ currentStep: currentStep + 1 });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // iOS Safari compatible scroll to top
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
     }
   };
 
   const handlePrev = () => {
     if (currentStep > 0) {
       updateProgress({ currentStep: currentStep - 1 });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // iOS Safari compatible scroll to top
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
     }
   };
 
@@ -140,7 +146,10 @@ const PersonalityTest = () => {
     setShowResult(false);
     setResult(null);
     setIsPersonalityTestDone(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // iOS Safari compatible scroll to top
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
   };
 
   const progressPercent = totalSteps > 0 ? ((currentStep + 1) / totalSteps) * 100 : 0;

@@ -127,14 +127,20 @@ const Personality = () => {
     }
     if (currentStep < totalSteps - 1) {
       updateProgress({ currentStep: currentStep + 1 });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // iOS Safari compatible scroll to top
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
     }
   };
 
   const handlePrev = () => {
     if (currentStep > 0) {
       updateProgress({ currentStep: currentStep - 1 });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // iOS Safari compatible scroll to top
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
     }
   };
 
@@ -170,7 +176,10 @@ const Personality = () => {
     setShowResult(false);
     setIsPersonalityQuizDone(false);
     localStorage.removeItem(RESULT_KEY);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // iOS Safari compatible scroll to top
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
   };
 
   // Choose path

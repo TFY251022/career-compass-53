@@ -33,10 +33,31 @@ interface AppState extends PersistedFlags {
 // --- Helpers ---
 const APP_STATE_KEY = "app-global-state";
 
+/** iOS Safari Private Mode throws SecurityError on localStorage access */
+const isLocalStorageAvailable = (): boolean => {
+  try {
+    const testKey = "__ls_test__";
+    localStorage.setItem(testKey, "1");
+    localStorage.removeItem(testKey);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+/** Use localStorage when available, fall back to sessionStorage for iOS Private Mode */
+const getStorage = (): Storage => {
+  try {
+    if (isLocalStorageAvailable()) return localStorage;
+  } catch {}
+  return sessionStorage;
+};
+
 const loadFlags = (): PersistedFlags => {
   if (typeof window === "undefined") return getDefaultFlags();
   try {
-    const saved = localStorage.getItem(APP_STATE_KEY);
+    const storage = getStorage();
+    const saved = storage.getItem(APP_STATE_KEY);
     return saved ? JSON.parse(saved) : getDefaultFlags();
   } catch {
     return getDefaultFlags();
@@ -53,10 +74,15 @@ const getDefaultFlags = (): PersistedFlags => ({
   avatarUrl: null,
 });
 
-/** 原子化更新 localStorage，避免覆蓋掉其他欄位 */
+/** 原子化更新 storage，避免覆蓋掉其他欄位 */
 const persistFlag = (partial: Partial<PersistedFlags>) => {
-  const current = loadFlags();
-  localStorage.setItem(APP_STATE_KEY, JSON.stringify({ ...current, ...partial }));
+  try {
+    const storage = getStorage();
+    const current = loadFlags();
+    storage.setItem(APP_STATE_KEY, JSON.stringify({ ...current, ...partial }));
+  } catch {
+    // silently fail if storage is completely unavailable
+  }
 };
 
 // --- Context ---
