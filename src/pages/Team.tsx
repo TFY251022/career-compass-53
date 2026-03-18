@@ -126,7 +126,7 @@ const Team = () => {
                 <CardTitle>{team.title}</CardTitle>
                 <CardDescription>{team.role}</CardDescription>
 
-                {/* 展開按鈕, 唯一可點防誤觸 */}
+                /* {/* 展開按鈕, 唯一可點防誤觸 */}
                 <button
                   type="button"
                   onClick={() => setOpenKey(isOpen ? null : team.key)}
@@ -135,7 +135,7 @@ const Team = () => {
                   <ChevronDown
                     className={`h-4 w-4 text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`}
                   />
-                </button>
+                </button> */
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">{team.description}</p>
