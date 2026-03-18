@@ -21,15 +21,15 @@ const Navbar = () => {
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
 
   const productLinks = [
-  { to: '/jobs/skill-search', label: '職類核心技能查詢', icon: Search, description: '根據技能搜尋最適合的職缺' },
-  { to: '/resume/optimize', label: '履歷優化', icon: FileText, description: '專業分析並優化您的履歷' },
-  { to: '/analysis/skills', label: '職能圖譜', icon: BarChart3, description: '深度分析技能優勢與發展方向' },
-  { to: '/jobs/recommendations', label: '推薦職缺', icon: Target, description: '根據您的條件推薦最佳職缺' }];
+    { to: '/jobs/skill-search', label: '職類核心技能查詢', icon: Search, description: '根據技能搜尋最適合的職缺' },
+    { to: '/resume/optimize', label: '履歷優化', icon: FileText, description: '專業分析並優化您的履歷' },
+    { to: '/analysis/skills', label: '職能圖譜', icon: BarChart3, description: '深度分析技能優勢與發展方向' },
+    { to: '/jobs/recommendations', label: '推薦職缺', icon: Target, description: '根據您的條件推薦最佳職缺' }];
 
 
   const navLinks = [
-  { to: '/', label: '首頁' },
-  { to: '/team', label: '關於我們' }];
+    { to: '/', label: '首頁' },
+    { to: '/team', label: '關於我們' }];
 
 
   const handleLogout = () => {
@@ -54,7 +54,7 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) =>
-            <Link key={link.to} to={link.to}>
+              <Link key={link.to} to={link.to}>
                 <Button variant="ghost" className="text-white/80 hover:text-white hover:bg-white/10">
                   {link.label}
                 </Button>
@@ -71,7 +71,7 @@ const Navbar = () => {
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] gap-1 p-4 md:w-[500px] md:grid-cols-1">
                       {productLinks.map((link) =>
-                      <li key={link.to}>
+                        <li key={link.to}>
                           <NavigationMenuLink asChild>
                             <Link to={link.to} className="flex items-center gap-3 select-none rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent/10 focus:bg-accent/10">
                               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -99,7 +99,7 @@ const Navbar = () => {
           {/* Auth Section */}
           <div className="hidden md:flex items-center gap-3">
             {isLoggedIn ?
-            <DropdownMenu>
+              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="gap-2 pl-2 text-white/80 hover:text-white hover:bg-white/10">
                     <Avatar className="h-8 w-8 border border-white/20 bg-white/80">
@@ -134,13 +134,13 @@ const Navbar = () => {
                   <DropdownMenuItem onClick={() => setPasswordModalOpen(true)} className="flex items-center gap-2 cursor-pointer">
                     <Lock className="h-4 w-4" />密碼設定
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-destructive">
+                  {/* <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-destructive">
                     <LogOut className="h-4 w-4" />登出
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                 </DropdownMenuContent>
               </DropdownMenu> :
 
-            <>
+              <>
                 <Link to="/auth/register-form">
                   <Button variant="ghost" className="text-white/80 hover:text-white hover:bg-white/10">註冊</Button>
                 </Link>
@@ -168,18 +168,18 @@ const Navbar = () => {
               </div>
               <div className="flex flex-col gap-1 px-3">
                 {navLinks.map((link) =>
-                <Link key={link.to} to={link.to} onClick={() => setMobileOpen(false)} className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#fbf1e8] active:bg-[#fbf1e8] transition-colors">
+                  <Link key={link.to} to={link.to} onClick={() => setMobileOpen(false)} className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#fbf1e8] active:bg-[#fbf1e8] transition-colors">
                     <span className="font-medium">{link.label}</span>
                   </Link>
                 )}
                 <Link to="/faq" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#fbf1e8] active:bg-[#fbf1e8] transition-colors">
-                    <HelpCircle className="h-5 w-5 text-primary" />
-                    <span className="font-medium">常見問答</span>
+                  <HelpCircle className="h-5 w-5 text-primary" />
+                  <span className="font-medium">常見問答</span>
                 </Link>
                 <div className="border-t border-border my-2 pt-2">
                   <p className="text-xs text-muted-foreground px-3 mb-2">服務項目</p>
                   {productLinks.map((link) =>
-                  <Link key={link.to} to={link.to} onClick={() => setMobileOpen(false)} className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#fbf1e8] active:bg-[#fbf1e8] transition-colors">
+                    <Link key={link.to} to={link.to} onClick={() => setMobileOpen(false)} className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#fbf1e8] active:bg-[#fbf1e8] transition-colors">
                       <link.icon className="h-5 w-5 text-primary" />
                       <span className="font-medium">{link.label}</span>
                     </Link>
@@ -187,22 +187,22 @@ const Navbar = () => {
                 </div>
                 <div className="border-t border-border my-2" />
                 {isLoggedIn ?
-                <>
+                  <>
                     <Link to="/member/center" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#fbf1e8] active:bg-[#fbf1e8] transition-colors">
                       <User className="h-5 w-5 text-primary" />
                       <span className="font-medium">會員中心</span>
                     </Link>
-                    <button onClick={() => {handleLogout();setMobileOpen(false);}} className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#fbf1e8] active:bg-[#fbf1e8] transition-colors text-destructive">
+                    <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#fbf1e8] active:bg-[#fbf1e8] transition-colors text-destructive">
                       <LogOut className="h-5 w-5" />
                       <span className="font-medium">登出</span>
                     </button>
                   </> :
 
-                <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-2">
                     <Link to="/auth/register-form" onClick={() => setMobileOpen(false)}>
                       <Button variant="outline" className="w-full">註冊</Button>
                     </Link>
-                    <Button onClick={() => {setAuthModalOpen(true);setMobileOpen(false);}} className="w-full gradient-primary">
+                    <Button onClick={() => { setAuthModalOpen(true); setMobileOpen(false); }} className="w-full gradient-primary">
                       登入
                     </Button>
                   </div>
